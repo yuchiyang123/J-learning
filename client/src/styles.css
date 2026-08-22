@@ -824,7 +824,7 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .detail-collapse.open { grid-template-rows: 1fr; }
 .detail-collapse-inner { overflow: hidden; min-height: 0; }
 .history-detail {
-  padding: 0.2rem 0 1.2rem;
+  padding: calc(0.2rem + 2px) 0.9rem 1.2rem;
 }
 .history-detail .quiz-question { margin-bottom: 1rem; }
 .history-detail .quiz-question:last-child { margin-bottom: 0; }
