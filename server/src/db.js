@@ -132,4 +132,13 @@ CREATE TABLE IF NOT EXISTS game_scores (
   detail TEXT,                      -- JSON string of extra stats (moves/time, combo, lives...)
   played_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+-- Every per-user read (history, stats, leaderboards) filters by these columns;
+-- without an index each one is a full table scan that gets linearly slower
+-- as usage accumulates rows.
+CREATE INDEX IF NOT EXISTS idx_quiz_results_user ON quiz_results(user_id, taken_at);
+CREATE INDEX IF NOT EXISTS idx_speaking_attempts_user ON speaking_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_words_user ON user_words(user_id, level);
+CREATE INDEX IF NOT EXISTS idx_game_scores_lookup ON game_scores(game, mode, level, score DESC);
+CREATE INDEX IF NOT EXISTS idx_game_scores_user ON game_scores(user_id, game, played_at);
 `);

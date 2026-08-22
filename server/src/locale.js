@@ -10,7 +10,20 @@ export function normalizeLocale(input) {
   return found || DEFAULT_LOCALE;
 }
 
-const toCn = OpenCC.Converter({ from: 'tw', to: 'cn' });
+const toCnRaw = OpenCC.Converter({ from: 'tw', to: 'cn' });
+
+// The site's content is static (seeded once, rarely changed), so the same
+// zh-TW string is converted to zh-CN over and over across requests — memoize
+// it instead of re-running the OpenCC dictionary lookup every time.
+const cnCache = new Map();
+function toCn(zhText) {
+  let cached = cnCache.get(zhText);
+  if (cached === undefined) {
+    cached = toCnRaw(zhText);
+    cnCache.set(zhText, cached);
+  }
+  return cached;
+}
 
 let cache = null;
 function getCache() {

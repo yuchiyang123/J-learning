@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import './db.js';
@@ -40,6 +41,7 @@ app.use(helmet({
   // break Google Fonts or the anti-flash inline <script> in index.html.
   contentSecurityPolicy: false,
 }));
+app.use(compression());
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json({ limit: '50kb' }));
 app.use(cookieParser());
@@ -67,7 +69,17 @@ app.use('/api/users', usersRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
-app.use(express.static(clientDist));
+// Vite content-hashes filenames under /assets, so those are safe to cache
+// forever; everything else (notably index.html, which references those
+// hashed names) must be revalidated every time or a deploy wouldn't be
+// picked up by returning visitors.
+app.use(express.static(clientDist, {
+  setHeaders(res, filePath) {
+    if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  },
+}));
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(clientDist, 'index.html'));
 });

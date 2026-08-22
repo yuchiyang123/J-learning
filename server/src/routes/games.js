@@ -44,10 +44,25 @@ router.get('/history', requireAuth, (req, res) => {
   res.json(rows.map((r) => ({ ...r, detail: r.detail ? JSON.parse(r.detail) : null })));
 });
 
+// Public + unauthenticated + hit on every games-hub page view, so it's the
+// one read endpoint most exposed to being hammered. The leaderboard doesn't
+// need to be perfectly real-time — a short TTL cache trades a few seconds of
+// staleness for cutting repeat DB hits entirely.
+const LEADERBOARD_TTL_MS = 30_000;
+const leaderboardCache = new Map(); // key -> { data, expiresAt }
+
 // GET /api/games/leaderboard?game=&mode=&level=&limit=10 -> top scores across all users (public)
 router.get('/leaderboard', (req, res) => {
-  const { game, mode, level, limit } = req.query;
+  const { game, mode, level } = req.query;
   if (!game) return res.status(400).json({ error: 'game required' });
+  const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+
+  const key = `${game}|${mode || ''}|${level || ''}|${limit}`;
+  const cached = leaderboardCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) {
+    return res.json(cached.data);
+  }
+
   let sql = `
     SELECT g.user_id, COALESCE(u.display_name, '匿名玩家') AS display_name, g.score, g.mode, g.level, g.played_at
     FROM game_scores g LEFT JOIN users u ON u.id = g.user_id
@@ -57,8 +72,11 @@ router.get('/leaderboard', (req, res) => {
   if (mode) { sql += ' AND g.mode = ?'; params.push(mode); }
   if (level) { sql += ' AND g.level = ?'; params.push(level); }
   sql += ' ORDER BY g.score DESC LIMIT ?';
-  params.push(limit ? Number(limit) : 10);
-  res.json(db.prepare(sql).all(...params));
+  params.push(limit);
+  const data = db.prepare(sql).all(...params);
+
+  leaderboardCache.set(key, { data, expiresAt: Date.now() + LEADERBOARD_TTL_MS });
+  res.json(data);
 });
 
 export default router;

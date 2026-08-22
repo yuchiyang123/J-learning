@@ -128,13 +128,18 @@ router.get('/wrong', requireAuth, (req, res) => {
   const params = [req.user.id];
   if (type) { sql += ' AND type = ?'; params.push(type); }
   if (level) { sql += ' AND level = ?'; params.push(level); }
-  sql += ' ORDER BY taken_at ASC';
+  // Newest first + capped: only "recent" wrong questions matter for practice,
+  // and this keeps the scan bounded instead of re-parsing a user's entire
+  // quiz history (which only grows) on every click.
+  sql += ' ORDER BY taken_at DESC LIMIT 300';
   const rows = db.prepare(sql).all(...params);
 
   const lastOutcome = new Map();
   for (const r of rows) {
     for (const d of JSON.parse(r.detail || '[]')) {
-      lastOutcome.set(d.questionId, d.isCorrect);
+      // Rows are newest-first, so the first outcome seen per question is
+      // already its most recent — never let an older row overwrite it.
+      if (!lastOutcome.has(d.questionId)) lastOutcome.set(d.questionId, d.isCorrect);
     }
   }
   const wrongIds = [...lastOutcome.entries()].filter(([, ok]) => !ok).map(([id]) => id);
