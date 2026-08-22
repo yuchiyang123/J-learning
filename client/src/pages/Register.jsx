@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { UserPlus, MailCheck } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
@@ -10,8 +10,8 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
   const { register } = useAuth();
-  const navigate = useNavigate();
   const { t } = useLocale();
 
   async function onSubmit(e) {
@@ -20,12 +20,29 @@ export default function Register() {
     setSubmitting(true);
     try {
       await register(userName, password, email);
-      navigate('/');
+      setDone(true);
     } catch (err) {
-      setError(err.message === 'register_failed' ? t('register_failed') : err.message);
+      const key = ['register_username_taken', 'register_email_taken'].includes(err.message)
+        ? err.message
+        : 'register_failed';
+      setError(t(key));
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (done) {
+    return (
+      <div className="page auth-page">
+        <div className="auth-card">
+          <h1><MailCheck size={22} /> {t('register_check_email_title')}</h1>
+          <p>{t('register_check_email_desc', { email })}</p>
+          <p className="auth-switch">
+            <Link to="/login">{t('login_title')}</Link>
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (

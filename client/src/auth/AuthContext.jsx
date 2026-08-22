@@ -45,11 +45,18 @@ export function AuthProvider({ children }) {
         const retryAfter = res.headers.get('Retry-After');
         throw new Error(`login_locked:${retryAfter || ''}`);
       }
+      const body = await res.json().catch(() => ({}));
+      if (body?.errors?.EmailConfirmed) {
+        throw new Error('login_email_unconfirmed');
+      }
       throw new Error('login_failed');
     }
     await refresh();
   }, [refresh]);
 
+  // Does NOT log in afterwards — Mini-SSO now requires email confirmation
+  // before a password-registered account can log in (server/-side check),
+  // so the caller should show a "check your email" message instead.
   const register = useCallback(async (userName, password, email) => {
     const csrfToken = await getCsrfToken();
     const res = await fetch(`${AUTH_BASE}/api/auth/create`, {
@@ -60,10 +67,11 @@ export function AuthProvider({ children }) {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error(body?.errors?.UserName?.[0] || 'register_failed');
+      if (body?.errors?.UserName) throw new Error('register_username_taken');
+      if (body?.errors?.Email) throw new Error('register_email_taken');
+      throw new Error('register_failed');
     }
-    await login(userName, password);
-  }, [login]);
+  }, []);
 
   const logout = useCallback(async () => {
     const csrfToken = await getCsrfToken();

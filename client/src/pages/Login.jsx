@@ -24,6 +24,8 @@ export default function Login() {
       if (err.message.startsWith('login_locked')) {
         const secs = err.message.split(':')[1];
         setError(t('login_locked', { seconds: secs || '?' }));
+      } else if (err.message === 'login_email_unconfirmed') {
+        setError(t('login_email_unconfirmed'));
       } else {
         setError(t('login_failed'));
       }
