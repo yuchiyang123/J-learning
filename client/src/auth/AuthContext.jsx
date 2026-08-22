@@ -96,25 +96,41 @@ export function AuthProvider({ children }) {
     // doesn't reveal whether the account exists, so there's nothing to branch on.
   }, []);
 
+  // Password reset uses an emailed link, not a code — see AuthContext/Mini-SSO's
+  // reset endpoints. redirectBaseUrl tells Mini-SSO which frontend to point the
+  // link back to; it's validated server-side against an origin allow-list.
   const forgotPassword = useCallback(async (userName) => {
     const csrfToken = await getCsrfToken();
     await fetch(`${AUTH_BASE}/api/auth/forgot-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
       credentials: 'include',
-      body: JSON.stringify({ userName }),
+      body: JSON.stringify({ userName, redirectBaseUrl: window.location.origin }),
     });
   }, []);
 
-  const resetPassword = useCallback(async (userName, code, newPassword) => {
+  // Call when the /reset-password?token=... landing page loads — starts the
+  // 5-minute window the user has to actually submit a new password.
+  const activateResetToken = useCallback(async (token) => {
+    const csrfToken = await getCsrfToken();
+    const res = await fetch(`${AUTH_BASE}/api/auth/reset-password/activate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+      credentials: 'include',
+      body: JSON.stringify({ token }),
+    });
+    return res.ok;
+  }, []);
+
+  const resetPassword = useCallback(async (token, newPassword) => {
     const csrfToken = await getCsrfToken();
     const res = await fetch(`${AUTH_BASE}/api/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
       credentials: 'include',
-      body: JSON.stringify({ userName, code, newPassword }),
+      body: JSON.stringify({ token, newPassword }),
     });
-    if (!res.ok) throw new Error('confirm_code_invalid');
+    if (!res.ok) throw new Error('reset_link_invalid');
   }, []);
 
   const logout = useCallback(async () => {
@@ -139,9 +155,22 @@ export function AuthProvider({ children }) {
       confirmEmail,
       resendConfirmation,
       forgotPassword,
+      activateResetToken,
       resetPassword,
     }),
-    [user, loading, login, register, logout, refresh, confirmEmail, resendConfirmation, forgotPassword, resetPassword]
+    [
+      user,
+      loading,
+      login,
+      register,
+      logout,
+      refresh,
+      confirmEmail,
+      resendConfirmation,
+      forgotPassword,
+      activateResetToken,
+      resetPassword,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

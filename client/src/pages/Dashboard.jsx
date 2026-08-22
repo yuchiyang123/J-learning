@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2 } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2, MailCheck, X } from 'lucide-react';
 import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import JlptCountdown from '../components/JlptCountdown.jsx';
@@ -10,13 +10,34 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
   const { t } = useLocale();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showResetBanner, setShowResetBanner] = useState(!!location.state?.passwordResetRequested);
 
   useEffect(() => {
     api.getStats().then(setStats).catch(() => setStats(null)).finally(() => setLoadingStats(false));
   }, []);
 
+  // Clear the router state once shown so a refresh/back-nav doesn't re-show it.
+  useEffect(() => {
+    if (location.state?.passwordResetRequested) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="page">
+      {showResetBanner && (
+        <div className="info-banner">
+          <MailCheck size={18} />
+          <span>{t('reset_password_sent_banner')}</span>
+          <button type="button" className="info-banner-close" onClick={() => setShowResetBanner(false)} aria-label={t('close')}>
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
       <h1>{t('dashboard_welcome')}</h1>
       <p className="subtitle">{t('dashboard_subtitle')}</p>
 

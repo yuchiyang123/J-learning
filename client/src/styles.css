@@ -187,6 +187,22 @@ body {
   background: none; border: none; padding: 0; font: inherit; cursor: pointer;
   color: var(--accent-dark); font-weight: 600; text-decoration: underline;
 }
+.field-hint { font-size: 0.78rem; font-weight: 500; color: var(--muted-2); }
+.reset-countdown {
+  text-align: center; font-weight: 700; color: var(--accent-dark); font-variant-numeric: tabular-nums;
+  margin-bottom: 0.8rem;
+}
+
+.info-banner {
+  display: flex; align-items: center; gap: 0.6rem; background: var(--accent-2-soft); color: var(--accent-2);
+  border: 1px solid var(--accent-2); border-radius: var(--radius); padding: 0.8rem 1rem; margin-bottom: 1.3rem;
+  font-weight: 600; font-size: 0.92rem;
+}
+.info-banner-close {
+  margin-left: auto; background: none; border: none; cursor: pointer; color: inherit;
+  display: inline-flex; align-items: center; opacity: 0.7;
+}
+.info-banner-close:hover { opacity: 1; }
 
 .navbar-toggle {
   display: none;

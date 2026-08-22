@@ -7,15 +7,7 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 export default function ForgotPassword() {
   const [userName, setUserName] = useState('');
   const [requesting, setRequesting] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const [code, setCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
-
-  const { forgotPassword, resetPassword } = useAuth();
+  const { forgotPassword } = useAuth();
   const navigate = useNavigate();
   const { t } = useLocale();
 
@@ -24,61 +16,12 @@ export default function ForgotPassword() {
     setRequesting(true);
     try {
       await forgotPassword(userName);
-      setSent(true);
     } finally {
-      setRequesting(false);
+      // Always proceed to the same "check your email" outcome regardless of
+      // whether the account exists — Mini-SSO itself never reveals that, so
+      // branching here on success/failure would just leak it a different way.
+      navigate('/', { state: { passwordResetRequested: true } });
     }
-  }
-
-  async function onReset(e) {
-    e.preventDefault();
-    setError('');
-    setSubmitting(true);
-    try {
-      await resetPassword(userName, code, newPassword);
-      setDone(true);
-    } catch {
-      setError(t('confirm_code_invalid'));
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  if (done) {
-    return (
-      <div className="page auth-page">
-        <div className="auth-card">
-          <h1><KeyRound size={22} /> {t('reset_password_done_title')}</h1>
-          <p>{t('reset_password_done_desc')}</p>
-          <p className="auth-switch">
-            <button type="button" className="submit-btn" onClick={() => navigate('/login')}>{t('login_title')}</button>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (sent) {
-    return (
-      <div className="page auth-page">
-        <div className="auth-card">
-          <h1><KeyRound size={22} /> {t('reset_password_title')}</h1>
-          <p>{t('reset_password_check_email_desc')}</p>
-          <form onSubmit={onReset} className="auth-form">
-            <label>
-              {t('confirm_code_label')}
-              <input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" maxLength={6} required autoFocus />
-            </label>
-            <label>
-              {t('reset_password_new_label')}
-              <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={6} />
-            </label>
-            {error && <p className="warning">{error}</p>}
-            <button className="submit-btn" type="submit" disabled={submitting}>{t('reset_password_submit_btn')}</button>
-          </form>
-        </div>
-      </div>
-    );
   }
 
   return (
