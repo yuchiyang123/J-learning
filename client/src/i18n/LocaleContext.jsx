@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { dictionaries } from './strings.js';
 
 const KEY = 'jp_locale';
@@ -27,17 +27,19 @@ export function LocaleProvider({ children }) {
     document.documentElement.setAttribute('data-locale', locale);
   }, [locale]);
 
-  function setLocale(next) {
+  const setLocale = useCallback((next) => {
     if (dictionaries[next]) setLocaleState(next);
-  }
+  }, []);
 
-  function t(key, vars) {
+  const t = useCallback((key, vars) => {
     const raw = dictionaries[locale]?.[key] ?? dictionaries[DEFAULT_LOCALE]?.[key] ?? key;
     if (!vars) return raw;
     return raw.replace(/\{(\w+)\}/g, (m, name) => (name in vars ? vars[name] : m));
-  }
+  }, [locale]);
 
-  return <LocaleContext.Provider value={{ locale, setLocale, t }}>{children}</LocaleContext.Provider>;
+  const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
+
+  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 
 export function useLocale() {
