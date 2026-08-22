@@ -46,6 +46,16 @@ app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json({ limit: '50kb' }));
 app.use(cookieParser());
 
+// Baseline limiter on every /api/* route — read endpoints (words/kanji/quiz
+// lists, leaderboards) had no rate limiting at all before this, leaving them
+// open to casual scraping/DoS despite the write-specific limiter below.
+app.use('/api', rateLimit({
+  windowMs: 60 * 1000,
+  limit: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+}));
+
 const writeLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 30,
@@ -57,6 +67,7 @@ app.use('/api/speaking', writeLimiter);
 app.use('/api/games/score', writeLimiter);
 app.use('/api/quiz/submit', writeLimiter);
 app.use('/api/users/profile', writeLimiter);
+app.use('/api/words/custom', writeLimiter);
 
 app.use('/api/words', wordsRouter);
 app.use('/api/kanji', kanjiRouter);

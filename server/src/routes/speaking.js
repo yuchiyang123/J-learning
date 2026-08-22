@@ -10,7 +10,8 @@ router.use(requireAuth);
 router.post('/', (req, res) => {
   const userId = req.user.id;
   const { targetText, recognizedText, score } = req.body;
-  if (!targetText) return res.status(400).json({ error: 'targetText required' });
+  if (!targetText || typeof targetText !== 'string') return res.status(400).json({ error: 'targetText required' });
+  if (score != null && typeof score !== 'number') return res.status(400).json({ error: 'score must be a number' });
   touchUser(userId);
   db.prepare(
     'INSERT INTO speaking_attempts (user_id, target_text, recognized_text, score) VALUES (?,?,?,?)'

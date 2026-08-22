@@ -4,6 +4,10 @@ import { optionalAuth, requireAuth } from '../auth.js';
 import { translate } from '../locale.js';
 
 const router = Router();
+const VALID_LEVELS = new Set(['N5', 'N4', 'N3', 'N2', 'N1']);
+const MAX_SHORT = 100;
+const MAX_LONG = 500;
+const MAX_CUSTOM_WORDS_PER_USER = 500;
 
 function localize(row, locale) {
   return {
@@ -46,8 +50,20 @@ router.get('/:id', (req, res) => {
 // POST /api/words/custom { level, kanji, kana, meaning, part_of_speech, example_jp, example_reading, example_zh }
 router.post('/custom', requireAuth, (req, res) => {
   const { level, kanji, kana, meaning, part_of_speech, example_jp, example_reading, example_zh } = req.body;
-  if (!level || !kana || !meaning) {
-    return res.status(400).json({ error: 'level, kana and meaning required' });
+  if (!VALID_LEVELS.has(level) || !kana || !meaning) {
+    return res.status(400).json({ error: 'valid level, kana and meaning required' });
+  }
+  const fields = { kanji, kana, meaning, part_of_speech, example_jp, example_reading, example_zh };
+  const shortFields = ['kanji', 'kana', 'meaning', 'part_of_speech'];
+  for (const [key, val] of Object.entries(fields)) {
+    const max = shortFields.includes(key) ? MAX_SHORT : MAX_LONG;
+    if (typeof val === 'string' && val.length > max) {
+      return res.status(400).json({ error: `${key} too long (max ${max})` });
+    }
+  }
+  const { count } = db.prepare('SELECT COUNT(*) AS count FROM user_words WHERE user_id = ?').get(req.user.id);
+  if (count >= MAX_CUSTOM_WORDS_PER_USER) {
+    return res.status(400).json({ error: 'custom word limit reached' });
   }
   const info = db
     .prepare(

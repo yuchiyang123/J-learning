@@ -11,7 +11,12 @@ const { JWT_SECRET, JWT_ISSUER, JWT_AUDIENCE } = process.env;
 function verify(token) {
   if (!token) return null;
   try {
-    const payload = jwt.verify(token, JWT_SECRET, { issuer: JWT_ISSUER, audience: JWT_AUDIENCE });
+    // Pin the algorithm explicitly — Mini-SSO signs with HS256 (see
+    // AuthService.cs). Without this, jsonwebtoken infers the allowed
+    // algorithm family from the key's shape, which is safe today but leaves
+    // no explicit guard against an algorithm-confusion attack if the secret
+    // or library defaults ever change.
+    const payload = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'], issuer: JWT_ISSUER, audience: JWT_AUDIENCE });
     return { id: payload.sub };
   } catch {
     return null;
