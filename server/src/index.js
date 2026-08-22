@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
+import { issueCsrfToken, requireCsrf } from './csrf.js';
 import './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -68,6 +69,9 @@ app.use('/api/games/score', writeLimiter);
 app.use('/api/quiz/submit', writeLimiter);
 app.use('/api/users/profile', writeLimiter);
 app.use('/api/words/custom', writeLimiter);
+
+app.get('/api/csrf', issueCsrfToken);
+app.use('/api', requireCsrf);
 
 app.use('/api/words', wordsRouter);
 app.use('/api/kanji', kanjiRouter);

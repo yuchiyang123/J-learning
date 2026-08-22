@@ -1,13 +1,34 @@
 import { getStoredLocale } from './i18n/LocaleContext.jsx';
 
 const BASE = '/api';
+const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+// Double-submit CSRF cookie: the server hands the token back in this
+// response body (the cookie itself is httpOnly, unreadable from JS), and
+// every write echoes it in a header the server checks against the cookie.
+// Cached across calls since it's valid for the cookie's 4h lifetime; on a
+// 403 (e.g. first load raced the cookie, or it expired) we refetch once.
+let csrfTokenPromise = null;
+function getCsrfToken(forceRefresh = false) {
+  if (forceRefresh) csrfTokenPromise = null;
+  csrfTokenPromise ??= fetch(`${BASE}/csrf`, { credentials: 'include' })
+    .then((r) => r.json())
+    .then((b) => b.csrfToken);
+  return csrfTokenPromise;
+}
 
 async function request(path, options = {}) {
-  const res = await fetch(BASE + path, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    ...options,
-  });
+  const method = (options.method || 'GET').toUpperCase();
+  const isWrite = WRITE_METHODS.has(method);
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  if (isWrite) headers['X-CSRF-TOKEN'] = await getCsrfToken();
+
+  let res = await fetch(BASE + path, { credentials: 'include', ...options, headers });
+  if (res.status === 403 && isWrite) {
+    headers['X-CSRF-TOKEN'] = await getCsrfToken(true);
+    res = await fetch(BASE + path, { credentials: 'include', ...options, headers });
+  }
+
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const err = new Error(body.error || `Request failed: ${res.status}`);
