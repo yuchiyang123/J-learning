@@ -73,6 +73,50 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const confirmEmail = useCallback(async (userName, code) => {
+    const csrfToken = await getCsrfToken();
+    const res = await fetch(`${AUTH_BASE}/api/auth/confirm-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+      credentials: 'include',
+      body: JSON.stringify({ userName, code }),
+    });
+    if (!res.ok) throw new Error('confirm_code_invalid');
+  }, []);
+
+  const resendConfirmation = useCallback(async (userName) => {
+    const csrfToken = await getCsrfToken();
+    await fetch(`${AUTH_BASE}/api/auth/resend-confirmation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+      credentials: 'include',
+      body: JSON.stringify({ userName }),
+    });
+    // Always "succeeds" from the caller's perspective — the server intentionally
+    // doesn't reveal whether the account exists, so there's nothing to branch on.
+  }, []);
+
+  const forgotPassword = useCallback(async (userName) => {
+    const csrfToken = await getCsrfToken();
+    await fetch(`${AUTH_BASE}/api/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+      credentials: 'include',
+      body: JSON.stringify({ userName }),
+    });
+  }, []);
+
+  const resetPassword = useCallback(async (userName, code, newPassword) => {
+    const csrfToken = await getCsrfToken();
+    const res = await fetch(`${AUTH_BASE}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+      credentials: 'include',
+      body: JSON.stringify({ userName, code, newPassword }),
+    });
+    if (!res.ok) throw new Error('confirm_code_invalid');
+  }, []);
+
   const logout = useCallback(async () => {
     const csrfToken = await getCsrfToken();
     await fetch(`${AUTH_BASE}/api/auth/logout`, {
@@ -84,8 +128,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, isLoggedIn: !!user, login, register, logout, refresh }),
-    [user, loading, login, register, logout, refresh]
+    () => ({
+      user,
+      loading,
+      isLoggedIn: !!user,
+      login,
+      register,
+      logout,
+      refresh,
+      confirmEmail,
+      resendConfirmation,
+      forgotPassword,
+      resetPassword,
+    }),
+    [user, loading, login, register, logout, refresh, confirmEmail, resendConfirmation, forgotPassword, resetPassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

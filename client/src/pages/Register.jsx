@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, MailCheck } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
@@ -10,8 +10,15 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
-  const { register } = useAuth();
+  const [registered, setRegistered] = useState(false);
+
+  const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const [resent, setResent] = useState(false);
+
+  const { register, confirmEmail, resendConfirmation, login } = useAuth();
+  const navigate = useNavigate();
   const { t } = useLocale();
 
   async function onSubmit(e) {
@@ -20,7 +27,7 @@ export default function Register() {
     setSubmitting(true);
     try {
       await register(userName, password, email);
-      setDone(true);
+      setRegistered(true);
     } catch (err) {
       const key = ['register_username_taken', 'register_email_taken'].includes(err.message)
         ? err.message
@@ -31,14 +38,53 @@ export default function Register() {
     }
   }
 
-  if (done) {
+  async function onConfirm(e) {
+    e.preventDefault();
+    setCodeError('');
+    setConfirming(true);
+    try {
+      await confirmEmail(userName, code);
+      // Verified — log straight in rather than bouncing back to the login form.
+      await login(userName, password);
+      navigate('/');
+    } catch {
+      setCodeError(t('confirm_code_invalid'));
+    } finally {
+      setConfirming(false);
+    }
+  }
+
+  async function onResend() {
+    setResent(false);
+    await resendConfirmation(userName);
+    setResent(true);
+  }
+
+  if (registered) {
     return (
       <div className="page auth-page">
         <div className="auth-card">
           <h1><MailCheck size={22} /> {t('register_check_email_title')}</h1>
           <p>{t('register_check_email_desc', { email })}</p>
+          <form onSubmit={onConfirm} className="auth-form">
+            <label>
+              {t('confirm_code_label')}
+              <input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                inputMode="numeric"
+                maxLength={6}
+                required
+                autoFocus
+              />
+            </label>
+            {codeError && <p className="warning">{codeError}</p>}
+            <button className="submit-btn" type="submit" disabled={confirming}>{t('confirm_code_btn')}</button>
+          </form>
           <p className="auth-switch">
-            <Link to="/login">{t('login_title')}</Link>
+            {resent ? t('confirm_code_resent') : (
+              <button type="button" className="link-btn" onClick={onResend}>{t('confirm_code_resend')}</button>
+            )}
           </p>
         </div>
       </div>

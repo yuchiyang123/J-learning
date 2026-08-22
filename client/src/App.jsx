@@ -12,6 +12,7 @@ import JlptMock from './pages/JlptMock.jsx';
 import Progress from './pages/Progress.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
 import GameHub from './pages/games/GameHub.jsx';
 import MemoryMatch from './pages/games/MemoryMatch.jsx';
 import BlitzChallenge from './pages/games/BlitzChallenge.jsx';
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/progress" element={<Progress />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/games" element={<GameHub />} />
           <Route path="/games/memory" element={<MemoryMatch />} />
           <Route path="/games/blitz" element={<BlitzChallenge />} />

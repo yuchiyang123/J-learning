@@ -51,6 +51,9 @@ export default function Login() {
           <button className="submit-btn" type="submit" disabled={submitting}>{t('login_btn')}</button>
         </form>
         <p className="auth-switch">
+          <Link to="/forgot-password">{t('forgot_password_link')}</Link>
+        </p>
+        <p className="auth-switch">
           {t('login_no_account')} <Link to="/register">{t('register_title')}</Link>
         </p>
       </div>
