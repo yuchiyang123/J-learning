@@ -77,9 +77,9 @@ export function GrammarListSkeleton({ count = 5 }) {
 export function SpeakingSkeleton() {
   return (
     <div className="speaking-card skeleton-wrap" aria-hidden="true">
-      <SkeletonBlock className="sk-line wide" />
-      <SkeletonBlock className="sk-line" />
-      <SkeletonBlock className="sk-line short" />
+      <SkeletonBlock className="sk-speaking-target" />
+      <SkeletonBlock className="sk-speaking-sub" />
+      <SkeletonBlock className="sk-speaking-sub short" />
       <div className="speaking-controls">
         <SkeletonBlock className="sk-pill wide" />
         <SkeletonBlock className="sk-pill wide" />

@@ -725,6 +725,9 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .sk-stat-value { height: 1.8rem; width: 60%; margin: 0 auto 0.5rem; }
 .stat-card .sk-line { margin: 0 auto; }
 
-.sk-visualizer { height: 72px; width: 100%; border-radius: 10px; }
+.sk-speaking-target { height: 1.6rem; width: 70%; }
+.sk-speaking-sub { height: 0.85rem; width: 50%; margin-top: 0.45rem; }
+.sk-speaking-sub.short { width: 35%; }
+.sk-visualizer { height: 72px; width: 100%; border-radius: 12px; margin-top: 1.1rem; }
 
 .sk-memory-card { aspect-ratio: 1; border-radius: 10px; }
