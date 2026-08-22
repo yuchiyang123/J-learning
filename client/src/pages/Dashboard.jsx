@@ -4,13 +4,15 @@ import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target,
 import { api, getUserId } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import JlptCountdown from '../components/JlptCountdown.jsx';
+import { StatGridSkeleton } from '../components/Skeleton.jsx';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(true);
   const { t } = useLocale();
 
   useEffect(() => {
-    api.getStats(getUserId()).then(setStats).catch(() => setStats(null));
+    api.getStats(getUserId()).then(setStats).catch(() => setStats(null)).finally(() => setLoadingStats(false));
   }, []);
 
   return (
@@ -20,6 +22,7 @@ export default function Dashboard() {
 
       <JlptCountdown />
 
+      {loadingStats && <StatGridSkeleton />}
       {stats && (
         <div className="card-grid">
           <StatCard label={t('dashboard_stat_reviewed')} value={stats.totalReviewed} />

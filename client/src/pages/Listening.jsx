@@ -4,6 +4,7 @@ import { api } from '../api.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import QuizRunner from '../components/QuizRunner.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { QuizSkeleton } from '../components/Skeleton.jsx';
 
 export default function Listening() {
   const [level, setLevel] = useState('N5');
@@ -24,7 +25,7 @@ export default function Listening() {
       <p className="subtitle">{t('listening_subtitle')}</p>
       <LevelPicker level={level} onChange={setLevel} />
 
-      {questions === null && <p>{t('loading')}</p>}
+      {questions === null && <QuizSkeleton count={4} />}
       {questions && questions.length === 0 && <p>{t('no_data_level')}</p>}
       {questions && questions.length > 0 && (
         <QuizRunner

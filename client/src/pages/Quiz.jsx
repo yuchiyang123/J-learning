@@ -3,6 +3,7 @@ import { RefreshCw } from 'lucide-react';
 import { api } from '../api.js';
 import QuizRunner from '../components/QuizRunner.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { QuizSkeleton } from '../components/Skeleton.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 const TYPES = [
@@ -50,7 +51,7 @@ export default function Quiz() {
         </div>
       </div>
 
-      {questions === null && <p>{t('loading')}</p>}
+      {questions === null && <QuizSkeleton />}
       {questions && questions.length === 0 && <p>{t('no_quiz_data')}</p>}
       {questions && questions.length > 0 && (
         <QuizRunner

@@ -4,14 +4,16 @@ import { api, getUserId } from '../api.js';
 import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { KanjiGridSkeleton } from '../components/Skeleton.jsx';
 
 export default function Kanji() {
   const [level, setLevel] = useState('N5');
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(null);
   const [marked, setMarked] = useState({});
   const { t, locale } = useLocale();
 
   useEffect(() => {
+    setList(null);
     api.getKanji(level).then(setList);
     setMarked({});
   }, [level, locale]);
@@ -26,6 +28,9 @@ export default function Kanji() {
       <h1>{t('kanji_title')}</h1>
       <LevelPicker level={level} onChange={setLevel} />
 
+      {list === null && <KanjiGridSkeleton />}
+
+      {list !== null && (
       <div className="kanji-grid">
         {list.map((k) => (
           <div className="kanji-card" key={k.id}>
@@ -58,6 +63,7 @@ export default function Kanji() {
         ))}
         {list.length === 0 && <p>{t('no_data_level')}</p>}
       </div>
+      )}
     </div>
   );
 }

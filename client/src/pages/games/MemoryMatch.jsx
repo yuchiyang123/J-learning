@@ -5,6 +5,7 @@ import { api, getUserId } from '../../api.js';
 import { speak } from '../../speech.js';
 import { seion, dakuon, handakuon } from '../../data/kana.js';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
+import { MemoryGridSkeleton } from '../../components/Skeleton.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 const CATEGORIES = [
@@ -199,7 +200,7 @@ export default function MemoryMatch() {
       </div>
 
       {loading ? (
-        <p>{t('loading')}</p>
+        <MemoryGridSkeleton count={pairCount * 2} cols={gridCols} />
       ) : (
         <div className="memory-grid" style={{ gridTemplateColumns: `repeat(${gridCols}, 1fr)` }}>
           {cards.map((card) => {

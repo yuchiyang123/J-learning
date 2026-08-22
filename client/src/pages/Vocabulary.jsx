@@ -3,6 +3,7 @@ import { Volume2, ArrowLeft, ArrowRight, X, Check } from 'lucide-react';
 import { api, getUserId } from '../api.js';
 import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { FlashcardSkeleton } from '../components/Skeleton.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
@@ -49,7 +50,7 @@ export default function Vocabulary() {
       <h1>{t('vocab_title')}</h1>
       <LevelPicker level={level} onChange={setLevel} />
 
-      {loading && <p>{t('loading')}</p>}
+      {loading && <FlashcardSkeleton />}
       {!loading && !current && <p>{t('no_data_level')}</p>}
 
       {!loading && current && (

@@ -4,13 +4,15 @@ import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { GrammarListSkeleton } from '../components/Skeleton.jsx';
 
 export default function Grammar() {
   const [level, setLevel] = useState('N5');
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(null);
   const { t, locale } = useLocale();
 
   useEffect(() => {
+    setList(null);
     api.getGrammar(level).then(setList);
   }, [level, locale]);
 
@@ -19,6 +21,9 @@ export default function Grammar() {
       <h1>{t('grammar_title')}</h1>
       <LevelPicker level={level} onChange={setLevel} />
 
+      {list === null && <GrammarListSkeleton />}
+
+      {list !== null && (
       <div className="grammar-list">
         {list.map((g) => (
           <div className="grammar-card" key={g.id}>
@@ -39,6 +44,7 @@ export default function Grammar() {
         ))}
         {list.length === 0 && <p>{t('no_data_level')}</p>}
       </div>
+      )}
     </div>
   );
 }

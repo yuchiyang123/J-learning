@@ -6,6 +6,7 @@ import { api } from '../api.js';
 import QuizRunner from '../components/QuizRunner.jsx';
 import WritingPractice from './WritingPractice.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { QuizSkeleton } from '../components/Skeleton.jsx';
 
 export default function Kana() {
   const [script, setScript] = useState('hira'); // 'hira' | 'kata'
@@ -87,7 +88,7 @@ function KanaQuiz() {
 
   return (
     <div>
-      {questions === null && <p>{t('loading')}</p>}
+      {questions === null && <QuizSkeleton count={5} />}
       {questions && questions.length === 0 && <p>{t('no_kana_quiz')}</p>}
       {questions && questions.length > 0 && (
         <QuizRunner

@@ -3,6 +3,7 @@ import { Timer } from 'lucide-react';
 import { api } from '../api.js';
 import QuizRunner from '../components/QuizRunner.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { QuizSkeleton } from '../components/Skeleton.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 const DURATION_SEC = 10 * 60; // 10 minute mock test
@@ -13,16 +14,19 @@ export default function JlptMock() {
   const [questions, setQuestions] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SEC);
   const [finished, setFinished] = useState(false);
+  const [starting, setStarting] = useState(false);
   const timerRef = useRef(null);
   const { t } = useLocale();
 
   async function start() {
     setFinished(false);
     setSecondsLeft(DURATION_SEC);
+    setStarting(true);
     const types = ['vocab', 'kanji', 'grammar', 'listening'];
     const batches = await Promise.all(types.map((t) => api.getQuiz({ type: t, level, count: 6 })));
     const merged = shuffle(batches.flat());
     setQuestions(merged);
+    setStarting(false);
     setStarted(true);
   }
 
@@ -58,7 +62,8 @@ export default function JlptMock() {
               </button>
             ))}
           </div>
-          <button className="submit-btn" onClick={start}>{t('jlpt_start_btn')}</button>
+          <button className="submit-btn" onClick={start} disabled={starting}>{t('jlpt_start_btn')}</button>
+          {starting && <QuizSkeleton count={4} />}
         </div>
       )}
 

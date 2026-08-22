@@ -5,10 +5,12 @@ import { speak, isRecognitionSupported, createRecognizer, similarityScore } from
 import { isVisualizerSupported, startVisualizer } from '../audioVisualizer.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { SpeakingSkeleton } from '../components/Skeleton.jsx';
 
 export default function Speaking() {
   const [level, setLevel] = useState('N5');
   const [sentences, setSentences] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
   const [listening, setListening] = useState(false);
   const [recognized, setRecognized] = useState('');
@@ -24,13 +26,14 @@ export default function Speaking() {
   useEffect(() => () => { stopVisualizerRef.current?.(); }, []);
 
   useEffect(() => {
+    setLoading(true);
     api.getWords(level).then((words) => {
       const withExamples = words.filter((w) => w.example_jp);
       setSentences(withExamples);
       setIndex(0);
       setRecognized('');
       setScore(null);
-    });
+    }).finally(() => setLoading(false));
   }, [level, locale]);
 
   useEffect(() => {
@@ -95,7 +98,9 @@ export default function Speaking() {
         <p className="warning">{t('speaking_no_recognition')}</p>
       )}
 
-      {current ? (
+      {loading && <SpeakingSkeleton />}
+
+      {!loading && (current ? (
         <div className="speaking-card">
           <div className="speaking-target">{current.example_jp}</div>
           <div className="speaking-reading">{current.example_reading}</div>
@@ -134,7 +139,7 @@ export default function Speaking() {
         </div>
       ) : (
         <p>{t('speaking_no_data')}</p>
-      )}
+      ))}
 
       {history.length > 0 && (
         <div className="speaking-history">
