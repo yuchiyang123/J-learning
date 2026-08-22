@@ -809,6 +809,10 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
    padding/border-bottom wins and leaves a padded, bordered "ghost" row
    between every entry even while collapsed. */
 .page table tr.history-detail-row td { padding: 0; border: none; }
+/* The data row right before the table's final (always :last-child now)
+   detail row is effectively the last visible row — its border-bottom sits
+   right on top of the table's own outer border, reading as a doubled line. */
+.page table tr:has(+ tr.history-detail-row:last-child) td { border-bottom: none; }
 /* Grid-template-rows 0fr/1fr trick: an animatable "auto height" collapse
    without measuring pixel heights in JS. The row stays mounted so the
    transition can play instead of the content just popping in/out. */
