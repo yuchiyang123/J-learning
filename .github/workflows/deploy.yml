@@ -12,10 +12,23 @@ jobs:
         shell: powershell
         run: git -C "D:\jlearn" pull --ff-only
 
+      # Stop the backend before touching its node_modules — npm ci deletes
+      # and recreates packages, and Windows can't replace files (especially
+      # better-sqlite3's native .node binary) while the running process has
+      # them open. Leaving this out corrupts node_modules mid-install.
+      - name: Stop backend service
+        shell: powershell
+        run: Stop-Service jp-learn-backend -Force -ErrorAction SilentlyContinue
+
       - name: Install server deps
         shell: powershell
         working-directory: D:\jlearn\server
         run: npm ci
+
+      - name: Start backend service
+        if: always()
+        shell: powershell
+        run: Start-Service jp-learn-backend -ErrorAction SilentlyContinue
 
       - name: Install client deps
         shell: powershell
