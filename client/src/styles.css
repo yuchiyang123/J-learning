@@ -654,12 +654,14 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writing-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
 .writing-romaji { font-weight: 700; color: var(--ink-soft); letter-spacing: 0.05em; }
 
-.writing-canvas-wrap { display: flex; align-items: center; gap: 0.8rem; }
+.writing-canvas-wrap { display: flex; align-items: center; gap: 0.6rem; width: 100%; }
 .writing-canvas {
-  width: min(70vw, 420px); height: min(70vw, 420px); background: var(--paper-raised); border-radius: 16px;
+  flex: 1 1 auto; min-width: 0; max-width: 420px; aspect-ratio: 1 / 1; height: auto;
+  background: var(--paper-raised); border-radius: 16px;
   box-shadow: var(--shadow-lg); border: 1px solid var(--line); touch-action: none; cursor: crosshair;
 }
 .writing-nav {
+  flex: 0 0 auto;
   border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 999px; width: 40px; height: 40px;
   display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: all 0.15s ease;
 }
@@ -672,14 +674,13 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   .writing-practice { grid-template-columns: 1fr; gap: 1rem; }
   .writing-stage { order: 1; }
   .writing-picker {
-    order: 2; grid-template-columns: repeat(8, 1fr); max-height: 220px;
+    order: 2; grid-template-columns: repeat(8, 1fr); max-height: none; overflow-y: visible;
   }
-  .writing-canvas { width: min(85vw, 420px); height: min(85vw, 420px); }
 }
 
 @media (max-width: 480px) {
   .writing-picker { grid-template-columns: repeat(6, 1fr); }
-  .writing-nav { width: 34px; height: 34px; }
+  .writing-nav { width: 34px; height: 34px; flex-basis: 34px; }
   .writing-toolbar { gap: 0.6rem; }
 }
 
