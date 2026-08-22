@@ -87,6 +87,9 @@ const zhTW = {
   quiz_title: '刷題',
   jlpt_title: 'JLPT 分級模擬考',
   progress_title: '學習進度',
+  progress_coming_soon_title: '學習進度尚未開放',
+  progress_coming_soon_desc: '這個功能需要登入才能安全地保存你的個人資料，登入系統還在開發中，敬請期待。',
+  badge_coming_soon: '即將推出',
   games_hub_title: '遊戲中心',
   games_hub_subtitle: '把日文練習變成遊戲，用單字、漢字、假名資料庫出題，邊玩邊記。',
 
@@ -259,6 +262,9 @@ const zhCN = {
   quiz_title: '刷题',
   jlpt_title: 'JLPT 分级模拟考',
   progress_title: '学习进度',
+  progress_coming_soon_title: '学习进度尚未开放',
+  progress_coming_soon_desc: '这个功能需要登录才能安全地保存你的个人资料，登录系统还在开发中，敬请期待。',
+  badge_coming_soon: '即将推出',
   games_hub_title: '游戏中心',
   games_hub_subtitle: '把日语练习变成游戏，用单字、汉字、假名资料库出题，边玩边记。',
 
@@ -431,6 +437,9 @@ const en = {
   quiz_title: 'Quiz',
   jlpt_title: 'JLPT Mock Exam',
   progress_title: 'Progress',
+  progress_coming_soon_title: 'Progress tracking isn’t open yet',
+  progress_coming_soon_desc: 'This feature needs a login system to safely store your personal data, which is still being built. Check back soon.',
+  badge_coming_soon: 'Coming soon',
   games_hub_title: 'Game Hub',
   games_hub_subtitle: 'Turn Japanese practice into games, powered by the vocab/kanji/kana question bank.',
 
@@ -603,6 +612,9 @@ const ko = {
   quiz_title: '문제풀이',
   jlpt_title: 'JLPT 등급별 모의고사',
   progress_title: '학습 진도',
+  progress_coming_soon_title: '학습 진도는 아직 열리지 않았습니다',
+  progress_coming_soon_desc: '이 기능은 개인 정보를 안전하게 저장하기 위해 로그인 시스템이 필요합니다. 아직 개발 중이니 조금만 기다려 주세요.',
+  badge_coming_soon: '출시 예정',
   games_hub_title: '게임 센터',
   games_hub_subtitle: '단어・한자・가나 문제은행으로 일본어 학습을 게임으로 즐겨보세요.',
 

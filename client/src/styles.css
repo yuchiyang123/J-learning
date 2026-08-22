@@ -288,6 +288,21 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 }
 .quick-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
 
+/* ---------- Coming soon (features gated until login exists) ---------- */
+.badge-coming-soon {
+  display: inline-block; margin-left: 0.5em; padding: 0.15em 0.55em; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
+  background: var(--accent-soft); color: var(--accent-dark); vertical-align: middle;
+}
+.navbar-links a .badge-coming-soon { background: rgba(255,255,255,0.25); color: #fff; }
+.coming-soon { display: flex; justify-content: center; padding-top: 3rem; }
+.coming-soon-card {
+  max-width: 420px; text-align: center; padding: 2.2rem 1.8rem; background: var(--paper-raised);
+  border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); color: var(--ink-soft);
+}
+.coming-soon-card svg { color: var(--accent); margin-bottom: 0.8rem; }
+.coming-soon-card h1 { color: var(--ink); font-size: 1.3rem; margin-bottom: 0.6rem; }
+
 /* ---------- Pickers / filters ---------- */
 .level-picker, .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.3rem; align-items: center; }
 .filter-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-right: 1rem; }

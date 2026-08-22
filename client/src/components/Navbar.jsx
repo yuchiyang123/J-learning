@@ -16,7 +16,7 @@ const links = [
   { to: '/quiz', key: 'nav_quiz' },
   { to: '/jlpt', key: 'nav_jlpt' },
   { to: '/games', key: 'nav_games' },
-  { to: '/progress', key: 'nav_progress' },
+  { to: '/progress', key: 'nav_progress', comingSoon: true },
 ];
 
 export default function Navbar() {
@@ -48,6 +48,7 @@ export default function Navbar() {
         {links.map((l) => (
           <NavLink key={l.to} to={l.to} end={l.end} className={({ isActive }) => (isActive ? 'active' : '')}>
             {t(l.key)}
+            {l.comingSoon && <span className="badge-coming-soon">{t('badge_coming_soon')}</span>}
           </NavLink>
         ))}
       </div>
