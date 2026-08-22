@@ -1,18 +1,22 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogIn, Lightbulb } from 'lucide-react';
 import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { StatGridSkeleton } from '../components/Skeleton.jsx';
+import { StatGridSkeleton, QuizSkeleton } from '../components/Skeleton.jsx';
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 export default function ProgressPage() {
   const [stats, setStats] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
-  const [detail, setDetail] = useState(null);
-  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailCache, setDetailCache] = useState({});
+  const [detailLoadingId, setDetailLoadingId] = useState(null);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(0);
   const { t } = useLocale();
   const { isLoggedIn, loading: authLoading } = useAuth();
 
@@ -24,20 +28,28 @@ export default function ProgressPage() {
       .finally(() => setLoading(false));
   }, [isLoggedIn]);
 
+  useEffect(() => { setPage(0); }, [pageSize, history.length]);
+
+  const totalPages = Math.max(Math.ceil(history.length / pageSize), 1);
+  const pagedHistory = useMemo(
+    () => history.slice(page * pageSize, page * pageSize + pageSize),
+    [history, page, pageSize]
+  );
+
   async function toggleDetail(id) {
     if (expandedId === id) {
       setExpandedId(null);
-      setDetail(null);
       return;
     }
     setExpandedId(id);
-    setDetail(null);
-    setDetailLoading(true);
-    try {
-      const d = await api.getQuizHistoryDetail(id);
-      setDetail(d);
-    } finally {
-      setDetailLoading(false);
+    if (!detailCache[id]) {
+      setDetailLoadingId(id);
+      try {
+        const d = await api.getQuizHistoryDetail(id);
+        setDetailCache((c) => ({ ...c, [id]: d }));
+      } finally {
+        setDetailLoadingId(null);
+      }
     }
   }
 
@@ -80,74 +92,104 @@ export default function ProgressPage() {
           <h2>{t('progress_quiz_history')}</h2>
           {history.length === 0 && <p>{t('progress_no_history')}</p>}
           {history.length > 0 && (
-            <table>
-              <thead>
-                <tr><th>{t('col_time')}</th><th>{t('col_type')}</th><th>{t('level_label')}</th><th>{t('col_result')}</th><th /></tr>
-              </thead>
-              <tbody>
-                {history.map((h) => (
-                  <Fragment key={h.id}>
-                    <tr>
-                      <td>{h.taken_at}</td>
-                      <td>{h.type}</td>
-                      <td>{h.level}</td>
-                      <td>{h.correct} / {h.total}</td>
-                      <td>
-                        <button className="secondary-btn history-view-btn" onClick={() => toggleDetail(h.id)}>
-                          {expandedId === h.id ? t('quiz_hide_detail_btn') : t('quiz_view_detail_btn')}
-                        </button>
-                      </td>
-                    </tr>
-                    {expandedId === h.id && (
-                      <tr className="history-detail-row">
-                        <td colSpan={5}>
-                          <div className="history-detail">
-                            {detailLoading && <p>{t('loading')}</p>}
-                            {detail && detail.detail.map((d, i) => (
-                              <div className="quiz-question" key={d.questionId ?? i}>
-                                <div className="quiz-question-head">
-                                  <span className="q-index">Q{i + 1}</span>
-                                  <span className="q-prompt">{d.prompt}</span>
+            <>
+              <table>
+                <thead>
+                  <tr><th>{t('col_time')}</th><th>{t('col_type')}</th><th>{t('level_label')}</th><th>{t('col_result')}</th><th /></tr>
+                </thead>
+                <tbody>
+                  {pagedHistory.map((h) => {
+                    const isOpen = expandedId === h.id;
+                    const detail = detailCache[h.id];
+                    return (
+                      <Fragment key={h.id}>
+                        <tr>
+                          <td>{h.taken_at}</td>
+                          <td>{h.type}</td>
+                          <td>{h.level}</td>
+                          <td>{h.correct} / {h.total}</td>
+                          <td>
+                            <button className="secondary-btn history-view-btn" onClick={() => toggleDetail(h.id)}>
+                              {isOpen ? t('quiz_hide_detail_btn') : t('quiz_view_detail_btn')}
+                            </button>
+                          </td>
+                        </tr>
+                        <tr className="history-detail-row">
+                          <td colSpan={5}>
+                            <div className={`detail-collapse${isOpen ? ' open' : ''}`}>
+                              <div className="detail-collapse-inner">
+                                <div className="history-detail">
+                                  {detailLoadingId === h.id && <QuizSkeleton count={2} />}
+                                  {detail && detail.detail.map((d, i) => (
+                                    <div className="quiz-question" key={d.questionId ?? i}>
+                                      <div className="quiz-question-head">
+                                        <span className="q-index">Q{i + 1}</span>
+                                        <span className="q-prompt">{d.prompt}</span>
+                                      </div>
+                                      {d.option_a && (
+                                        <div className="quiz-options">
+                                          {['a', 'b', 'c', 'd'].map((key) => {
+                                            const label = d[`option_${key}`];
+                                            if (!label) return null;
+                                            let cls = 'quiz-option';
+                                            if (key === d.correctAnswer) cls += ' correct';
+                                            else if (key === d.selected && !d.isCorrect) cls += ' wrong';
+                                            return (
+                                              <button key={key} className={cls} disabled>
+                                                {label}
+                                                {key === d.correctAnswer && <span className="option-tag">{t('quiz_correct_answer')}</span>}
+                                                {key === d.selected && !d.isCorrect && <span className="option-tag">{t('quiz_your_answer')}</span>}
+                                              </button>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                      {!d.option_a && (
+                                        <div className="history-answer-line">
+                                          <strong>{t('quiz_your_answer')}：</strong>{d.selected || '—'}
+                                          <strong>{t('quiz_correct_answer')}：</strong>{d.correctAnswer}
+                                        </div>
+                                      )}
+                                      {d.explanation && (
+                                        <div className="quiz-explanation icon-row">
+                                          <Lightbulb size={15} /> <span>{d.explanation}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
                                 </div>
-                                {d.option_a && (
-                                  <div className="quiz-options">
-                                    {['a', 'b', 'c', 'd'].map((key) => {
-                                      const label = d[`option_${key}`];
-                                      if (!label) return null;
-                                      let cls = 'quiz-option';
-                                      if (key === d.correctAnswer) cls += ' correct';
-                                      else if (key === d.selected && !d.isCorrect) cls += ' wrong';
-                                      return (
-                                        <button key={key} className={cls} disabled>
-                                          {label}
-                                          {key === d.correctAnswer && <span className="option-tag">{t('quiz_correct_answer')}</span>}
-                                          {key === d.selected && !d.isCorrect && <span className="option-tag">{t('quiz_your_answer')}</span>}
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                                {!d.option_a && (
-                                  <div className="history-answer-line">
-                                    <strong>{t('quiz_your_answer')}：</strong>{d.selected || '—'}
-                                    <strong>{t('quiz_correct_answer')}：</strong>{d.correctAnswer}
-                                  </div>
-                                )}
-                                {d.explanation && (
-                                  <div className="quiz-explanation icon-row">
-                                    <Lightbulb size={15} /> <span>{d.explanation}</span>
-                                  </div>
-                                )}
                               </div>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                ))}
-              </tbody>
-            </table>
+                            </div>
+                          </td>
+                        </tr>
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              <div className="history-pagination">
+                <div className="filter-group">
+                  <span className="filter-label">{t('progress_page_size_label')}</span>
+                  {PAGE_SIZE_OPTIONS.map((n) => (
+                    <button key={n} className={pageSize === n ? 'active' : ''} onClick={() => setPageSize(n)}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <div className="pagination-controls">
+                  <button className="secondary-btn" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+                    {t('progress_page_prev')}
+                  </button>
+                  <span className="pagination-indicator">
+                    {t('progress_page_indicator', { page: page + 1, total: totalPages })}
+                  </span>
+                  <button className="secondary-btn" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+                    {t('progress_page_next')}
+                  </button>
+                </div>
+              </div>
+            </>
           )}
         </>
       )}

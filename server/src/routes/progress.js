@@ -46,6 +46,20 @@ router.post('/review', (req, res) => {
   res.json({ ok: true });
 });
 
+// DELETE /api/progress/:itemType/:itemId
+// Clears a mark entirely (used when re-clicking the already-active
+// 不熟/記得 button to deselect it) rather than forcing a switch to the
+// other state.
+router.delete('/:itemType/:itemId', (req, res) => {
+  const { itemType, itemId } = req.params;
+  db.prepare('DELETE FROM user_progress WHERE user_id = ? AND item_type = ? AND item_id = ?').run(
+    req.user.id,
+    itemType,
+    itemId
+  );
+  res.json({ ok: true });
+});
+
 // GET /api/progress/stats
 router.get('/stats', (req, res) => {
   const userId = req.user.id;

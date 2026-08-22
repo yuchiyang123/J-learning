@@ -14,6 +14,7 @@ export default function Vocabulary() {
   const [progress, setProgress] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
   const [index, setIndex] = useState(0);
+  const [dir, setDir] = useState('next'); // 'next' | 'prev' — drives the card slide animation
   const [flipped, setFlipped] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -64,11 +65,13 @@ export default function Vocabulary() {
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
 
   function next() {
+    setDir('next');
     setFlipped(false);
     setIndex((i) => (i + 1) % Math.max(filteredWords.length, 1));
   }
 
   function prev() {
+    setDir('prev');
     setFlipped(false);
     setIndex((i) => (i - 1 + filteredWords.length) % Math.max(filteredWords.length, 1));
   }
@@ -83,6 +86,17 @@ export default function Vocabulary() {
     if (!current) return;
     const itemType = current.isCustom ? 'custom_word' : 'word';
     const itemId = current.id;
+
+    // Clicking the already-active button deselects it — clears the mark
+    // entirely instead of forcing a switch to the other state. Stay on the
+    // card rather than advancing, since this is a correction.
+    const isDeselect = (correct === false && currentSrs === 0) || (correct === true && currentSrs > 0);
+    if (isDeselect) {
+      setProgress((prev) => prev.filter((p) => !(p.item_type === itemType && p.item_id === itemId)));
+      await api.clearProgress({ itemType, itemId }).catch(() => {});
+      return;
+    }
+
     setProgress((prev) => {
       const existing = prev.find((p) => p.item_type === itemType && p.item_id === itemId);
       const nextSrs = correct ? Math.min((existing?.srs_level ?? 0) + 1, 6) : 0;
@@ -137,7 +151,8 @@ export default function Vocabulary() {
       {!loading && current && (
         <div className="flashcard-wrap">
           <div
-            className={`flip-card${flipped ? ' is-flipped' : ''}`}
+            key={wordKey(current)}
+            className={`flip-card slide-${dir}${flipped ? ' is-flipped' : ''}`}
             onClick={() => setFlipped((f) => !f)}
           >
             <div className="flip-card-inner">

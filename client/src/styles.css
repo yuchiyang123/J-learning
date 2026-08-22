@@ -379,6 +379,16 @@ button { cursor: pointer; font-family: inherit; }
   perspective: 1400px;
   cursor: pointer;
 }
+.flip-card.slide-next { animation: card-slide-next 0.28s ease; }
+.flip-card.slide-prev { animation: card-slide-prev 0.28s ease; }
+@keyframes card-slide-next {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes card-slide-prev {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 .flip-card-inner {
   position: relative;
   width: 100%;
@@ -796,15 +806,30 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 
 /* ---------- Quiz history detail (Progress page) ---------- */
 .history-detail-row td { padding: 0; border: none; }
+/* Grid-template-rows 0fr/1fr trick: an animatable "auto height" collapse
+   without measuring pixel heights in JS. The row stays mounted so the
+   transition can play instead of the content just popping in/out. */
+.detail-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+.detail-collapse.open { grid-template-rows: 1fr; }
+.detail-collapse-inner { overflow: hidden; min-height: 0; }
 .history-detail {
-  padding: 1rem 1.2rem; background: var(--paper-raised); border: 1px solid var(--line);
-  border-radius: var(--radius); margin: 0.5rem 0 1.2rem;
+  padding: 0.2rem 0 1.2rem;
 }
 .history-detail .quiz-question { margin-bottom: 1rem; }
 .history-detail .quiz-question:last-child { margin-bottom: 0; }
 .history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .history-answer-line strong { color: var(--ink); }
 .history-view-btn { font-size: 0.82rem; padding: 0.3rem 0.7rem; }
+.history-pagination {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;
+}
+.pagination-controls { display: flex; align-items: center; gap: 0.8rem; }
+.pagination-controls button:disabled { opacity: 0.45; cursor: default; }
+.pagination-indicator { font-size: 0.88rem; color: var(--ink-soft); font-weight: 600; }
 .option-tag {
   display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
 }

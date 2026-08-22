@@ -54,6 +54,7 @@ export const api = {
   },
   getProgress: () => request('/progress'),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
+  clearProgress: ({ itemType, itemId }) => request(`/progress/${itemType}/${itemId}`, { method: 'DELETE' }),
   getStats: () => request('/progress/stats'),
   logSpeaking: (payload) => request('/speaking', { method: 'POST', body: JSON.stringify(payload) }),
   getSpeakingHistory: () => request('/speaking'),
