@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>日本語学習 - 日文學習網</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('jp_theme');
+          if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+          var loc = localStorage.getItem('jp_locale');
+          if (loc) document.documentElement.setAttribute('data-locale', loc);
+        } catch (e) {
+          /* localStorage unavailable — fall back to system preference via CSS media query */
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

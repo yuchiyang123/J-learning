@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# SQLite database (regenerate with `npm run seed` in server/)
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local Claude Code tooling config (machine/session-specific, not project source)
+.claude/
+
+# Logs
+npm-debug.log*
+*.log
