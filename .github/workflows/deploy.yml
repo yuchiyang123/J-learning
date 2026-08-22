@@ -10,19 +10,19 @@ jobs:
     steps:
       - name: Pull latest
         shell: powershell
-        run: git -C "D:\練習\50" pull --ff-only
+        run: git -C "D:\jlearn" pull --ff-only
 
       - name: Install server deps
         shell: powershell
-        working-directory: D:\練習\50\server
+        working-directory: D:\jlearn\server
         run: npm ci
 
       - name: Install client deps
         shell: powershell
-        working-directory: D:\練習\50\client
+        working-directory: D:\jlearn\client
         run: npm ci
 
       - name: Build client
         shell: powershell
-        working-directory: D:\練習\50\client
+        working-directory: D:\jlearn\client
         run: npm run build
