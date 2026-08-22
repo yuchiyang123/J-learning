@@ -1,6 +1,11 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import './db.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
 
 import wordsRouter from './routes/words.js';
 import kanjiRouter from './routes/kanji.js';
@@ -25,6 +30,11 @@ app.use('/api/games', gamesRouter);
 app.use('/api/users', usersRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+
+app.use(express.static(clientDist));
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
