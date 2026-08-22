@@ -9,20 +9,20 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull latest
-        shell: pwsh
+        shell: powershell
         run: git -C "D:\練習\50" pull --ff-only
 
       - name: Install server deps
-        shell: pwsh
+        shell: powershell
         working-directory: D:\練習\50\server
         run: npm ci
 
       - name: Install client deps
-        shell: pwsh
+        shell: powershell
         working-directory: D:\練習\50\client
         run: npm ci
 
       - name: Build client
-        shell: pwsh
+        shell: powershell
         working-directory: D:\練習\50\client
         run: npm run build
