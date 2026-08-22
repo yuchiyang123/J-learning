@@ -2,23 +2,17 @@ import { getStoredLocale } from './i18n/LocaleContext.jsx';
 
 const BASE = '/api';
 
-export function getUserId() {
-  let id = localStorage.getItem('jp_user_id');
-  if (!id) {
-    id = 'user_' + Math.random().toString(36).slice(2, 10);
-    localStorage.setItem('jp_user_id', id);
-  }
-  return id;
-}
-
 async function request(path, options = {}) {
   const res = await fetch(BASE + path, {
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     ...options,
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Request failed: ${res.status}`);
+    const err = new Error(body.error || `Request failed: ${res.status}`);
+    err.status = res.status;
+    throw err;
   }
   return res.json();
 }
@@ -44,23 +38,25 @@ export const api = {
     if (includeAnswers) params.set('includeAnswers', '1');
     return request(`/quiz?${withLocale(params)}`);
   },
+  // Grades and returns results even when logged out; only persisted to
+  // history/stats when the caller has a valid session (see server route).
   submitQuiz: (payload) => request('/quiz/submit', { method: 'POST', body: JSON.stringify({ locale: getStoredLocale(), ...payload }) }),
-  getQuizHistory: (userId) => request(`/quiz/history?userId=${userId}`),
-  getProgress: (userId) => request(`/progress?userId=${userId}`),
+  getQuizHistory: () => request('/quiz/history'),
+  getProgress: () => request('/progress'),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
-  getStats: (userId) => request(`/progress/stats?userId=${userId}`),
+  getStats: () => request('/progress/stats'),
   logSpeaking: (payload) => request('/speaking', { method: 'POST', body: JSON.stringify(payload) }),
-  getSpeakingHistory: (userId) => request(`/speaking?userId=${userId}`),
+  getSpeakingHistory: () => request('/speaking'),
 
   saveGameScore: (payload) => request('/games/score', { method: 'POST', body: JSON.stringify(payload) }),
-  getGameBest: ({ userId, game, mode, level } = {}) => {
-    const params = new URLSearchParams({ userId, game });
+  getGameBest: ({ game, mode, level } = {}) => {
+    const params = new URLSearchParams({ game });
     if (mode) params.set('mode', mode);
     if (level) params.set('level', level);
     return request(`/games/best?${params.toString()}`);
   },
-  getGameHistory: ({ userId, game } = {}) => {
-    const params = new URLSearchParams({ userId });
+  getGameHistory: ({ game } = {}) => {
+    const params = new URLSearchParams();
     if (game) params.set('game', game);
     return request(`/games/history?${params.toString()}`);
   },
@@ -72,6 +68,6 @@ export const api = {
     return request(`/games/leaderboard?${params.toString()}`);
   },
 
-  getUserProfile: (userId) => request(`/users/me?userId=${userId}`),
+  getUserProfile: () => request('/users/me'),
   updateUserProfile: (payload) => request('/users/profile', { method: 'POST', body: JSON.stringify(payload) }),
 };

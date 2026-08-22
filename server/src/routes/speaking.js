@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import { db } from '../db.js';
 import { touchUser } from '../users.js';
+import { requireAuth } from '../auth.js';
 
 const router = Router();
+router.use(requireAuth);
 
-// POST /api/speaking { userId, targetText, recognizedText, score }
+// POST /api/speaking { targetText, recognizedText, score }
 router.post('/', (req, res) => {
-  const { userId = 'guest', targetText, recognizedText, score } = req.body;
+  const userId = req.user.id;
+  const { targetText, recognizedText, score } = req.body;
   if (!targetText) return res.status(400).json({ error: 'targetText required' });
   touchUser(userId);
   db.prepare(
@@ -15,12 +18,11 @@ router.post('/', (req, res) => {
   res.json({ ok: true });
 });
 
-// GET /api/speaking?userId=guest
+// GET /api/speaking
 router.get('/', (req, res) => {
-  const { userId = 'guest' } = req.query;
   const rows = db
     .prepare('SELECT * FROM speaking_attempts WHERE user_id = ? ORDER BY attempted_at DESC LIMIT 50')
-    .all(userId);
+    .all(req.user.id);
   res.json(rows);
 });
 

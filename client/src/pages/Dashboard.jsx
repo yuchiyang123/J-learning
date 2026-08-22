@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2 } from 'lucide-react';
-import { api, getUserId } from '../api.js';
+import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import JlptCountdown from '../components/JlptCountdown.jsx';
 import { StatGridSkeleton } from '../components/Skeleton.jsx';
@@ -12,7 +12,7 @@ export default function Dashboard() {
   const { t } = useLocale();
 
   useEffect(() => {
-    api.getStats(getUserId()).then(setStats).catch(() => setStats(null)).finally(() => setLoadingStats(false));
+    api.getStats().then(setStats).catch(() => setStats(null)).finally(() => setLoadingStats(false));
   }, []);
 
   return (
@@ -43,10 +43,7 @@ export default function Dashboard() {
         <Link className="quick-link icon-btn" to="/quiz"><ListChecks size={18} /> {t('quick_quiz')}</Link>
         <Link className="quick-link icon-btn" to="/jlpt"><Target size={18} /> {t('quick_jlpt')}</Link>
         <Link className="quick-link icon-btn" to="/games"><Gamepad2 size={18} /> {t('quick_games')}</Link>
-        <Link className="quick-link icon-btn" to="/progress">
-          <BarChart3 size={18} /> {t('quick_progress')}
-          <span className="badge-coming-soon">{t('badge_coming_soon')}</span>
-        </Link>
+        <Link className="quick-link icon-btn" to="/progress"><BarChart3 size={18} /> {t('quick_progress')}</Link>
       </div>
     </div>
   );

@@ -1,20 +1,22 @@
 import { Router } from 'express';
 import { db } from '../db.js';
 import { touchUser } from '../users.js';
+import { requireAuth } from '../auth.js';
 
 const router = Router();
+router.use(requireAuth);
 
-// GET /api/progress?userId=guest
+// GET /api/progress
 router.get('/', (req, res) => {
-  const { userId = 'guest' } = req.query;
-  const rows = db.prepare('SELECT * FROM user_progress WHERE user_id = ?').all(userId);
+  const rows = db.prepare('SELECT * FROM user_progress WHERE user_id = ?').all(req.user.id);
   res.json(rows);
 });
 
-// POST /api/progress/review { userId, itemType, itemId, correct }
+// POST /api/progress/review { itemType, itemId, correct }
 // simple SRS: correct -> srsLevel+1, next review pushed out; wrong -> reset to 0
 router.post('/review', (req, res) => {
-  const { userId = 'guest', itemType, itemId, correct } = req.body;
+  const userId = req.user.id;
+  const { itemType, itemId, correct } = req.body;
   if (!itemType || !itemId) return res.status(400).json({ error: 'itemType and itemId required' });
   touchUser(userId);
 
@@ -44,9 +46,9 @@ router.post('/review', (req, res) => {
   res.json({ ok: true });
 });
 
-// GET /api/progress/stats?userId=guest
+// GET /api/progress/stats
 router.get('/stats', (req, res) => {
-  const { userId = 'guest' } = req.query;
+  const userId = req.user.id;
   const progress = db.prepare('SELECT * FROM user_progress WHERE user_id = ?').all(userId);
   const results = db.prepare('SELECT * FROM quiz_results WHERE user_id = ?').all(userId);
   const speaking = db.prepare('SELECT * FROM speaking_attempts WHERE user_id = ?').all(userId);

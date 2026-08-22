@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Volume2, ArrowLeft, ArrowRight, X, Check } from 'lucide-react';
-import { api, getUserId } from '../api.js';
+import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { FlashcardSkeleton } from '../components/Skeleton.jsx';
@@ -41,7 +41,7 @@ export default function Vocabulary() {
 
   async function mark(correct) {
     if (!current) return;
-    await api.reviewProgress({ userId: getUserId(), itemType: 'word', itemId: current.id, correct });
+    await api.reviewProgress({ itemType: 'word', itemId: current.id, correct }).catch(() => {});
     next();
   }
 

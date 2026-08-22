@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Trophy, PartyPopper } from 'lucide-react';
-import { api, getUserId } from '../../api.js';
+import { api } from '../../api.js';
 import { speak } from '../../speech.js';
 import { seion, dakuon, handakuon } from '../../data/kana.js';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
@@ -83,7 +83,7 @@ export default function MemoryMatch() {
     setBest(localBest);
     const mode = `${category}_${pairCount}`;
     api
-      .getGameBest({ userId: getUserId(), game: 'memory', mode, level: category === 'kana' ? 'N5' : level })
+      .getGameBest({ game: 'memory', mode, level: category === 'kana' ? 'N5' : level })
       .then((remote) => {
         if (remote?.detail && (!localBest || remote.score > scoreFor(localBest))) {
           setBest(remote.detail);
@@ -147,7 +147,6 @@ export default function MemoryMatch() {
 
       api
         .saveGameScore({
-          userId: getUserId(),
           game: 'memory',
           mode: `${category}_${pairCount}`,
           level: category === 'kana' ? 'N5' : level,

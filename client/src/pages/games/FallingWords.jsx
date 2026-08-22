@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, CloudRain, Heart, Trophy } from 'lucide-react';
-import { api, getUserId } from '../../api.js';
+import { api } from '../../api.js';
 import { seion, dakuon, handakuon } from '../../data/kana.js';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
 
@@ -51,7 +51,7 @@ export default function FallingWords() {
     const localBest = JSON.parse(localStorage.getItem(bestKey(category, level)) || 'null');
     setBest(localBest);
     api
-      .getGameBest({ userId: getUserId(), game: 'falling', mode: category, level: effectiveLevel })
+      .getGameBest({ game: 'falling', mode: category, level: effectiveLevel })
       .then((remote) => {
         if (remote?.detail && (!localBest || remote.score > localBest.score)) {
           setBest(remote.detail);
@@ -118,7 +118,7 @@ export default function FallingWords() {
     }
 
     api
-      .saveGameScore({ userId: getUserId(), game: 'falling', mode: category, level: effectiveLevel, score, detail: record })
+      .saveGameScore({ game: 'falling', mode: category, level: effectiveLevel, score, detail: record })
       .catch(() => {});
 
     setPhase('done');

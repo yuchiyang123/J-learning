@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Volume2, Mic, ArrowRight, Info } from 'lucide-react';
-import { api, getUserId } from '../api.js';
+import { api } from '../api.js';
 import { speak, isRecognitionSupported, createRecognizer, similarityScore } from '../speech.js';
 import { isVisualizerSupported, startVisualizer } from '../audioVisualizer.js';
 import { LevelPicker } from './Vocabulary.jsx';
@@ -37,7 +37,7 @@ export default function Speaking() {
   }, [level, locale]);
 
   useEffect(() => {
-    api.getSpeakingHistory(getUserId()).then(setHistory);
+    api.getSpeakingHistory().then(setHistory).catch(() => setHistory([]));
   }, []);
 
   const current = sentences[index];
@@ -82,8 +82,8 @@ export default function Speaking() {
       setRecognized(text);
       const s = similarityScore(current.example_jp, text);
       setScore(s);
-      await api.logSpeaking({ userId: getUserId(), targetText: current.example_jp, recognizedText: text, score: s });
-      api.getSpeakingHistory(getUserId()).then(setHistory);
+      await api.logSpeaking({ targetText: current.example_jp, recognizedText: text, score: s }).catch(() => {});
+      api.getSpeakingHistory().then(setHistory).catch(() => {});
     };
     recognizer.start();
   }, [supported, current, visualizerSupported, t]);

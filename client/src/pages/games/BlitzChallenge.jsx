@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Zap, Flame, Trophy, Timer } from 'lucide-react';
-import { api, getUserId } from '../../api.js';
+import { api } from '../../api.js';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
@@ -54,7 +54,7 @@ export default function BlitzChallenge() {
     const localBest = JSON.parse(localStorage.getItem(bestKey(type, effectiveLevel)) || 'null');
     setBest(localBest);
     api
-      .getGameBest({ userId: getUserId(), game: 'blitz', mode: type, level: effectiveLevel })
+      .getGameBest({ game: 'blitz', mode: type, level: effectiveLevel })
       .then((remote) => {
         if (remote?.detail && (!localBest || remote.score > localBest.score)) {
           setBest(remote.detail);
@@ -102,7 +102,7 @@ export default function BlitzChallenge() {
     if (answersRef.current.length > 0) {
       try {
         const effectiveLevel = type === 'kana' ? 'N5' : level;
-        await api.submitQuiz({ userId: getUserId(), type, level: effectiveLevel, answers: answersRef.current });
+        await api.submitQuiz({ type, level: effectiveLevel, answers: answersRef.current });
       } catch { /* best-effort logging only */ }
     }
     setBestCombo((bc) => {
@@ -116,7 +116,7 @@ export default function BlitzChallenge() {
       }
 
       api
-        .saveGameScore({ userId: getUserId(), game: 'blitz', mode: type, level: effectiveLevel, score: record.score, detail: record })
+        .saveGameScore({ game: 'blitz', mode: type, level: effectiveLevel, score: record.score, detail: record })
         .catch(() => {});
 
       return bc;

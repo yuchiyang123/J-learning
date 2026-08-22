@@ -39,7 +39,3 @@ jobs:
         shell: powershell
         working-directory: D:\jlearn\client
         run: npm run build
-
-      - name: TEMP test cloudflared restart permission
-        shell: powershell
-        run: Restart-Service cloudflared -Force

@@ -9,7 +9,9 @@ import Listening from './pages/Listening.jsx';
 import Speaking from './pages/Speaking.jsx';
 import Quiz from './pages/Quiz.jsx';
 import JlptMock from './pages/JlptMock.jsx';
-import ComingSoon from './pages/ComingSoon.jsx';
+import Progress from './pages/Progress.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 import GameHub from './pages/games/GameHub.jsx';
 import MemoryMatch from './pages/games/MemoryMatch.jsx';
 import BlitzChallenge from './pages/games/BlitzChallenge.jsx';
@@ -30,10 +32,9 @@ export default function App() {
           <Route path="/speaking" element={<Speaking />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/jlpt" element={<JlptMock />} />
-          <Route
-            path="/progress"
-            element={<ComingSoon titleKey="progress_coming_soon_title" descKey="progress_coming_soon_desc" />}
-          />
+          <Route path="/progress" element={<Progress />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/games" element={<GameHub />} />
           <Route path="/games/memory" element={<MemoryMatch />} />
           <Route path="/games/blitz" element={<BlitzChallenge />} />

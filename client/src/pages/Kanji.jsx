@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { X, Check } from 'lucide-react';
-import { api, getUserId } from '../api.js';
+import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
@@ -20,7 +20,9 @@ export default function Kanji() {
 
   async function mark(k, correct) {
     setMarked((m) => ({ ...m, [k.id]: correct ? 'good' : 'bad' }));
-    await api.reviewProgress({ userId: getUserId(), itemType: 'kanji', itemId: k.id, correct });
+    // Silently no-op when logged out — marking still works locally in the UI,
+    // it just isn't persisted without an account.
+    await api.reviewProgress({ itemType: 'kanji', itemId: k.id, correct }).catch(() => {});
   }
 
   return (

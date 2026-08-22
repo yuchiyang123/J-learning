@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { translate } from '../locale.js';
+import { optionalAuth, requireAuth } from '../auth.js';
 
 const router = Router();
 
@@ -46,13 +47,17 @@ router.get('/', (req, res) => {
   res.json(safe);
 });
 
-// POST /api/quiz/submit { userId, type, level, answers: [{questionId, selected}], locale }
-router.post('/submit', (req, res) => {
-  const { userId = 'guest', type = 'mixed', level = 'N5', answers = [], locale } = req.body;
+// POST /api/quiz/submit { type, level, answers: [{questionId, selected}], locale }
+// Grades and returns results regardless of login (practicing without an
+// account still needs to show right/wrong); only persists to quiz_results
+// (and therefore /history and /stats) when the caller is authenticated.
+router.post('/submit', optionalAuth, (req, res) => {
+  const { type = 'mixed', level = 'N5', answers = [], locale } = req.body;
   if (!Array.isArray(answers) || answers.length === 0) {
     return res.status(400).json({ error: 'answers required' });
   }
-  touchUser(userId);
+  const userId = req.user?.id;
+  if (userId) touchUser(userId);
   const getQ = db.prepare('SELECT * FROM quiz_questions WHERE id = ?');
   const detail = [];
   let correct = 0;
@@ -71,19 +76,20 @@ router.post('/submit', (req, res) => {
     });
   }
   const total = detail.length;
-  db.prepare(
-    'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
-  ).run(userId, type, level, total, correct, JSON.stringify(detail));
+  if (userId) {
+    db.prepare(
+      'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
+    ).run(userId, type, level, total, correct, JSON.stringify(detail));
+  }
 
   res.json({ total, correct, detail });
 });
 
-// GET /api/quiz/history?userId=guest
-router.get('/history', (req, res) => {
-  const { userId = 'guest' } = req.query;
+// GET /api/quiz/history
+router.get('/history', requireAuth, (req, res) => {
   const rows = db
     .prepare('SELECT id, type, level, total, correct, taken_at FROM quiz_results WHERE user_id = ? ORDER BY taken_at DESC LIMIT 50')
-    .all(userId);
+    .all(req.user.id);
   res.json(rows);
 });
 

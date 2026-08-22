@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import './db.js';
 
@@ -38,8 +40,9 @@ app.use(helmet({
   // break Google Fonts or the anti-flash inline <script> in index.html.
   contentSecurityPolicy: false,
 }));
-app.use(cors({ origin: ALLOWED_ORIGINS }));
+app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json({ limit: '50kb' }));
+app.use(cookieParser());
 
 const writeLimiter = rateLimit({
   windowMs: 60 * 1000,

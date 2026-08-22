@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Volume2, Lightbulb } from 'lucide-react';
-import { api, getUserId } from '../api.js';
+import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
@@ -21,7 +21,6 @@ export default function QuizRunner({ questions, type, level, onFinish, extraActi
     setSubmitting(true);
     try {
       const payload = {
-        userId: getUserId(),
         type,
         level,
         answers: questions.map((q) => ({ questionId: q.id, selected: answers[q.id] || '' })),
