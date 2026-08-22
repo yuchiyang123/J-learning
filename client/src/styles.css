@@ -805,7 +805,10 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .sk-memory-card { aspect-ratio: 1; border-radius: 10px; }
 
 /* ---------- Quiz history detail (Progress page) ---------- */
-.history-detail-row td { padding: 0; border: none; }
+/* Higher specificity than ".page table td" is required here, or that rule's
+   padding/border-bottom wins and leaves a padded, bordered "ghost" row
+   between every entry even while collapsed. */
+.page table tr.history-detail-row td { padding: 0; border: none; }
 /* Grid-template-rows 0fr/1fr trick: an animatable "auto height" collapse
    without measuring pixel heights in JS. The row stays mounted so the
    transition can play instead of the content just popping in/out. */
