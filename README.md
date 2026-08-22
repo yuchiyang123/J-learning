@@ -4,6 +4,27 @@
 
 線上體驗：https://j-learning.matthewyu.uk
 
+## 畫面截圖
+
+<table>
+  <tr>
+    <td><img src="docs/screenshots/dashboard.jpg" alt="首頁 Dashboard" width="400"/></td>
+    <td><img src="docs/screenshots/vocabulary.jpg" alt="單字學習" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">首頁</td>
+    <td align="center">單字學習</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/kanji.jpg" alt="漢字學習" width="400"/></td>
+    <td><img src="docs/screenshots/quiz.jpg" alt="刷題" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">漢字學習</td>
+    <td align="center">刷題</td>
+  </tr>
+</table>
+
 ## 功能
 
 - **五十音（假名）** 學習與測驗
