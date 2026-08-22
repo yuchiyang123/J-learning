@@ -7,7 +7,6 @@ import { isPasswordValid } from '../auth/passwordPolicy.js';
 
 export default function Register() {
   const [userName, setUserName] = useState('');
-  const [userNameConfirm, setUserNameConfirm] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [email, setEmail] = useState('');
@@ -28,10 +27,6 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
-    if (userName !== userNameConfirm) {
-      setError(t('register_username_mismatch'));
-      return;
-    }
     if (password !== passwordConfirm) {
       setError(t('register_password_mismatch'));
       return;
@@ -116,10 +111,6 @@ export default function Register() {
           <label>
             {t('username_label')}
             <input value={userName} onChange={(e) => setUserName(e.target.value)} required autoFocus />
-          </label>
-          <label>
-            {t('username_confirm_label')}
-            <input value={userNameConfirm} onChange={(e) => setUserNameConfirm(e.target.value)} required />
           </label>
           <label>
             {t('email_label')}
