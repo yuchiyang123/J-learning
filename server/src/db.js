@@ -104,6 +104,24 @@ CREATE TABLE IF NOT EXISTS speaking_attempts (
   attempted_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- User-authored vocabulary entries, private to the owner. Kept separate from
+-- "words" (the shared seeded dictionary) so custom entries never collide with
+-- public word ids; reviewProgress tags these with item_type 'custom_word' to
+-- keep their SRS state independent of the public word with the same numeric id.
+CREATE TABLE IF NOT EXISTS user_words (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  level TEXT NOT NULL,
+  kanji TEXT,
+  kana TEXT NOT NULL,
+  meaning TEXT NOT NULL,
+  part_of_speech TEXT,
+  example_jp TEXT,
+  example_reading TEXT,
+  example_zh TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS game_scores (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id TEXT NOT NULL,

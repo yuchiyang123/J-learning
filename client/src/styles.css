@@ -443,6 +443,16 @@ button { cursor: pointer; font-family: inherit; }
 .btn-bad:hover { background: var(--accent-soft); }
 .progress-indicator { color: var(--ink-soft); font-size: 0.9rem; font-weight: 600; }
 
+.custom-word-badge {
+  position: absolute; top: 0.8rem; right: 1rem; font-size: 0.7rem; font-weight: 700;
+  color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0.15rem 0.6rem;
+}
+.add-word-form {
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-raised);
+  padding: 1.2rem 1.4rem; margin-bottom: 1.3rem; max-width: 480px;
+}
+.add-word-form h2 { font-size: 1rem; margin-bottom: 0.9rem; }
+
 /* ---------- Kana chart ---------- */
 .kana-section { margin-bottom: 1.8rem; }
 .kana-table { display: flex; flex-direction: column; gap: 0.45rem; }
@@ -779,3 +789,22 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .sk-visualizer { height: 72px; width: 100%; border-radius: 12px; margin-top: 1.1rem; }
 
 .sk-memory-card { aspect-ratio: 1; border-radius: 10px; }
+
+/* ---------- Quiz history detail (Progress page) ---------- */
+.history-detail-row td { padding: 0; border: none; }
+.history-detail {
+  padding: 1rem 1.2rem; background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: var(--radius); margin: 0.5rem 0 1.2rem;
+}
+.history-detail .quiz-question:last-child { margin-bottom: 0; }
+.history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; }
+.history-answer-line strong { color: var(--ink); }
+.history-view-btn { font-size: 0.82rem; padding: 0.3rem 0.7rem; }
+
+/* ---------- Print ---------- */
+@media print {
+  .navbar, .no-print { display: none !important; }
+  .page { max-width: 100%; padding: 0; }
+  .quiz-question { break-inside: avoid; }
+  body { background: #fff; color: #000; }
+}

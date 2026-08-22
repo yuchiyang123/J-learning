@@ -28,6 +28,8 @@ function withLocale(params) {
 
 export const api = {
   getWords: (level) => request(`/words?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
+  addCustomWord: (payload) => request('/words/custom', { method: 'POST', body: JSON.stringify(payload) }),
+  deleteCustomWord: (id) => request(`/words/custom/${id}`, { method: 'DELETE' }),
   getKanji: (level) => request(`/kanji?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
   getGrammar: (level) => request(`/grammar?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
   getQuiz: ({ type, level, count, includeAnswers } = {}) => {
@@ -42,6 +44,14 @@ export const api = {
   // history/stats when the caller has a valid session (see server route).
   submitQuiz: (payload) => request('/quiz/submit', { method: 'POST', body: JSON.stringify({ locale: getStoredLocale(), ...payload }) }),
   getQuizHistory: () => request('/quiz/history'),
+  getQuizHistoryDetail: (id) => request(`/quiz/history/${id}?${withLocale(new URLSearchParams())}`),
+  getQuizWrong: ({ type, level, count } = {}) => {
+    const params = new URLSearchParams();
+    if (type) params.set('type', type);
+    if (level) params.set('level', level);
+    if (count) params.set('count', count);
+    return request(`/quiz/wrong?${withLocale(params)}`);
+  },
   getProgress: () => request('/progress'),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
   getStats: () => request('/progress/stats'),

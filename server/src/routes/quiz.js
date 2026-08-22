@@ -93,4 +93,57 @@ router.get('/history', requireAuth, (req, res) => {
   res.json(rows);
 });
 
+// GET /api/quiz/history/:id -> full per-question detail for review, with the
+// original question's option text re-attached (quiz_results.detail only
+// stored the prompt/selected/correct letters, not the option labels).
+router.get('/history/:id', requireAuth, (req, res) => {
+  const row = db.prepare('SELECT * FROM quiz_results WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  if (!row) return res.status(404).json({ error: 'not found' });
+  const { locale } = req.query;
+  const getQ = db.prepare('SELECT * FROM quiz_questions WHERE id = ?');
+  const rawDetail = JSON.parse(row.detail || '[]');
+  const detail = rawDetail.map((d) => {
+    const q = getQ.get(d.questionId);
+    if (!q) return d;
+    const lq = localizeQuestion(q, locale);
+    return {
+      ...d,
+      option_a: lq.option_a,
+      option_b: lq.option_b,
+      option_c: lq.option_c,
+      option_d: lq.option_d,
+      audio_text: q.audio_text,
+    };
+  });
+  res.json({ ...row, detail });
+});
+
+// GET /api/quiz/wrong?type=&level=&count=&locale= -> questions (no answers)
+// pulled from this user's own quiz history where their most recent attempt on
+// that question was wrong. A question answered wrong once but later correct
+// drops out, since only the latest outcome per question counts.
+router.get('/wrong', requireAuth, (req, res) => {
+  const { type, level, count, locale } = req.query;
+  let sql = 'SELECT detail FROM quiz_results WHERE user_id = ?';
+  const params = [req.user.id];
+  if (type) { sql += ' AND type = ?'; params.push(type); }
+  if (level) { sql += ' AND level = ?'; params.push(level); }
+  sql += ' ORDER BY taken_at ASC';
+  const rows = db.prepare(sql).all(...params);
+
+  const lastOutcome = new Map();
+  for (const r of rows) {
+    for (const d of JSON.parse(r.detail || '[]')) {
+      lastOutcome.set(d.questionId, d.isCorrect);
+    }
+  }
+  const wrongIds = [...lastOutcome.entries()].filter(([, ok]) => !ok).map(([id]) => id);
+  if (wrongIds.length === 0) return res.json([]);
+
+  const placeholders = wrongIds.map(() => '?').join(',');
+  const questions = db.prepare(`SELECT * FROM quiz_questions WHERE id IN (${placeholders})`).all(...wrongIds);
+  const picked = shuffle(questions).slice(0, count ? Number(count) : questions.length).map((q) => localizeQuestion(q, locale));
+  res.json(picked.map(({ answer, explanation, ...rest }) => rest));
+});
+
 export default router;
