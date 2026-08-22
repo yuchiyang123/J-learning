@@ -288,6 +288,8 @@ h1 {
   letter-spacing: 0.02em;
 }
 h2 { font-family: var(--font-heading); font-weight: 700; }
+.page-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.page-head-row h1 { margin-bottom: 0; }
 .subtitle { color: var(--ink-soft); margin-top: -0.6rem; }
 
 /* ---------- JLPT countdown card ---------- */
@@ -439,8 +441,10 @@ button { cursor: pointer; font-family: inherit; }
 .flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--accent); color: var(--accent-dark); transform: translateY(-1px); }
 .btn-good { border-color: var(--accent-2) !important; color: var(--accent-2); }
 .btn-good:hover { background: var(--accent-2-soft); }
+.btn-good.active { background: var(--accent-2); color: #fff; }
 .btn-bad { border-color: var(--accent) !important; color: var(--accent); }
 .btn-bad:hover { background: var(--accent-soft); }
+.btn-bad.active { background: var(--accent); color: #fff; }
 .progress-indicator { color: var(--ink-soft); font-size: 0.9rem; font-weight: 600; }
 
 .custom-word-badge {
@@ -796,10 +800,14 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   padding: 1rem 1.2rem; background: var(--paper-raised); border: 1px solid var(--line);
   border-radius: var(--radius); margin: 0.5rem 0 1.2rem;
 }
+.history-detail .quiz-question { margin-bottom: 1rem; }
 .history-detail .quiz-question:last-child { margin-bottom: 0; }
-.history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; }
+.history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .history-answer-line strong { color: var(--ink); }
 .history-view-btn { font-size: 0.82rem; padding: 0.3rem 0.7rem; }
+.option-tag {
+  display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
+}
 
 /* ---------- Print ---------- */
 @media print {

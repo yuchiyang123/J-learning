@@ -117,7 +117,13 @@ export default function ProgressPage() {
                                       let cls = 'quiz-option';
                                       if (key === d.correctAnswer) cls += ' correct';
                                       else if (key === d.selected && !d.isCorrect) cls += ' wrong';
-                                      return <button key={key} className={cls} disabled>{label}</button>;
+                                      return (
+                                        <button key={key} className={cls} disabled>
+                                          {label}
+                                          {key === d.correctAnswer && <span className="option-tag">{t('quiz_correct_answer')}</span>}
+                                          {key === d.selected && !d.isCorrect && <span className="option-tag">{t('quiz_your_answer')}</span>}
+                                        </button>
+                                      );
                                     })}
                                   </div>
                                 )}

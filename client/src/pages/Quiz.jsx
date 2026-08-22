@@ -39,7 +39,14 @@ export default function Quiz() {
 
   return (
     <div className="page">
-      <h1>{t('quiz_title')}</h1>
+      <div className="page-head-row">
+        <h1>{t('quiz_title')}</h1>
+        {questions && questions.length > 0 && (
+          <button className="secondary-btn icon-btn no-print" onClick={() => window.print()}>
+            <Printer size={15} /> {t('quiz_print_btn')}
+          </button>
+        )}
+      </div>
 
       <div className="filter-row">
         <div className="filter-group">
@@ -78,14 +85,9 @@ export default function Quiz() {
           type={type}
           level={level}
           extraActions={
-            <>
-              <button className="secondary-btn icon-btn" onClick={() => setSessionKey((k) => k + 1)}>
-                <RefreshCw size={15} /> {t('btn_new_batch')}
-              </button>
-              <button className="secondary-btn icon-btn no-print" onClick={() => window.print()}>
-                <Printer size={15} /> {t('quiz_print_btn')}
-              </button>
-            </>
+            <button className="secondary-btn icon-btn" onClick={() => setSessionKey((k) => k + 1)}>
+              <RefreshCw size={15} /> {t('btn_new_batch')}
+            </button>
           }
         />
       )}

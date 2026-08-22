@@ -64,6 +64,8 @@ export default function QuizRunner({ questions, type, level, onFinish, extraActi
                 return (
                   <button key={key} className={cls} disabled={!!result} onClick={() => select(q.id, key)}>
                     {label}
+                    {d && key === d.correctAnswer && <span className="option-tag">{t('quiz_correct_answer')}</span>}
+                    {d && selected && !d.isCorrect && <span className="option-tag">{t('quiz_your_answer')}</span>}
                   </button>
                 );
               })}

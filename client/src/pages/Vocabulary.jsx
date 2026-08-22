@@ -37,18 +37,31 @@ export default function Vocabulary() {
   useEffect(load, [level, locale, isLoggedIn]);
   useEffect(() => { if (!isLoggedIn) setFilter('all'); }, [isLoggedIn]);
 
-  const unknownWords = useMemo(() => {
-    const known = new Set();
+  const progressByKey = useMemo(() => {
+    const map = new Map();
     for (const p of progress) {
-      if ((p.item_type === 'word' || p.item_type === 'custom_word') && p.srs_level > 0) {
-        known.add(`${p.item_type}:${p.item_id}`);
+      if (p.item_type === 'word' || p.item_type === 'custom_word') {
+        map.set(`${p.item_type}:${p.item_id}`, p.srs_level);
       }
     }
-    return words.filter((w) => !known.has(`${w.isCustom ? 'custom_word' : 'word'}:${w.id}`));
-  }, [words, progress]);
+    return map;
+  }, [progress]);
+
+  function wordKey(w) {
+    return `${w.isCustom ? 'custom_word' : 'word'}:${w.id}`;
+  }
+
+  // "只顯示不會的" means explicitly marked 不熟 before (a progress row exists
+  // with srs_level 0) — a word never reviewed yet just hasn't been reached,
+  // it isn't "known to be unknown" yet.
+  const unknownWords = useMemo(
+    () => words.filter((w) => progressByKey.get(wordKey(w)) === 0),
+    [words, progressByKey]
+  );
 
   const filteredWords = filter === 'unknown' ? unknownWords : words;
   const current = filteredWords[index];
+  const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
 
   function next() {
     setFlipped(false);
@@ -69,8 +82,14 @@ export default function Vocabulary() {
   async function mark(correct) {
     if (!current) return;
     const itemType = current.isCustom ? 'custom_word' : 'word';
-    await api.reviewProgress({ itemType, itemId: current.id, correct }).catch(() => {});
-    if (isLoggedIn) api.getProgress().then(setProgress).catch(() => {});
+    const itemId = current.id;
+    setProgress((prev) => {
+      const existing = prev.find((p) => p.item_type === itemType && p.item_id === itemId);
+      const nextSrs = correct ? Math.min((existing?.srs_level ?? 0) + 1, 6) : 0;
+      if (existing) return prev.map((p) => (p === existing ? { ...p, srs_level: nextSrs } : p));
+      return [...prev, { item_type: itemType, item_id: itemId, srs_level: nextSrs }];
+    });
+    await api.reviewProgress({ itemType, itemId, correct }).catch(() => {});
     next();
   }
 
@@ -153,8 +172,18 @@ export default function Vocabulary() {
           </div>
 
           <div className="mark-controls">
-            <button className="btn-bad icon-btn" onClick={() => mark(false)}><X size={16} /> {t('btn_dont_know')}</button>
-            <button className="btn-good icon-btn" onClick={() => mark(true)}><Check size={16} /> {t('btn_remember')}</button>
+            <button
+              className={`btn-bad icon-btn${currentSrs === 0 ? ' active' : ''}`}
+              onClick={() => mark(false)}
+            >
+              <X size={16} /> {t('btn_dont_know')}
+            </button>
+            <button
+              className={`btn-good icon-btn${currentSrs > 0 ? ' active' : ''}`}
+              onClick={() => mark(true)}
+            >
+              <Check size={16} /> {t('btn_remember')}
+            </button>
           </div>
 
           <div className="progress-indicator">
