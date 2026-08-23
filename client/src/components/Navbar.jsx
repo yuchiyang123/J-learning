@@ -63,7 +63,7 @@ export default function Navbar() {
       <div className="navbar-actions">
         {isLoggedIn ? (
           <button type="button" className="navbar-auth-link" onClick={handleLogout}>
-            <LogOut size={15} /> {user?.userName} · {t('nav_logout')}
+            <LogOut size={15} /> <span className="navbar-username">{user?.userName}</span> · {t('nav_logout')}
           </button>
         ) : (
           <NavLink to="/login" className={({ isActive }) => `navbar-auth-link${isActive ? ' active' : ''}`}>

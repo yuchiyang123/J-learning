@@ -37,7 +37,10 @@ export default function Dropdown({ options, value, onChange, icon, ariaLabel, al
         aria-label={ariaLabel}
       >
         {icon}
-        <span className="dropdown-trigger-label">{current?.label}</span>
+        <span className="dropdown-trigger-label">
+          <span className="dropdown-label-full">{current?.label}</span>
+          <span className="dropdown-label-short">{current?.short ?? current?.label}</span>
+        </span>
         <ChevronDown size={14} className={`dropdown-chevron${open ? ' is-open' : ''}`} />
       </button>
 

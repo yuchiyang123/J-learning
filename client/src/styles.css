@@ -216,10 +216,15 @@ body {
    wrapping messily across the top bar — collapse it into a hamburger menu
    instead of letting it wrap. */
 @media (max-width: 860px) {
-  .navbar { gap: 0.75rem 0.6rem; padding: 0.7rem 1rem; }
+  .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
   .navbar-brand { order: 1; font-size: 1.1rem; }
   .navbar-toggle { display: inline-flex; order: 2; margin-left: auto; }
-  .navbar-actions { order: 3; margin-left: 0; }
+  .navbar-actions { order: 3; margin-left: 0; gap: 0.3rem; }
+  /* The action row (login, language, theme) is the other big contributor to
+     the top bar overflowing and wrapping onto an extra line on narrow
+     phones — tighten it and swap the language switcher to its short form
+     (see LOCALE_OPTIONS' `short`) instead of the full language name. */
+  .navbar-auth-link { padding: 0.3rem 0.5rem; font-size: 0.82rem; }
   .navbar-links {
     order: 4;
     flex-basis: 100%;
@@ -234,6 +239,17 @@ body {
   .navbar-links.is-open { display: flex; }
   .navbar-links a { padding: 0.8rem 1rem; border-radius: 10px; font-size: 1rem; }
   .navbar-links a.active { box-shadow: none; }
+}
+
+/* On genuinely narrow phones (not just tablet-portrait-and-below), the
+   860px tightening above still isn't quite enough headroom for
+   brand + hamburger + login + language + theme to all fit on one row. */
+@media (max-width: 400px) {
+  .navbar { padding: 0.55rem 0.6rem; gap: 0.5rem 0.3rem; }
+  .navbar-brand { font-size: 0.95rem; gap: 0.25rem; }
+  /* An arbitrarily long display name would otherwise be the one thing none
+     of the tightening above can bound — truncate it instead. */
+  .navbar-username { display: inline-block; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
 }
 
 .theme-toggle {
@@ -253,8 +269,19 @@ body {
 }
 .dropdown-trigger:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
 .dropdown-trigger-label { white-space: nowrap; }
+.dropdown-label-short { display: none; }
 .dropdown-chevron { transition: transform 0.15s ease; opacity: 0.85; }
 .dropdown-chevron.is-open { transform: rotate(180deg); }
+
+/* Placed after the base .dropdown-trigger/.dropdown-label-short rules above
+   (not the earlier navbar breakpoint) so it actually wins the cascade —
+   two same-specificity rules for the same class fall back to source order,
+   and an earlier media-query block loses to a later plain rule. */
+@media (max-width: 860px) {
+  .dropdown-trigger { padding: 0.35rem 0.5rem; font-size: 0.8rem; gap: 0.25rem; }
+  .dropdown-label-full { display: none; }
+  .dropdown-label-short { display: inline; }
+}
 
 .dropdown-menu {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;

@@ -2,11 +2,14 @@
 // CONTENT (word meanings, grammar explanations, quiz options) is translated
 // server-side — see server/src/locale.js — and requested via the `locale` query
 // param threaded through client/src/api.js.
+// `short` is only ever shown on narrow viewports (see .dropdown-label-short
+// in styles.css) — the full label keeps showing everywhere else, including
+// inside the dropdown's own option list.
 export const LOCALE_OPTIONS = [
-  { value: 'zh-TW', label: '繁體中文' },
-  { value: 'zh-CN', label: '简体中文' },
-  { value: 'ko', label: '한국어' },
-  { value: 'en', label: 'English' },
+  { value: 'zh-TW', label: '繁體中文', short: '繁中' },
+  { value: 'zh-CN', label: '简体中文', short: '简中' },
+  { value: 'ko', label: '한국어', short: '한' },
+  { value: 'en', label: 'English', short: 'EN' },
 ];
 
 const zhTW = {
