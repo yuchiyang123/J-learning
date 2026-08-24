@@ -248,11 +248,11 @@ export default function KanaWriteQuiz({ script }) {
         <div className="writequiz-setup">
           <div className="writequiz-setup-actions">
             <span className="filter-label">{t('kana_writequiz_select_rows')}</span>
-            <button className="secondary-btn" onClick={() => setSelectedRows(new Set(allRows.map((r) => r.label)))}>
-              {t('kana_writequiz_select_all')}
-            </button>
-            <button className="secondary-btn" onClick={() => setSelectedRows(new Set())}>
-              {t('kana_writequiz_select_none')}
+            <button
+              className="secondary-btn"
+              onClick={() => setSelectedRows(selectedRows.size === allRows.length ? new Set() : new Set(allRows.map((r) => r.label)))}
+            >
+              {selectedRows.size === allRows.length ? t('kana_writequiz_select_none') : t('kana_writequiz_select_all')}
             </button>
           </div>
 
