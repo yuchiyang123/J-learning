@@ -759,6 +759,7 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   background: var(--paper-raised); border-radius: 16px;
   box-shadow: var(--shadow-lg); border: 1px solid var(--line); touch-action: none; cursor: crosshair;
 }
+.writing-canvas.locked { cursor: default; border-color: var(--accent-2); }
 .writing-nav {
   flex: 0 0 auto;
   border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 999px; width: 40px; height: 40px;

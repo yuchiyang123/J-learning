@@ -218,19 +218,19 @@ export default function KanaWriteQuiz({ script }) {
             ref={canvasRef}
             width={CANVAS_SIZE}
             height={CANVAS_SIZE}
-            className="writing-canvas"
-            onPointerDown={pointerDown}
-            onPointerMove={pointerMove}
-            onPointerUp={pointerUp}
-            onPointerLeave={pointerUp}
+            className={`writing-canvas${revealed ? ' locked' : ''}`}
+            onPointerDown={revealed ? undefined : pointerDown}
+            onPointerMove={revealed ? undefined : pointerMove}
+            onPointerUp={revealed ? undefined : pointerUp}
+            onPointerLeave={revealed ? undefined : pointerUp}
           />
-          <div className="writing-controls">
-            <button className="secondary-btn icon-btn" onClick={undo}><Undo2 size={15} /> {t('btn_undo')}</button>
-            <button className="secondary-btn icon-btn" onClick={clearCanvas}><Eraser size={15} /> {t('btn_clear')}</button>
-            {!revealed && (
+          {!revealed && (
+            <div className="writing-controls">
+              <button className="secondary-btn icon-btn" onClick={undo}><Undo2 size={15} /> {t('btn_undo')}</button>
+              <button className="secondary-btn icon-btn" onClick={clearCanvas}><Eraser size={15} /> {t('btn_clear')}</button>
               <button className="submit-btn" onClick={reveal}>{t('kana_writequiz_reveal')}</button>
-            )}
-          </div>
+            </div>
+          )}
           {revealed && (
             <>
               {suggestion && (
