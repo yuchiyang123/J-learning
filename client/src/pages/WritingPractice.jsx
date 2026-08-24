@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Eraser, Undo2, Volume2, Eye, EyeOff } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
+import kanaStrokes from '../data/kanaStrokes.json';
 import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
 const CANVAS_SIZE = 480;
+const STROKE_VIEWBOX = 109;
 
 const flatList = [...seion, ...dakuon, ...handakuon].flatMap((row) =>
   row.cells.filter(Boolean).map(([hira, kata, romaji]) => ({ hira, kata, romaji }))
@@ -42,16 +44,51 @@ export default function WritingPractice({ script }) {
     ctx.setLineDash([]);
     ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    // faint guide character
+    // stroke-order guide: faint strokes + numbered start points, from KanjiVG data
     if (showGuide) {
-      ctx.save();
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#c23a2e';
-      ctx.font = `${canvas.width * 0.72}px "Zen Maru Gothic", "Noto Sans JP", sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(char, canvas.width / 2, canvas.height / 2 + canvas.width * 0.04);
-      ctx.restore();
+      const strokes = kanaStrokes[char];
+      if (strokes) {
+        const scale = canvas.width / STROKE_VIEWBOX;
+
+        ctx.save();
+        ctx.globalAlpha = 0.35;
+        ctx.strokeStyle = '#c23a2e';
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.scale(scale, scale);
+        for (const d of strokes.paths) ctx.stroke(new Path2D(d));
+        ctx.restore();
+
+        ctx.save();
+        ctx.font = `bold ${Math.round(canvas.width * 0.032)}px "Noto Sans TC", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (const { x, y, n } of strokes.numbers) {
+          const px = x * scale;
+          const py = y * scale - 5 * scale;
+          ctx.beginPath();
+          ctx.arc(px, py, canvas.width * 0.024, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = '#c23a2e';
+          ctx.stroke();
+          ctx.fillStyle = '#c23a2e';
+          ctx.fillText(String(n), px, py + 0.5);
+        }
+        ctx.restore();
+      } else {
+        // fallback for any character missing from the generated stroke data
+        ctx.save();
+        ctx.globalAlpha = 0.18;
+        ctx.fillStyle = '#c23a2e';
+        ctx.font = `${canvas.width * 0.72}px "Zen Maru Gothic", "Noto Sans JP", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(char, canvas.width / 2, canvas.height / 2 + canvas.width * 0.04);
+        ctx.restore();
+      }
     }
 
     // ink strokes
@@ -142,7 +179,6 @@ export default function WritingPractice({ script }) {
             className={`writing-picker-btn${i === index ? ' active' : ''}`}
             onClick={() => setIndex(i)}
           >
-            <span className="writing-picker-order">{i + 1}</span>
             {script === 'hira' ? k.hira : k.kata}
           </button>
         ))}
@@ -151,7 +187,6 @@ export default function WritingPractice({ script }) {
       <div className="writing-stage">
         <div className="writing-toolbar">
           <button className="tiny-btn icon-btn" onClick={() => speak(current.hira)}><Volume2 size={16} /> {t('btn_play_audio')}</button>
-          <span className="writing-order-count">{index + 1} / {flatList.length}</span>
           <span className="writing-romaji">{current.romaji}</span>
           <button className="tiny-btn icon-btn" onClick={() => setShowGuide((g) => !g)}>
             {showGuide ? <Eye size={16} /> : <EyeOff size={16} />} {t('writing_char_ref')}
