@@ -5,16 +5,16 @@ import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { KanjiGridSkeleton } from '../components/Skeleton.jsx';
+import { useCachedApi } from '../hooks/useCachedApi.js';
 
 export default function Kanji() {
   const [level, setLevel] = useState('N5');
-  const [list, setList] = useState(null);
   const [marked, setMarked] = useState({});
   const { t, locale } = useLocale();
 
+  const [list, loading] = useCachedApi(`kanji:${level}:${locale}`, () => api.getKanji(level));
+
   useEffect(() => {
-    setList(null);
-    api.getKanji(level).then(setList);
     setMarked({});
   }, [level, locale]);
 
@@ -30,9 +30,9 @@ export default function Kanji() {
       <h1>{t('kanji_title')}</h1>
       <LevelPicker level={level} onChange={setLevel} />
 
-      {list === null && <KanjiGridSkeleton />}
+      {loading && <KanjiGridSkeleton />}
 
-      {list !== null && (
+      {!loading && list && (
       <div className="kanji-grid">
         {list.map((k) => (
           <div className="kanji-card" key={k.id}>

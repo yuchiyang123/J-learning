@@ -5,38 +5,49 @@ import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { FlashcardSkeleton } from '../components/Skeleton.jsx';
+import { useCachedApi } from '../hooks/useCachedApi.js';
+import { invalidateCache } from '../lib/apiCache.js';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function Vocabulary() {
   const [level, setLevel] = useState('N5');
-  const [words, setWords] = useState([]);
   const [progress, setProgress] = useState([]);
+  const [progressLoading, setProgressLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
   const [index, setIndex] = useState(0);
   const [dir, setDir] = useState('next'); // 'next' | 'prev' — drives the card slide animation
   const [flipped, setFlipped] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const { t, locale } = useLocale();
   const { isLoggedIn } = useAuth();
 
-  function load() {
-    setLoading(true);
-    const requests = [api.getWords(level)];
-    if (isLoggedIn) requests.push(api.getProgress());
-    Promise.all(requests)
-      .then(([data, progressData]) => {
-        setWords(data);
-        if (progressData) setProgress(progressData);
-        setIndex(0);
-        setFlipped(false);
-      })
-      .finally(() => setLoading(false));
-  }
+  // Word content rarely changes, so it's cache-first (see hooks/useCachedApi)
+  // — revisiting a level already fetched this session is instant. Progress
+  // (SRS state) is per-user and genuinely live, so it stays a plain fetch,
+  // separate from the cached word list, on its own loading flag.
+  const wordsKey = `words:${level}:${locale}`;
+  const [wordsData, wordsLoading, reloadWords] = useCachedApi(wordsKey, () => api.getWords(level));
+  const words = wordsData ?? [];
+  const loading = wordsLoading || progressLoading;
 
-  useEffect(load, [level, locale, isLoggedIn]);
+  useEffect(() => {
+    setIndex(0);
+    setFlipped(false);
+  }, [level, locale]);
+
+  useEffect(() => {
+    if (!isLoggedIn) { setProgress([]); setProgressLoading(false); return; }
+    setProgressLoading(true);
+    api.getProgress().then(setProgress).finally(() => setProgressLoading(false));
+  }, [isLoggedIn]);
+
   useEffect(() => { if (!isLoggedIn) setFilter('all'); }, [isLoggedIn]);
+
+  function reloadWordsAfterMutation() {
+    invalidateCache(wordsKey);
+    reloadWords(true);
+  }
 
   const progressByKey = useMemo(() => {
     const map = new Map();
@@ -111,7 +122,7 @@ export default function Vocabulary() {
     if (!current?.isCustom) return;
     if (!window.confirm(t('vocab_delete_confirm'))) return;
     await api.deleteCustomWord(current.id).catch(() => {});
-    load();
+    reloadWordsAfterMutation();
   }
 
   return (
@@ -140,7 +151,7 @@ export default function Vocabulary() {
         <AddWordForm
           level={level}
           t={t}
-          onAdded={() => { setShowAddForm(false); load(); }}
+          onAdded={() => { setShowAddForm(false); reloadWordsAfterMutation(); }}
           onCancel={() => setShowAddForm(false)}
         />
       )}

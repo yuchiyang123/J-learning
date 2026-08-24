@@ -5,6 +5,8 @@ import { drawKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
+import { useCachedApi } from '../hooks/useCachedApi.js';
+import { invalidateCache } from '../lib/apiCache.js';
 import { api } from '../api.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
@@ -41,22 +43,24 @@ export default function KanaWriteQuiz({ script }) {
   const [revealed, setRevealed] = useState(false);
   const [suggestion, setSuggestion] = useState(null);
   const [results, setResults] = useState([]);
-  const [wrongCount, setWrongCount] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const canvasRef = useRef(null);
   const { strokesRef, pointerDown, pointerMove, pointerUp, clearStrokes, undoStroke, drawInkStrokes } =
     useKanaCanvas(canvasRef, PEN_SIZE);
 
+  // Cached so switching script tabs or navigating away and back doesn't
+  // re-fetch a count that hasn't changed; invalidated explicitly right after
+  // a submit actually changes it (see grade()) rather than on every stage
+  // transition, which was the previous (over-eager) refetch trigger.
+  const wrongKey = isLoggedIn ? `kana-write-wrong:${script}` : null;
+  const [wrongRows, , reloadWrong] = useCachedApi(wrongKey, () => api.getKanaWriteWrong(script));
+  const wrongCount = wrongRows ? wrongRows.length : null;
+
   useEffect(() => {
     setStage('setup');
     setSelectedRows(new Set());
   }, [script]);
-
-  useEffect(() => {
-    if (!isLoggedIn) { setWrongCount(null); return; }
-    api.getKanaWriteWrong(script).then((rows) => setWrongCount(rows.length));
-  }, [isLoggedIn, script, stage]);
 
   function toggleRow(label) {
     setSelectedRows((s) => {
@@ -161,7 +165,15 @@ export default function KanaWriteQuiz({ script }) {
     }
     setSubmitting(true);
     try {
-      if (isLoggedIn) await api.submitKanaWrite({ script, items: nextResults });
+      if (isLoggedIn) {
+        await api.submitKanaWrite({ script, items: nextResults });
+        // The submit just changed which characters count as "wrong" for this
+        // script — the cached count/list from before this session no longer
+        // reflects reality, so drop it and pull a fresh one now rather than
+        // showing a stale mistake-book count on the next setup screen.
+        invalidateCache(wrongKey);
+        reloadWrong(true);
+      }
     } finally {
       setSubmitting(false);
       setStage('done');
