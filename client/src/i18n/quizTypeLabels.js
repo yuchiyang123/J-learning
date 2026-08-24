@@ -12,3 +12,9 @@ export const QUIZ_TYPE_LABEL_KEYS = {
   kana_write: 'type_kana_write',
   jlpt_mock: 'type_jlpt_mock',
 };
+
+// Types whose quiz_results.level column isn't a real JLPT level: 'kana' is
+// hardcoded to N5 server-side, and 'kana_write' repurposes the column to
+// hold the script ('hira'/'kata') instead. History should show "-" for
+// these rather than a misleading level value.
+export const QUIZ_TYPES_WITHOUT_LEVEL = new Set(['kana', 'kana_write']);

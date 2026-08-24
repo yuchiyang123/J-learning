@@ -6,7 +6,7 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { StatGridSkeleton, QuizSkeleton } from '../components/Skeleton.jsx';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
-import { QUIZ_TYPE_LABEL_KEYS } from '../i18n/quizTypeLabels.js';
+import { QUIZ_TYPE_LABEL_KEYS, QUIZ_TYPES_WITHOUT_LEVEL } from '../i18n/quizTypeLabels.js';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
@@ -108,7 +108,7 @@ export default function ProgressPage() {
                         <tr>
                           <td>{h.taken_at}</td>
                           <td>{t(QUIZ_TYPE_LABEL_KEYS[h.type] ?? h.type)}</td>
-                          <td>{h.level}</td>
+                          <td>{QUIZ_TYPES_WITHOUT_LEVEL.has(h.type) ? '-' : h.level}</td>
                           <td>{h.correct} / {h.total}</td>
                           <td>
                             <button className="secondary-btn history-view-btn" onClick={() => toggleDetail(h.id)}>
