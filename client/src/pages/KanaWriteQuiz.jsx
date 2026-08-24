@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, X, Undo2, Eraser, RefreshCw } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
-import kanaStrokes from '../data/kanaStrokes.json';
+import { drawKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
+import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
+import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { api } from '../api.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
 const CANVAS_SIZE = 420;
-const STROKE_VIEWBOX = 109;
 const PEN_SIZE = 10;
 
 const allRows = [...seion, ...dakuon, ...handakuon];
@@ -22,10 +23,12 @@ function shuffle(arr) {
 }
 
 // Handwriting quiz: pick rows -> shuffled romaji prompts -> draw the kana ->
-// reveal the reference stroke order -> self-grade. There's no OCR here, so
-// grading is an honest self-report, same spirit as a paper drill. Results are
-// posted to /api/quiz/kana-write/submit (self-reported correctness + the raw
-// strokes) and wrong characters resurface via the "mistake book" below.
+// reveal the reference stroke order -> self-grade. Revealing also runs a
+// cheap shape-similarity heuristic (see lib/kanaStrokeRecognition.js) as a
+// *suggestion* only — there's no real OCR here, so the self-report is still
+// what actually gets recorded. Results are posted to
+// /api/quiz/kana-write/submit (self-reported correctness + the raw strokes)
+// and wrong characters resurface via the "mistake book" below.
 export default function KanaWriteQuiz({ script }) {
   const { isLoggedIn } = useAuth();
   const { t } = useLocale();
@@ -35,14 +38,14 @@ export default function KanaWriteQuiz({ script }) {
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [suggestion, setSuggestion] = useState(null);
   const [results, setResults] = useState([]);
   const [wrongCount, setWrongCount] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const canvasRef = useRef(null);
-  const strokesRef = useRef([]);
-  const currentStrokeRef = useRef(null);
-  const drawingRef = useRef(false);
+  const { strokesRef, pointerDown, pointerMove, pointerUp, clearStrokes, undoStroke, drawInkStrokes } =
+    useKanaCanvas(canvasRef, PEN_SIZE);
 
   useEffect(() => {
     setStage('setup');
@@ -67,7 +70,8 @@ export default function KanaWriteQuiz({ script }) {
     setQIndex(0);
     setResults([]);
     setRevealed(false);
-    strokesRef.current = [];
+    setSuggestion(null);
+    clearStrokes();
     setStage('active');
   }
 
@@ -110,113 +114,34 @@ export default function KanaWriteQuiz({ script }) {
     ctx.setLineDash([]);
     ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    if (revealed && current) {
-      const strokes = kanaStrokes[current.char];
-      if (strokes) {
-        const scale = canvas.width / STROKE_VIEWBOX;
+    if (revealed && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
 
-        ctx.save();
-        ctx.globalAlpha = 0.4;
-        ctx.strokeStyle = '#1f6f5c';
-        ctx.lineWidth = 3.2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.scale(scale, scale);
-        for (const d of strokes.paths) ctx.stroke(new Path2D(d));
-        ctx.restore();
-
-        ctx.save();
-        ctx.font = `bold ${Math.round(canvas.width * 0.032)}px "Noto Sans TC", sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (const { x, y, n } of strokes.numbers) {
-          const px = x * scale;
-          const py = y * scale - 5 * scale;
-          ctx.beginPath();
-          ctx.arc(px, py, canvas.width * 0.024, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.fill();
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = '#1f6f5c';
-          ctx.stroke();
-          ctx.fillStyle = '#1f6f5c';
-          ctx.fillText(String(n), px, py + 0.5);
-        }
-        ctx.restore();
-      }
-    }
-
-    ctx.strokeStyle = '#262421';
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = PEN_SIZE;
-    for (const stroke of strokesRef.current) {
-      if (stroke.length < 2) continue;
-      ctx.beginPath();
-      ctx.moveTo(stroke[0].x, stroke[0].y);
-      for (let i = 1; i < stroke.length; i++) ctx.lineTo(stroke[i].x, stroke[i].y);
-      ctx.stroke();
-    }
+    drawInkStrokes(ctx);
   }
 
   useEffect(() => {
-    strokesRef.current = [];
+    clearStrokes();
     setRevealed(false);
+    setSuggestion(null);
     redraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qIndex, stage]);
 
   useEffect(redraw, [revealed]);
 
-  function getPoint(e) {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
-  }
-
-  function pointerDown(e) {
-    e.preventDefault();
-    canvasRef.current.setPointerCapture(e.pointerId);
-    drawingRef.current = true;
-    currentStrokeRef.current = [getPoint(e)];
-  }
-
-  function pointerMove(e) {
-    if (!drawingRef.current) return;
-    const pt = getPoint(e);
-    currentStrokeRef.current.push(pt);
-    const ctx = canvasRef.current.getContext('2d');
-    const stroke = currentStrokeRef.current;
-    const n = stroke.length;
-    if (n >= 2) {
-      ctx.strokeStyle = '#262421';
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.lineWidth = PEN_SIZE;
-      ctx.beginPath();
-      ctx.moveTo(stroke[n - 2].x, stroke[n - 2].y);
-      ctx.lineTo(stroke[n - 1].x, stroke[n - 1].y);
-      ctx.stroke();
-    }
-  }
-
-  function pointerUp() {
-    if (!drawingRef.current) return;
-    drawingRef.current = false;
-    if (currentStrokeRef.current?.length > 0) strokesRef.current.push(currentStrokeRef.current);
-    currentStrokeRef.current = null;
-  }
-
   function clearCanvas() {
-    strokesRef.current = [];
+    clearStrokes();
     redraw();
   }
 
   function undo() {
-    strokesRef.current.pop();
+    undoStroke();
     redraw();
+  }
+
+  function reveal() {
+    setRevealed(true);
+    setSuggestion(scoreKanaDrawing(strokesRef.current, current.char));
   }
 
   async function grade(isCorrect) {
@@ -302,18 +227,28 @@ export default function KanaWriteQuiz({ script }) {
             <button className="secondary-btn icon-btn" onClick={undo}><Undo2 size={15} /> {t('btn_undo')}</button>
             <button className="secondary-btn icon-btn" onClick={clearCanvas}><Eraser size={15} /> {t('btn_clear')}</button>
             {!revealed && (
-              <button className="submit-btn" onClick={() => setRevealed(true)}>{t('kana_writequiz_reveal')}</button>
+              <button className="submit-btn" onClick={reveal}>{t('kana_writequiz_reveal')}</button>
             )}
           </div>
           {revealed && (
-            <div className="writequiz-grade-actions">
-              <button className="secondary-btn icon-btn writequiz-correct" disabled={submitting} onClick={() => grade(true)}>
-                <Check size={16} /> {t('kana_writequiz_self_correct')}
-              </button>
-              <button className="secondary-btn icon-btn writequiz-wrong" disabled={submitting} onClick={() => grade(false)}>
-                <X size={16} /> {t('kana_writequiz_self_wrong')}
-              </button>
-            </div>
+            <>
+              {suggestion && (
+                <div className={`writequiz-suggestion${suggestion.suggestCorrect ? ' suggest-correct' : ' suggest-wrong'}`}>
+                  {t(
+                    suggestion.suggestCorrect ? 'kana_writequiz_suggestion_correct' : 'kana_writequiz_suggestion_wrong',
+                    { percent: Math.round(suggestion.score * 100) }
+                  )}
+                </div>
+              )}
+              <div className="writequiz-grade-actions">
+                <button className="secondary-btn icon-btn writequiz-correct" disabled={submitting} onClick={() => grade(true)}>
+                  <Check size={16} /> {t('kana_writequiz_self_correct')}
+                </button>
+                <button className="secondary-btn icon-btn writequiz-wrong" disabled={submitting} onClick={() => grade(false)}>
+                  <X size={16} /> {t('kana_writequiz_self_wrong')}
+                </button>
+              </div>
+            </>
           )}
         </div>
       )}

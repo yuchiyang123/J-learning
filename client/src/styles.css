@@ -802,6 +802,11 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
 .writequiz-progress { font-weight: 700; color: var(--ink-soft); }
 .writequiz-romaji { font-size: 2rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); letter-spacing: 0.06em; }
+.writequiz-suggestion {
+  font-size: 0.85rem; font-weight: 600; padding: 0.5rem 0.9rem; border-radius: 8px; max-width: 420px; text-align: center;
+}
+.writequiz-suggestion.suggest-correct { background: var(--accent-2-soft); color: var(--accent-2); }
+.writequiz-suggestion.suggest-wrong { background: var(--accent-soft); color: var(--accent-dark); }
 .writequiz-grade-actions { display: flex; align-items: center; gap: 1rem; }
 .writequiz-correct { border-color: var(--accent-2); color: var(--accent-2); }
 .writequiz-correct:hover { border-color: var(--accent-2); color: var(--accent-2); }
