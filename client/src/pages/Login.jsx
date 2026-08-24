@@ -48,7 +48,7 @@ export default function Login() {
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </label>
           {error && <p className="warning">{error}</p>}
-          <button className="submit-btn" type="submit" disabled={submitting}>{t('login_btn')}</button>
+          <button className="submit-btn login-submit-btn" type="submit" disabled={submitting}>{t('login_btn')}</button>
         </form>
         <p className="auth-switch">
           <Link to="/forgot-password">{t('forgot_password_link')}</Link>

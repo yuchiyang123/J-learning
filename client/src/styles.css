@@ -587,6 +587,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
 .submit-btn:disabled { background: var(--disabled-bg); cursor: not-allowed; box-shadow: none; }
+.login-submit-btn { align-self: stretch; width: 100%; background: var(--accent); }
 .quiz-result { font-size: 1.3rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
 
 .timer-bar { font-weight: 700; margin-bottom: 1rem; }
