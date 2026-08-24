@@ -828,6 +828,22 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .stroke-thumbnail-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
 .stroke-thumbnail-ink { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
 
+/* ---------- 404 ---------- */
+.notfound-page { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+.notfound-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; max-width: 420px; }
+.notfound-icon { color: var(--accent); opacity: 0.85; margin-bottom: 0.4rem; }
+.notfound-code {
+  font-size: 4.5rem; font-weight: 900; font-family: var(--font-heading); color: var(--accent); line-height: 1;
+}
+.notfound-card h1 { margin: 0.2rem 0 0; }
+.notfound-home-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.8rem;
+  background: var(--accent); color: #fff; border: none; padding: 0.75rem 1.6rem;
+  border-radius: 10px; font-weight: 700; text-decoration: none; box-shadow: var(--shadow-md);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.notfound-home-btn:hover { transform: translateY(-2px); background: var(--accent-dark); }
+
 /* ---------- Fade-in for page content ---------- */
 .page { animation: fade-up 0.35s ease; }
 @keyframes fade-up {

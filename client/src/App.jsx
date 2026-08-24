@@ -18,6 +18,7 @@ import GameHub from './pages/games/GameHub.jsx';
 import MemoryMatch from './pages/games/MemoryMatch.jsx';
 import BlitzChallenge from './pages/games/BlitzChallenge.jsx';
 import FallingWords from './pages/games/FallingWords.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/games/memory" element={<MemoryMatch />} />
           <Route path="/games/blitz" element={<BlitzChallenge />} />
           <Route path="/games/falling" element={<FallingWords />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </div>
