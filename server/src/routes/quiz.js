@@ -151,4 +151,67 @@ router.get('/wrong', requireAuth, (req, res) => {
   res.json(picked.map(({ answer, explanation, ...rest }) => rest));
 });
 
+// POST /api/quiz/kana-write/submit { script: 'hira'|'kata', items: [{char, romaji, isCorrect, strokes}] }
+// Handwriting quiz is self-graded client-side (there's no OCR here — the user
+// draws, reveals the reference character, then honestly marks right/wrong), so
+// unlike /submit there's no server-side answer lookup: we just tally what the
+// client already scored and persist it under the same quiz_results shape used
+// by every other quiz type, with level repurposed to hold the script.
+router.post('/kana-write/submit', optionalAuth, (req, res) => {
+  const { script, items = [] } = req.body;
+  if ((script !== 'hira' && script !== 'kata') || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'script and items required' });
+  }
+  const userId = req.user?.id;
+  if (userId) touchUser(userId);
+
+  let correct = 0;
+  const detail = items.map((item) => {
+    const isCorrect = !!item.isCorrect;
+    if (isCorrect) correct++;
+    return {
+      questionId: `${script}:${item.char}`,
+      script,
+      prompt: item.romaji,
+      selected: isCorrect ? item.char : '',
+      correctAnswer: item.char,
+      isCorrect,
+      strokes: Array.isArray(item.strokes) ? item.strokes : [],
+    };
+  });
+  const total = detail.length;
+
+  if (userId) {
+    db.prepare(
+      'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
+    ).run(userId, 'kana_write', script, total, correct, JSON.stringify(detail));
+  }
+
+  res.json({ total, correct, detail });
+});
+
+// GET /api/quiz/kana-write/wrong?script=hira|kata
+// Same "most recent outcome per character wins" logic as /wrong, but kana
+// handwriting has no quiz_questions row to look up — everything needed
+// (script/char/romaji) is already sitting in each detail entry from submit.
+router.get('/kana-write/wrong', requireAuth, (req, res) => {
+  const { script } = req.query;
+  let sql = "SELECT detail FROM quiz_results WHERE user_id = ? AND type = 'kana_write'";
+  const params = [req.user.id];
+  if (script) { sql += ' AND level = ?'; params.push(script); }
+  sql += ' ORDER BY taken_at DESC LIMIT 300';
+  const rows = db.prepare(sql).all(...params);
+
+  const lastOutcome = new Map();
+  for (const r of rows) {
+    for (const d of JSON.parse(r.detail || '[]')) {
+      if (!lastOutcome.has(d.questionId)) lastOutcome.set(d.questionId, d);
+    }
+  }
+  const wrong = [...lastOutcome.values()]
+    .filter((d) => !d.isCorrect)
+    .map((d) => ({ script: d.script, char: d.correctAnswer, romaji: d.prompt }));
+  res.json(wrong);
+});
+
 export default router;

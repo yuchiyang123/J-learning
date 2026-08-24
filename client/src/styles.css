@@ -783,6 +783,32 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   .writing-toolbar { gap: 0.6rem; }
 }
 
+/* ---------- Kana handwriting quiz ---------- */
+.kana-writequiz { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+
+.writequiz-setup { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1rem; }
+.writequiz-setup-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.writequiz-row-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.writequiz-row-chip {
+  display: flex; align-items: center; gap: 0.4rem; border: 1px solid var(--line); background: var(--paper-raised);
+  color: var(--ink); border-radius: 999px; padding: 0.4rem 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.15s ease;
+}
+.writequiz-row-chip:hover { border-color: var(--accent); color: var(--accent-dark); }
+.writequiz-row-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.writequiz-row-chip input { accent-color: var(--accent); }
+.writequiz-setup-footer { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.writequiz-wrongbook { border-top: 1px dashed var(--line); padding-top: 1rem; }
+
+.writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
+.writequiz-progress { font-weight: 700; color: var(--ink-soft); }
+.writequiz-romaji { font-size: 2rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); letter-spacing: 0.06em; }
+.writequiz-grade-actions { display: flex; align-items: center; gap: 1rem; }
+.writequiz-correct { border-color: var(--accent-2); color: var(--accent-2); }
+.writequiz-correct:hover { border-color: var(--accent-2); color: var(--accent-2); }
+.writequiz-wrong { border-color: var(--accent); color: var(--accent-dark); }
+
+.writequiz-done { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+
 /* ---------- Fade-in for page content ---------- */
 .page { animation: fade-up 0.35s ease; }
 @keyframes fade-up {

@@ -5,12 +5,13 @@ import { speak } from '../speech.js';
 import { api } from '../api.js';
 import QuizRunner from '../components/QuizRunner.jsx';
 import WritingPractice from './WritingPractice.jsx';
+import KanaWriteQuiz from './KanaWriteQuiz.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { QuizSkeleton } from '../components/Skeleton.jsx';
 
 export default function Kana() {
   const [script, setScript] = useState('hira'); // 'hira' | 'kata'
-  const [mode, setMode] = useState('chart'); // 'chart' | 'quiz' | 'write'
+  const [mode, setMode] = useState('chart'); // 'chart' | 'quiz' | 'write' | 'writequiz'
   const { t } = useLocale();
 
   return (
@@ -29,6 +30,7 @@ export default function Kana() {
           <button className={mode === 'chart' ? 'active' : ''} onClick={() => setMode('chart')}>{t('kana_mode_chart')}</button>
           <button className={mode === 'quiz' ? 'active' : ''} onClick={() => setMode('quiz')}>{t('kana_mode_quiz')}</button>
           <button className={mode === 'write' ? 'active' : ''} onClick={() => setMode('write')}>{t('kana_mode_write')}</button>
+          <button className={mode === 'writequiz' ? 'active' : ''} onClick={() => setMode('writequiz')}>{t('kana_mode_writequiz')}</button>
         </div>
       </div>
 
@@ -42,6 +44,7 @@ export default function Kana() {
 
       {mode === 'quiz' && <KanaQuiz />}
       {mode === 'write' && <WritingPractice script={script} />}
+      {mode === 'writequiz' && <KanaWriteQuiz script={script} />}
     </div>
   );
 }

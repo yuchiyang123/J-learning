@@ -73,6 +73,8 @@ export const api = {
     if (count) params.set('count', count);
     return request(`/quiz/wrong?${withLocale(params)}`);
   },
+  submitKanaWrite: (payload) => request('/quiz/kana-write/submit', { method: 'POST', body: JSON.stringify(payload) }),
+  getKanaWriteWrong: (script) => request(`/quiz/kana-write/wrong${script ? `?script=${script}` : ''}`),
   getProgress: () => request('/progress'),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
   clearProgress: ({ itemType, itemId }) => request(`/progress/${itemType}/${itemId}`, { method: 'DELETE' }),
