@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { StatGridSkeleton, QuizSkeleton } from '../components/Skeleton.jsx';
+import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
@@ -149,6 +150,9 @@ export default function ProgressPage() {
                                           <strong>{t('quiz_your_answer')}：</strong>{d.selected || '—'}
                                           <strong>{t('quiz_correct_answer')}：</strong>{d.correctAnswer}
                                         </div>
+                                      )}
+                                      {d.strokes?.length > 0 && (
+                                        <StrokeThumbnail strokes={d.strokes} size={90} viewBox={420} />
                                       )}
                                       {d.explanation && (
                                         <div className="quiz-explanation icon-row">

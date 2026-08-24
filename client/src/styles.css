@@ -813,6 +813,20 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writequiz-wrong { border-color: var(--accent); color: var(--accent-dark); }
 
 .writequiz-done { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.writequiz-review-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; max-width: 720px; }
+.writequiz-review-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.5rem;
+  border: 2px solid var(--line); border-radius: 10px; background: var(--paper-raised);
+}
+.writequiz-review-item.correct { border-color: var(--accent-2); }
+.writequiz-review-item.wrong { border-color: var(--accent); }
+.writequiz-review-meta { display: flex; align-items: baseline; gap: 0.4rem; }
+.writequiz-review-char { font-weight: 900; font-family: var(--font-heading); }
+.writequiz-review-romaji { font-size: 0.8rem; color: var(--ink-soft); }
+
+.stroke-thumbnail { display: block; border-radius: 6px; }
+.stroke-thumbnail-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+.stroke-thumbnail-ink { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
 
 /* ---------- Fade-in for page content ---------- */
 .page { animation: fade-up 0.35s ease; }

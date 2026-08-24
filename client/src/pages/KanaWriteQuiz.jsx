@@ -4,6 +4,7 @@ import { seion, dakuon, handakuon } from '../data/kana.js';
 import { drawKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
+import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import { api } from '../api.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
@@ -259,6 +260,19 @@ export default function KanaWriteQuiz({ script }) {
           <div className="quiz-result">
             {t('score_result')}：{results.filter((r) => r.isCorrect).length} / {results.length}
           </div>
+
+          <div className="writequiz-review-grid">
+            {results.map((r, i) => (
+              <div key={i} className={`writequiz-review-item${r.isCorrect ? ' correct' : ' wrong'}`}>
+                <StrokeThumbnail strokes={r.strokes} size={90} viewBox={CANVAS_SIZE} />
+                <div className="writequiz-review-meta">
+                  <span className="writequiz-review-char">{r.char}</span>
+                  <span className="writequiz-review-romaji">{r.romaji}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="writequiz-setup-footer">
             <button className="submit-btn" onClick={() => setStage('setup')}>{t('kana_writequiz_back_setup')}</button>
           </div>
