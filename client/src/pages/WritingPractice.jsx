@@ -142,6 +142,7 @@ export default function WritingPractice({ script }) {
             className={`writing-picker-btn${i === index ? ' active' : ''}`}
             onClick={() => setIndex(i)}
           >
+            <span className="writing-picker-order">{i + 1}</span>
             {script === 'hira' ? k.hira : k.kata}
           </button>
         ))}
@@ -150,6 +151,7 @@ export default function WritingPractice({ script }) {
       <div className="writing-stage">
         <div className="writing-toolbar">
           <button className="tiny-btn icon-btn" onClick={() => speak(current.hira)}><Volume2 size={16} /> {t('btn_play_audio')}</button>
+          <span className="writing-order-count">{index + 1} / {flatList.length}</span>
           <span className="writing-romaji">{current.romaji}</span>
           <button className="tiny-btn icon-btn" onClick={() => setShowGuide((g) => !g)}>
             {showGuide ? <Eye size={16} /> : <EyeOff size={16} />} {t('writing_char_ref')}
