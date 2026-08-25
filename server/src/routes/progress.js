@@ -75,6 +75,29 @@ router.get('/stats', (req, res) => {
     ? speaking.reduce((s, a) => s + (a.score || 0), 0) / speaking.length
     : null;
 
+  // Per-category accuracy for the Progress page's radar/bar charts. 'kana'
+  // (MC quiz) and 'kana_write' (handwriting quiz) are two different
+  // quiz_results.type values but the same practice area from the learner's
+  // point of view, so they're summed into one 五十音 bucket here.
+  const byType = new Map();
+  for (const r of results) {
+    const bucket = byType.get(r.type) || { total: 0, correct: 0 };
+    bucket.total += r.total;
+    bucket.correct += r.correct;
+    byType.set(r.type, bucket);
+  }
+  const kana = byType.get('kana') || { total: 0, correct: 0 };
+  const kanaWrite = byType.get('kana_write') || { total: 0, correct: 0 };
+  const accuracyOf = (bucket) => (bucket.total ? Math.round((bucket.correct / bucket.total) * 100) : null);
+  const categoryBreakdown = [
+    { type: 'kana', total: kana.total + kanaWrite.total, accuracy: accuracyOf({ total: kana.total + kanaWrite.total, correct: kana.correct + kanaWrite.correct }) },
+    { type: 'vocab', total: (byType.get('vocab') || { total: 0 }).total, accuracy: accuracyOf(byType.get('vocab') || { total: 0, correct: 0 }) },
+    { type: 'kanji', total: (byType.get('kanji') || { total: 0 }).total, accuracy: accuracyOf(byType.get('kanji') || { total: 0, correct: 0 }) },
+    { type: 'grammar', total: (byType.get('grammar') || { total: 0 }).total, accuracy: accuracyOf(byType.get('grammar') || { total: 0, correct: 0 }) },
+    { type: 'listening', total: (byType.get('listening') || { total: 0 }).total, accuracy: accuracyOf(byType.get('listening') || { total: 0, correct: 0 }) },
+    { type: 'speaking', total: speaking.length, accuracy: avgSpeaking !== null ? Math.round(avgSpeaking) : null },
+  ];
+
   res.json({
     totalReviewed,
     mastered,
@@ -84,6 +107,7 @@ router.get('/stats', (req, res) => {
     speakingAttempts: speaking.length,
     avgSpeakingScore: avgSpeaking !== null ? Math.round(avgSpeaking) : null,
     recentResults: results.slice(-10).reverse(),
+    categoryBreakdown,
   });
 });
 

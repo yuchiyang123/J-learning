@@ -6,8 +6,21 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { StatGridSkeleton, QuizSkeleton } from '../components/Skeleton.jsx';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
+import RadarChart from '../components/RadarChart.jsx';
+import CategoryBarChart from '../components/CategoryBarChart.jsx';
 import { QUIZ_TYPE_LABEL_KEYS, QUIZ_TYPES_WITHOUT_LEVEL } from '../i18n/quizTypeLabels.js';
 import { formatServerTimestamp } from '../lib/formatDate.js';
+
+// categoryBreakdown[].type -> the nav_* label key that already names this
+// practice area everywhere else in the app (navbar, mode pickers, ...).
+const CATEGORY_LABEL_KEYS = {
+  kana: 'nav_kana',
+  vocab: 'nav_vocab',
+  kanji: 'nav_kanji',
+  grammar: 'nav_grammar',
+  listening: 'nav_listening',
+  speaking: 'nav_speaking',
+};
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
@@ -32,6 +45,16 @@ export default function ProgressPage() {
   }, [isLoggedIn]);
 
   useEffect(() => { setPage(0); }, [pageSize, history.length]);
+
+  const categoryAxes = useMemo(() => {
+    if (!stats?.categoryBreakdown) return [];
+    return stats.categoryBreakdown.map((c) => ({
+      type: c.type,
+      label: t(CATEGORY_LABEL_KEYS[c.type] ?? c.type),
+      value: c.accuracy,
+    }));
+  }, [stats, t]);
+  const hasAnyPracticeData = stats ? stats.quizTotal > 0 || stats.speakingAttempts > 0 : false;
 
   const totalPages = Math.max(Math.ceil(history.length / pageSize), 1);
   const pagedHistory = useMemo(
@@ -88,6 +111,16 @@ export default function ProgressPage() {
           <StatCard label={t('progress_speaking_count')} value={stats.speakingAttempts} />
           <StatCard label={t('dashboard_stat_speaking')} value={stats.avgSpeakingScore ?? '—'} />
         </div>
+      )}
+
+      {!loading && stats && hasAnyPracticeData && (
+        <>
+          <h2>{t('progress_overview_title')}</h2>
+          <div className="overview-panel">
+            <RadarChart axes={categoryAxes} />
+            <CategoryBarChart axes={categoryAxes} noDataLabel={t('progress_overview_no_data')} />
+          </div>
+        </>
       )}
 
       {!loading && (
