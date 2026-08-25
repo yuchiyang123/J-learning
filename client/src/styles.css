@@ -829,6 +829,14 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .stroke-thumbnail-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
 .stroke-thumbnail-ink { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
 
+/* The quiz canvas has no side elements (unlike writing-practice's prev/next
+   nav buttons) squeezing its width down, so on a narrow phone it renders
+   almost edge-to-edge — a `touch-action: none` block that big leaves barely
+   any margin to swipe-scroll past without accidentally starting a stroke. */
+@media (max-width: 480px) {
+  .writequiz-stage .writing-canvas { max-width: 260px; }
+}
+
 /* ---------- 404 ---------- */
 .notfound-page { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
 .notfound-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; max-width: 420px; }
