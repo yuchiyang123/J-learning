@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { GraduationCap, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
@@ -38,10 +38,10 @@ export default function Navbar() {
   return (
     <>
       <nav className="navbar">
-        <div className="navbar-brand">
+        <Link to="/" className="navbar-brand">
           <GraduationCap size={20} />
           {t('brand')}
-        </div>
+        </Link>
 
         <div className="navbar-links">
           {links.map((l) => (
@@ -81,10 +81,10 @@ export default function Navbar() {
           fighting the slide animation the way `display: none` would. */}
       <aside className={`nav-drawer${drawerOpen ? ' is-open' : ''}`} aria-hidden={!drawerOpen} {...(!drawerOpen ? { inert: '' } : {})}>
         <div className="nav-drawer-header">
-          <div className="navbar-brand">
+          <Link to="/" className="navbar-brand" onClick={() => setDrawerOpen(false)}>
             <GraduationCap size={20} />
             {t('brand')}
-          </div>
+          </Link>
           <button type="button" className="nav-drawer-close" onClick={() => setDrawerOpen(false)} aria-label={t('nav_toggle_label')}>
             <X size={20} />
           </button>

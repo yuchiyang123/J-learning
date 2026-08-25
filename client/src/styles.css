@@ -141,7 +141,13 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  /* Now a <Link> (so clicking the logo goes home) — reset the browser's
+     default anchor color/underline instead of inheriting them. */
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
 }
+.navbar-brand:hover { opacity: 0.85; }
 .navbar-links { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
 .navbar-links a {
   color: rgba(255,255,255,0.88);
