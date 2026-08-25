@@ -193,6 +193,18 @@ body {
   margin-bottom: 0.8rem;
 }
 
+/* ---------- Settings ---------- */
+.settings-card { max-width: 480px; padding: 1.6rem; margin: 1rem 0; }
+.settings-section-heading {
+  display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; margin: 0 0 1rem; color: var(--ink);
+}
+.settings-section-heading svg { color: var(--accent); }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.6rem 0; border-top: 1px solid var(--line);
+}
+.settings-row:first-of-type { border-top: none; }
+
 .info-banner {
   display: flex; align-items: center; gap: 0.6rem; background: var(--accent-2-soft); color: var(--accent-2);
   border: 1px solid var(--accent-2); border-radius: var(--radius); padding: 0.8rem 1rem; margin-bottom: 1.3rem;
@@ -214,42 +226,79 @@ body {
 
 /* Below this width the full link list no longer fits on one line and starts
    wrapping messily across the top bar — collapse it into a hamburger menu
-   instead of letting it wrap. */
+   that opens the left-side drawer (below) instead of letting it wrap. */
 @media (max-width: 860px) {
   .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
-  .navbar-brand { order: 1; font-size: 1.1rem; }
-  .navbar-toggle { display: inline-flex; order: 2; margin-left: auto; }
-  .navbar-actions { order: 3; margin-left: 0; gap: 0.3rem; }
-  /* The action row (login, language, theme) is the other big contributor to
-     the top bar overflowing and wrapping onto an extra line on narrow
-     phones — tighten it and swap the language switcher to its short form
-     (see LOCALE_OPTIONS' `short`) instead of the full language name. */
-  .navbar-auth-link { padding: 0.3rem 0.5rem; font-size: 0.82rem; }
-  .navbar-links {
-    order: 4;
-    flex-basis: 100%;
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.2rem;
-    margin-top: 0.5rem;
-    padding-top: 0.7rem;
-    border-top: 1px solid rgba(255,255,255,0.25);
-  }
-  .navbar-links.is-open { display: flex; }
-  .navbar-links a { padding: 0.8rem 1rem; border-radius: 10px; font-size: 1rem; }
-  .navbar-links a.active { box-shadow: none; }
+  .navbar-toggle { display: inline-flex; }
+  .navbar-links { display: none; }
+  /* The account popover is redundant with the drawer's own inline account
+     section (AccountMenu variant="inline") — one entry point per screen
+     size, not two, so it isn't there to be mistaken for something else. */
+  .navbar-account-slot { display: none; }
 }
 
 /* On genuinely narrow phones (not just tablet-portrait-and-below), the
    860px tightening above still isn't quite enough headroom for
-   brand + hamburger + login + language + theme to all fit on one row. */
+   brand + language + theme + hamburger to all fit on one row. */
 @media (max-width: 400px) {
   .navbar { padding: 0.55rem 0.6rem; gap: 0.5rem 0.3rem; }
   .navbar-brand { font-size: 0.95rem; gap: 0.25rem; }
-  /* An arbitrarily long display name would otherwise be the one thing none
-     of the tightening above can bound — truncate it instead. */
-  .navbar-username { display: inline-block; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+}
+
+/* An arbitrarily long display name would otherwise be the one thing nothing
+   above can bound — truncate it, in both the popover trigger and the
+   drawer's inline heading. */
+.navbar-username { display: inline-block; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+@media (max-width: 400px) {
+  .navbar-username { max-width: 70px; }
+}
+
+/* ---------- Mobile nav drawer ---------- */
+.nav-drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(20, 14, 10, 0.45);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 39;
+}
+.nav-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+.nav-drawer {
+  position: fixed; top: 0; bottom: 0; left: 0; width: 280px; max-width: 82vw;
+  background: var(--paper); border-right: 1px solid var(--line); box-shadow: var(--shadow-lg);
+  transform: translateX(-100%); transition: transform 0.22s ease;
+  z-index: 40; display: flex; flex-direction: column; overflow-y: auto;
+}
+.nav-drawer.is-open { transform: translateX(0); }
+
+.nav-drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.1rem; border-bottom: 1px solid var(--line); flex-shrink: 0;
+}
+.nav-drawer-header .navbar-brand { color: var(--ink); }
+.nav-drawer-close {
+  border: none; background: none; color: var(--ink-soft); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 999px; transition: background 0.15s ease;
+}
+.nav-drawer-close:hover { background: var(--cream-4); }
+
+.nav-drawer-links { display: flex; flex-direction: column; padding: 0.6rem; gap: 0.1rem; }
+.nav-drawer-links a {
+  color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.96rem;
+  padding: 0.75rem 0.9rem; border-radius: 10px; transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-drawer-links a:hover { background: var(--cream-4); }
+.nav-drawer-links a.active { background: var(--accent-soft); color: var(--accent-dark); }
+
+.nav-drawer-account { margin-top: auto; border-top: 1px solid var(--line); padding: 0.6rem; flex-shrink: 0; }
+/* AccountMenu's logged-out state renders the same .navbar-auth-link used in
+   the (dark, gradient) header — it needs its own colors here since the
+   drawer's background is the light paper surface, not the header. */
+.nav-drawer-account .navbar-auth-link {
+  color: var(--ink); padding: 0.75rem 0.9rem; font-size: 0.96rem; font-weight: 600;
+}
+.nav-drawer-account .navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); transform: none; }
+
+@media (min-width: 861px) {
+  .nav-drawer, .nav-drawer-backdrop { display: none; }
 }
 
 .theme-toggle {
@@ -305,6 +354,21 @@ body {
 .dropdown-option:hover { background: var(--accent-soft); color: var(--accent-dark); }
 .dropdown-option.is-selected { color: var(--accent); font-weight: 700; }
 .dropdown-option svg { color: var(--accent); flex-shrink: 0; }
+
+/* ---------- Account menu (popover on desktop, inline in the mobile drawer) ---------- */
+.account-menu-popover { min-width: 200px; }
+.account-menu-divider { height: 1px; background: var(--line); margin: 0.35rem 0.2rem; }
+/* Left at its own resting color (not the shared --ink) so it reads as a
+   distinct, slightly-more-deliberate action than "登入後才能..." nav-style
+   options above it — the whole point of separating it out was to stop it
+   from being mistaken for a profile/menu link. */
+.account-menu-logout { color: var(--accent-dark); }
+
+.account-menu-heading {
+  display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.7rem 0.5rem;
+  font-weight: 700; color: var(--ink-soft); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.account-menu-inline { display: flex; flex-direction: column; gap: 0.1rem; }
 
 .app-main { flex: 1; padding: 2.2rem 1.75rem 4rem; max-width: 980px; margin: 0 auto; width: 100%; }
 

@@ -1,28 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { useDismissableMenu } from '../hooks/useDismissableMenu.js';
 
 // Generic custom-styled dropdown — replaces native <select> (which can't be
 // themed consistently across browsers/OS) with a themeable popover menu that
 // follows the site's design tokens in both light and dark mode.
 export default function Dropdown({ options, value, onChange, icon, ariaLabel, align = 'right' }) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onDocClick(e) {
-      if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
-    }
-    function onKey(e) {
-      if (e.key === 'Escape') setOpen(false);
-    }
-    document.addEventListener('mousedown', onDocClick);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDocClick);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
+  const { open, setOpen, rootRef } = useDismissableMenu();
 
   const current = options.find((o) => o.value === value) ?? options[0];
 
