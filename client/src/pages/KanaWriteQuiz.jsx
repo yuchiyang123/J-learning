@@ -101,7 +101,13 @@ export default function KanaWriteQuiz({ script }) {
 
   const current = queue[qIndex];
 
-  function redraw() {
+  // `revealed` defaults to the current render's state, but the "new
+  // question" effect below calls this in the same tick as setRevealed(false)
+  // — state updates aren't applied until the next render, so without the
+  // explicit override this would still see the *previous* question's
+  // revealed=true and briefly paint its stroke-order answer onto the new
+  // question before the next render clears it. That flash was the bug.
+  function redraw(revealedOverride = revealed) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -119,7 +125,7 @@ export default function KanaWriteQuiz({ script }) {
     ctx.setLineDash([]);
     ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    if (revealed && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
+    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
 
     drawInkStrokes(ctx);
   }
@@ -128,7 +134,7 @@ export default function KanaWriteQuiz({ script }) {
     clearStrokes();
     setRevealed(false);
     setSuggestion(null);
-    redraw();
+    redraw(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qIndex, stage]);
 
