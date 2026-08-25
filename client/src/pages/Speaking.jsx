@@ -7,6 +7,13 @@ import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { SpeakingSkeleton } from '../components/Skeleton.jsx';
 
+// Desktop Chrome reliably auto-stops recognition a moment after it detects
+// silence, but that "end of speech" detection isn't consistent on mobile —
+// it can just sit in the listening state indefinitely. This is a safety net
+// so a recording can never get stuck: force it to stop after this long even
+// if the browser never fires its own end-of-speech event.
+const MAX_RECORDING_MS = 8000;
+
 export default function Speaking() {
   const [level, setLevel] = useState('N5');
   const [sentences, setSentences] = useState([]);
@@ -21,6 +28,8 @@ export default function Speaking() {
   const visualizerSupported = isVisualizerSupported();
   const canvasRef = useRef(null);
   const stopVisualizerRef = useRef(null);
+  const recognizerRef = useRef(null);
+  const autoStopTimerRef = useRef(null);
   const { t, locale } = useLocale();
 
   useEffect(() => () => { stopVisualizerRef.current?.(); }, []);
@@ -69,10 +78,25 @@ export default function Speaking() {
       stopViz();
       return;
     }
+    recognizerRef.current = recognizer;
 
-    recognizer.onstart = () => setListening(true);
-    recognizer.onend = () => { setListening(false); stopViz(); };
+    const clearAutoStop = () => {
+      if (autoStopTimerRef.current) {
+        clearTimeout(autoStopTimerRef.current);
+        autoStopTimerRef.current = null;
+      }
+    };
+
+    recognizer.onstart = () => {
+      setListening(true);
+      // .stop() (as opposed to .abort()) still finalizes whatever audio was
+      // captured so far into a result, rather than throwing the recording away.
+      autoStopTimerRef.current = setTimeout(() => recognizer.stop(), MAX_RECORDING_MS);
+    };
+    recognizer.onend = () => { recognizerRef.current = null; clearAutoStop(); setListening(false); stopViz(); };
     recognizer.onerror = (e) => {
+      recognizerRef.current = null;
+      clearAutoStop();
       setListening(false);
       stopViz();
       setError(`${t('speaking_recognition_failed')}：${e.error || t('speaking_unknown_error')}`);
@@ -87,6 +111,17 @@ export default function Speaking() {
     };
     recognizer.start();
   }, [supported, current, visualizerSupported, t]);
+
+  // Lets the user manually end a recording (e.g. on mobile, where automatic
+  // end-of-speech detection can fail to fire — see MAX_RECORDING_MS above).
+  const stopListening = useCallback(() => {
+    recognizerRef.current?.stop();
+  }, []);
+
+  useEffect(() => () => {
+    recognizerRef.current?.abort();
+    if (autoStopTimerRef.current) clearTimeout(autoStopTimerRef.current);
+  }, []);
 
   return (
     <div className="page">
@@ -110,8 +145,8 @@ export default function Speaking() {
             <button className="icon-btn" onClick={() => speak(current.example_jp)}>
               <Volume2 size={16} /> {t('btn_play_example')}
             </button>
-            <button className="icon-btn" disabled={!supported || listening} onClick={handleRecord}>
-              <Mic size={16} className={listening ? 'pulse' : ''} /> {listening ? t('btn_recording') : t('btn_start_recording')}
+            <button className="icon-btn" disabled={!supported} onClick={listening ? stopListening : handleRecord}>
+              <Mic size={16} className={listening ? 'pulse' : ''} /> {listening ? t('btn_tap_to_stop') : t('btn_start_recording')}
             </button>
             <button className="icon-btn" onClick={() => setIndex((i) => (i + 1) % sentences.length)}>
               {t('btn_next_word')} <ArrowRight size={16} />
