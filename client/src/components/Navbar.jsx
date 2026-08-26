@@ -10,6 +10,7 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 // it's only ever relevant once you're logged in (see AccountMenu.jsx).
 const links = [
   { to: '/', key: 'nav_home', end: true },
+  { to: '/search', key: 'nav_search' },
   { to: '/kana', key: 'nav_kana' },
   { to: '/vocabulary', key: 'nav_vocab' },
   { to: '/kanji', key: 'nav_kanji' },

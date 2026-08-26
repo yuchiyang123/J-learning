@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Volume2, Search, X, Check } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
@@ -24,7 +25,9 @@ function splitExplanation(explanation) {
 }
 
 export default function Grammar() {
-  const [level, setLevel] = useState('N5');
+  const [searchParams] = useSearchParams();
+  const urlLevel = searchParams.get('level');
+  const [level, setLevel] = useState(/^N[1-5]$/.test(urlLevel) ? urlLevel : 'N5');
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
   const [progress, setProgress] = useState([]);

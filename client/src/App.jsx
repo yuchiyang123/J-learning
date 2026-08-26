@@ -11,6 +11,7 @@ import Quiz from './pages/Quiz.jsx';
 import JlptMock from './pages/JlptMock.jsx';
 import Progress from './pages/Progress.jsx';
 import Settings from './pages/Settings.jsx';
+import Search from './pages/Search.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/jlpt" element={<JlptMock />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

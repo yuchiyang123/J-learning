@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2 } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
@@ -11,7 +12,9 @@ import { invalidateCache } from '../lib/apiCache.js';
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function Vocabulary() {
-  const [level, setLevel] = useState('N5');
+  const [searchParams] = useSearchParams();
+  const urlLevel = searchParams.get('level');
+  const [level, setLevel] = useState(LEVELS.includes(urlLevel) ? urlLevel : 'N5');
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'

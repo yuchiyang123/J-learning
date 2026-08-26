@@ -21,6 +21,7 @@ import progressRouter from './routes/progress.js';
 import speakingRouter from './routes/speaking.js';
 import gamesRouter from './routes/games.js';
 import usersRouter from './routes/users.js';
+import searchRouter from './routes/search.js';
 
 const ALLOWED_ORIGINS = [
   'https://j-learning.matthewyu.uk',
@@ -81,6 +82,7 @@ app.use('/api/progress', progressRouter);
 app.use('/api/speaking', speakingRouter);
 app.use('/api/games', gamesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/search', searchRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
