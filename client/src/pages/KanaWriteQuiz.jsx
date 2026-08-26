@@ -200,7 +200,7 @@ export default function KanaWriteQuiz({ script }) {
     <div className="kana-writequiz">
       {stage === 'setup' && (
         <div className="writequiz-setup">
-          <div className="writequiz-setup-actions">
+          <div className="filter-group">
             <span className="filter-label">{t('kana_writequiz_prompt_mode')}</span>
             <button className={promptMode === 'romaji' ? 'active' : ''} onClick={() => setPromptMode('romaji')}>
               {t('kana_writequiz_prompt_romaji')}
