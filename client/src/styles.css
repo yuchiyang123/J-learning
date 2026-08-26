@@ -615,7 +615,6 @@ button { cursor: pointer; font-family: inherit; }
 }
 .kana-cell:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .kana-cell.empty { background: transparent; border: none; box-shadow: none; }
-.kana-cell.is-playing { border-color: var(--accent); background: var(--accent-soft); box-shadow: var(--shadow-md); }
 .kana-char { font-size: 1.45rem; font-weight: 700; font-family: var(--font-heading); }
 .kana-romaji { font-size: 0.75rem; color: var(--ink-soft); }
 

@@ -11,7 +11,7 @@ import { QuizSkeleton } from '../components/Skeleton.jsx';
 
 export default function Kana() {
   const [script, setScript] = useState('hira'); // 'hira' | 'kata'
-  const [mode, setMode] = useState('chart'); // 'chart' | 'listen' | 'quiz' | 'write' | 'writequiz'
+  const [mode, setMode] = useState('chart'); // 'chart' | 'quiz' | 'write' | 'writequiz'
   const { t } = useLocale();
 
   return (
@@ -28,7 +28,6 @@ export default function Kana() {
         <div className="filter-group">
           <span className="filter-label">{t('mode_label')}</span>
           <button className={mode === 'chart' ? 'active' : ''} onClick={() => setMode('chart')}>{t('kana_mode_chart')}</button>
-          <button className={mode === 'listen' ? 'active' : ''} onClick={() => setMode('listen')}>{t('kana_mode_listen')}</button>
           <button className={mode === 'quiz' ? 'active' : ''} onClick={() => setMode('quiz')}>{t('kana_mode_quiz')}</button>
           <button className={mode === 'write' ? 'active' : ''} onClick={() => setMode('write')}>{t('kana_mode_write')}</button>
           <button className={mode === 'writequiz' ? 'active' : ''} onClick={() => setMode('writequiz')}>{t('kana_mode_writequiz')}</button>
@@ -43,15 +42,6 @@ export default function Kana() {
         </>
       )}
 
-      {mode === 'listen' && (
-        <>
-          <p className="subtitle">{t('kana_listen_hint')}</p>
-          <KanaTable title={t('seion_title')} rows={seion} script={script} hideRomaji />
-          <KanaTable title={t('dakuon_title')} rows={dakuon} script={script} hideRomaji />
-          <KanaTable title={t('handakuon_title')} rows={handakuon} script={script} hideRomaji />
-        </>
-      )}
-
       {mode === 'quiz' && <KanaQuiz />}
       {mode === 'write' && <WritingPractice script={script} />}
       {mode === 'writequiz' && <KanaWriteQuiz script={script} />}
@@ -59,19 +49,7 @@ export default function Kana() {
   );
 }
 
-function KanaTable({ title, rows, script, hideRomaji = false }) {
-  // In listening-practice mode there's no visible answer at all — the only
-  // feedback that a click registered is this brief highlight, timed to
-  // roughly cover how long the TTS utterance takes to start.
-  const [playingKey, setPlayingKey] = useState(null);
-
-  function play(key, char) {
-    speak(char);
-    if (!hideRomaji) return;
-    setPlayingKey(key);
-    setTimeout(() => setPlayingKey((k) => (k === key ? null : k)), 600);
-  }
-
+function KanaTable({ title, rows, script }) {
   return (
     <div className="kana-section">
       <h2>{title}</h2>
@@ -79,22 +57,21 @@ function KanaTable({ title, rows, script, hideRomaji = false }) {
         {rows.map((row) => (
           <div className="kana-row" key={row.label}>
             <div className="kana-row-label">{row.label}</div>
-            {row.cells.map((cell, i) => {
-              const key = `${row.label}-${i}`;
-              return cell ? (
+            {row.cells.map((cell, i) =>
+              cell ? (
                 <button
                   key={i}
-                  className={`kana-cell${hideRomaji && playingKey === key ? ' is-playing' : ''}`}
-                  onClick={() => play(key, cell[0])}
-                  title={hideRomaji ? undefined : cell[2]}
+                  className="kana-cell"
+                  onClick={() => speak(cell[0])}
+                  title={cell[2]}
                 >
                   <span className="kana-char">{script === 'hira' ? cell[0] : cell[1]}</span>
-                  {!hideRomaji && <span className="kana-romaji">{cell[2]}</span>}
+                  <span className="kana-romaji">{cell[2]}</span>
                 </button>
               ) : (
                 <div key={i} className="kana-cell empty" />
-              );
-            })}
+              )
+            )}
           </div>
         ))}
       </div>
