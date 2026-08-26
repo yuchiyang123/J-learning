@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, X, Undo2, Eraser, RefreshCw } from 'lucide-react';
+import { Check, X, Undo2, Eraser, RefreshCw, Volume2 } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
 import { drawKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
+import { speak } from '../speech.js';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
@@ -37,6 +38,7 @@ export default function KanaWriteQuiz({ script }) {
   const { t } = useLocale();
 
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
+  const [promptMode, setPromptMode] = useState('romaji'); // 'romaji' | 'audio'
   const [selectedRows, setSelectedRows] = useState(() => new Set());
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
@@ -140,6 +142,14 @@ export default function KanaWriteQuiz({ script }) {
 
   useEffect(redraw, [revealed]);
 
+  // Audio prompt mode: no romaji is shown at all, so the question is only
+  // ever heard, never read — auto-play it as each new question comes up
+  // (the on-screen 發音 button lets them replay it).
+  useEffect(() => {
+    if (stage === 'active' && promptMode === 'audio' && current) speak(current.char);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qIndex, stage, promptMode]);
+
   function clearCanvas() {
     clearStrokes();
     redraw();
@@ -191,6 +201,16 @@ export default function KanaWriteQuiz({ script }) {
       {stage === 'setup' && (
         <div className="writequiz-setup">
           <div className="writequiz-setup-actions">
+            <span className="filter-label">{t('kana_writequiz_prompt_mode')}</span>
+            <button className={promptMode === 'romaji' ? 'active' : ''} onClick={() => setPromptMode('romaji')}>
+              {t('kana_writequiz_prompt_romaji')}
+            </button>
+            <button className={promptMode === 'audio' ? 'active' : ''} onClick={() => setPromptMode('audio')}>
+              {t('kana_writequiz_prompt_audio')}
+            </button>
+          </div>
+
+          <div className="writequiz-setup-actions">
             <span className="filter-label">{t('kana_writequiz_select_rows')}</span>
             <button
               className="secondary-btn"
@@ -231,7 +251,13 @@ export default function KanaWriteQuiz({ script }) {
       {stage === 'active' && current && (
         <div className="writequiz-stage">
           <div className="writequiz-progress">{t('kana_writequiz_progress', { current: qIndex + 1, total: queue.length })}</div>
-          <div className="writequiz-romaji">{current.romaji}</div>
+          {promptMode === 'romaji' ? (
+            <div className="writequiz-romaji">{current.romaji}</div>
+          ) : (
+            <button className="secondary-btn icon-btn writequiz-play-btn" onClick={() => speak(current.char)}>
+              <Volume2 size={18} /> {t('btn_play_audio')}
+            </button>
+          )}
           <canvas
             ref={canvasRef}
             width={CANVAS_SIZE}
@@ -251,6 +277,7 @@ export default function KanaWriteQuiz({ script }) {
           )}
           {revealed && (
             <>
+              {promptMode === 'audio' && <div className="writequiz-romaji revealed-romaji">{current.romaji}</div>}
               {suggestion && (
                 <div className={`writequiz-suggestion${suggestion.suggestCorrect ? ' suggest-correct' : ' suggest-wrong'}`}>
                   {t(
