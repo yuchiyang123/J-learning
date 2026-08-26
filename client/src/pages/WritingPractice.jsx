@@ -4,6 +4,7 @@ import { seion, dakuon, handakuon } from '../data/kana.js';
 import { drawKanaStrokeGuide, drawKanaFallbackGlyph } from '../lib/kanaStrokeGuide.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
+import { getKanaWriteAutoplay } from '../lib/kanaWritePrefs.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
 const CANVAS_SIZE = 480;
@@ -58,9 +59,12 @@ export default function WritingPractice({ script }) {
 
   // Selecting a character (picker click or prev/next) plays its pronunciation
   // instead of the practice showing romaji text — the learner hears the
-  // reading rather than reading it off the screen.
+  // reading rather than reading it off the screen. Togglable in 個人中心
+  // (settings_kana_autoplay_label) since not everyone wants audio firing on
+  // every switch; re-read fresh each time rather than held in state, since
+  // this component doesn't need to react live to a change made elsewhere.
   useEffect(() => {
-    speak(char);
+    if (getKanaWriteAutoplay()) speak(char);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, script]);
 
