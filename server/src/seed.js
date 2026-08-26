@@ -477,6 +477,19 @@ const VOCAB_MEANING_PER_LEVEL = 300;
 const VOCAB_READING_PER_LEVEL = 150;
 const LISTENING_PER_LEVEL = 150;
 
+// The bulk listening quiz can't show the tested word as text (that would
+// give the audio question away), so every one of these ~150-per-level
+// questions used to share one literal instruction string verbatim — scanning
+// a list of them reads as broken/duplicated content even though each one
+// plays different audio. Cycling a few natural equivalent phrasings keeps
+// consecutive questions from being byte-identical without hinting the answer.
+const LISTENING_WORD_PROMPTS = [
+  '聞こえた単語の意味を選んでください。',
+  '音声を聞いて、正しい意味を選んでください。',
+  'この単語の意味は何ですか？音声を聞いて選んでください。',
+  '聞こえた単語はどんな意味ですか？',
+];
+
 for (const level of ['N5', 'N4', 'N3', 'N2', 'N1']) {
   const pool = wordsByLevel[level] || [];
   if (pool.length < 4) continue;
@@ -500,11 +513,14 @@ for (const level of ['N5', 'N4', 'N3', 'N2', 'N1']) {
   }
 
   // listening quiz: audio_text spoken aloud, choose the meaning
+  let listeningIndex = 0;
   for (const w of shuffleArr(pool).slice(0, LISTENING_PER_LEVEL)) {
     const [, , kana, meaning] = w;
     const distractors = pickDistractors(pool, meaning, 3);
     if (distractors.length < 3) continue;
-    addQuiz('listening', level, '聞こえた単語の意味を選んでください。', kana, [meaning, ...distractors], 'a');
+    const prompt = LISTENING_WORD_PROMPTS[listeningIndex % LISTENING_WORD_PROMPTS.length];
+    listeningIndex++;
+    addQuiz('listening', level, prompt, kana, [meaning, ...distractors], 'a');
   }
 }
 
