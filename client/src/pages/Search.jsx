@@ -57,7 +57,7 @@ export default function SearchPage() {
               <h2>{t('nav_vocab')}</h2>
               <div className="search-result-list">
                 {results.words.map((w) => (
-                  <Link key={w.id} to={`/vocabulary?level=${w.level}`} className="search-result-item">
+                  <Link key={w.id} to={`/vocabulary?level=${w.level}&id=${w.id}`} className="search-result-item">
                     <span className="search-result-level">{w.level}</span>
                     <span className="search-result-main">{w.kanji || w.kana}</span>
                     {w.kanji && <span className="search-result-reading">{w.kana}</span>}
@@ -73,7 +73,7 @@ export default function SearchPage() {
               <h2>{t('nav_kanji')}</h2>
               <div className="search-result-list">
                 {results.kanji.map((k) => (
-                  <Link key={k.id} to={`/kanji?level=${k.level}`} className="search-result-item">
+                  <Link key={k.id} to={`/kanji?level=${k.level}&q=${encodeURIComponent(k.character)}`} className="search-result-item">
                     <span className="search-result-level">{k.level}</span>
                     <span className="search-result-main">{k.character}</span>
                     <span className="search-result-reading">{k.onyomi || k.kunyomi || ''}</span>
@@ -89,7 +89,7 @@ export default function SearchPage() {
               <h2>{t('nav_grammar')}</h2>
               <div className="search-result-list">
                 {results.grammar.map((g) => (
-                  <Link key={g.id} to={`/grammar?level=${g.level}`} className="search-result-item">
+                  <Link key={g.id} to={`/grammar?level=${g.level}&q=${encodeURIComponent(g.pattern)}`} className="search-result-item">
                     <span className="search-result-level">{g.level}</span>
                     <span className="search-result-main">{g.pattern}</span>
                     <span className="search-result-sub">{g.meaning}</span>

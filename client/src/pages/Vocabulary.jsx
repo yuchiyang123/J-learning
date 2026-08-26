@@ -14,6 +14,7 @@ const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 export default function Vocabulary() {
   const [searchParams] = useSearchParams();
   const urlLevel = searchParams.get('level');
+  const urlWordId = searchParams.get('id');
   const [level, setLevel] = useState(LEVELS.includes(urlLevel) ? urlLevel : 'N5');
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
@@ -77,6 +78,20 @@ export default function Vocabulary() {
   const filteredWords = filter === 'unknown' ? unknownWords : words;
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
+
+  // Landed here from a site-wide search result (?id=) — jump straight to
+  // that card instead of leaving the learner on whatever card index 0 is.
+  // Forces filter back to 'all' since the target word may not be in the
+  // '只顯示不會的' subset.
+  useEffect(() => {
+    if (!urlWordId || words.length === 0) return;
+    const idx = words.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
+    if (idx === -1) return;
+    setFilter('all');
+    setIndex(idx);
+    setFlipped(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlWordId, words.length]);
 
   function next() {
     setDir('next');

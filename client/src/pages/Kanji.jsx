@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { X, Check, Search } from 'lucide-react';
 import { api } from '../api.js';
@@ -16,7 +16,7 @@ export default function Kanji() {
   const urlLevel = searchParams.get('level');
   const [level, setLevel] = useState(/^N[1-5]$/.test(urlLevel) ? urlLevel : 'N5');
   const [mode, setMode] = useState('browse'); // 'browse' | 'write' | 'writequiz'
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
@@ -25,7 +25,16 @@ export default function Kanji() {
 
   const [list, loading] = useCachedApi(`kanji:${level}:${locale}`, () => api.getKanji(level));
 
-  useEffect(() => { setQuery(''); }, [level]);
+  // Clears the query when the user picks a different level manually, but
+  // not on mount — mounting with a URL-provided ?q= (from site-wide search)
+  // needs to survive this same-effect-signature level-change reset. Compares
+  // against the previous level (rather than a fire-once flag) so this stays
+  // correct under StrictMode's double-invoke-on-mount in dev.
+  const prevLevel = useRef(level);
+  useEffect(() => {
+    if (prevLevel.current !== level) setQuery('');
+    prevLevel.current = level;
+  }, [level]);
 
   // Previously this page tracked marks in local-only state, so a reload or
   // just navigating away and back showed every card as unmarked again even
