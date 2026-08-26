@@ -77,6 +77,8 @@ const zhTW = {
 
   vocab_title: '單字學習',
   kanji_title: '漢字學習',
+  kanji_search_placeholder: '搜尋漢字、讀音或意思...',
+  kanji_no_match: '沒有符合條件的漢字，換個關鍵字或篩選試試？',
   grammar_title: '文法解說',
   grammar_search_placeholder: '搜尋文法或意思...',
   grammar_no_match: '沒有符合條件的文法，換個關鍵字或篩選試試？',
@@ -364,6 +366,8 @@ const zhCN = {
 
   vocab_title: '单字学习',
   kanji_title: '汉字学习',
+  kanji_search_placeholder: '搜索汉字、读音或意思...',
+  kanji_no_match: '没有符合条件的汉字，换个关键字或筛选试试？',
   grammar_title: '文法解说',
   grammar_search_placeholder: '搜索文法或意思...',
   grammar_no_match: '没有符合条件的文法，换个关键字或筛选试试？',
@@ -651,6 +655,8 @@ const en = {
 
   vocab_title: 'Vocabulary',
   kanji_title: 'Kanji',
+  kanji_search_placeholder: 'Search kanji, reading, or meaning...',
+  kanji_no_match: 'No kanji match — try a different keyword or filter?',
   grammar_title: 'Grammar',
   grammar_search_placeholder: 'Search pattern or meaning...',
   grammar_no_match: 'No grammar points match — try a different keyword or filter?',
@@ -938,6 +944,8 @@ const ko = {
 
   vocab_title: '단어 학습',
   kanji_title: '한자 학습',
+  kanji_search_placeholder: '한자, 읽는 법 또는 의미 검색...',
+  kanji_no_match: '조건에 맞는 한자가 없습니다. 다른 검색어나 필터를 시도해보세요.',
   grammar_title: '문법 설명',
   grammar_search_placeholder: '문형 또는 의미 검색...',
   grammar_no_match: '조건에 맞는 문법이 없습니다. 다른 검색어나 필터를 시도해보세요.',

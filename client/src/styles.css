@@ -659,7 +659,7 @@ button { cursor: pointer; font-family: inherit; }
 .kanji-mark-btn.good:hover { background: var(--accent-2-soft); color: var(--accent-2); }
 .kanji-mark-btn.good.is-active { background: var(--accent-2); color: #fff; }
 
-/* ---------- Search box (generic, currently used by Grammar) ---------- */
+/* ---------- Search box (generic, used by Grammar/Kanji) ---------- */
 .search-box {
   display: flex; align-items: center; gap: 0.5rem; flex: 1 1 240px; max-width: 360px;
   border: 1px solid var(--line); background: var(--paper-raised); border-radius: 999px;
