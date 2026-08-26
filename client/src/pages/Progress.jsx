@@ -104,6 +104,9 @@ export default function ProgressPage() {
 
       {!loading && stats && (
         <div className="card-grid">
+          {stats.streak > 0 && (
+            <StatCard label={t('dashboard_stat_streak')} value={`${stats.streak} ${t('streak_days_unit')}`} />
+          )}
           <StatCard label={t('dashboard_stat_reviewed')} value={stats.totalReviewed} />
           <StatCard label={t('dashboard_stat_mastered')} value={stats.mastered} />
           <StatCard label={t('progress_quiz_total')} value={stats.quizTotal} />

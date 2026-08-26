@@ -75,6 +75,28 @@ router.get('/stats', (req, res) => {
     ? speaking.reduce((s, a) => s + (a.score || 0), 0) / speaking.length
     : null;
 
+  // Daily streak: consecutive UTC calendar days with at least one quiz
+  // result or speaking attempt, counting back from today. Today not having
+  // any activity yet doesn't break the streak (the user just hasn't done
+  // today's practice yet) — it only breaks once a full day is skipped.
+  // Calendar day is UTC here (matches how every timestamp in this app is
+  // already stored — see lib/formatDate.js on the client, which only
+  // converts to local time for *display*), so a user far from UTC could see
+  // their streak flip a day earlier/later than their own midnight; a known,
+  // accepted simplification rather than tracking each user's timezone.
+  const activeDates = new Set([
+    ...results.map((r) => r.taken_at.slice(0, 10)),
+    ...speaking.map((a) => a.attempted_at.slice(0, 10)),
+  ]);
+  let streak = 0;
+  const cursor = new Date();
+  cursor.setUTCHours(0, 0, 0, 0);
+  if (!activeDates.has(cursor.toISOString().slice(0, 10))) cursor.setUTCDate(cursor.getUTCDate() - 1);
+  while (activeDates.has(cursor.toISOString().slice(0, 10))) {
+    streak++;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+
   // Per-category accuracy for the Progress page's radar/bar charts. 'kana'
   // (MC quiz) and 'kana_write' (handwriting quiz) are two different
   // quiz_results.type values but the same practice area from the learner's
@@ -108,6 +130,7 @@ router.get('/stats', (req, res) => {
     avgSpeakingScore: avgSpeaking !== null ? Math.round(avgSpeaking) : null,
     recentResults: results.slice(-10).reverse(),
     categoryBreakdown,
+    streak,
   });
 });
 
