@@ -53,6 +53,7 @@ export const api = {
   deleteCustomWord: (id) => request(`/words/custom/${id}`, { method: 'DELETE' }),
   getKanji: (level) => request(`/kanji?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
   getGrammar: (level) => request(`/grammar?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
+  search: (q) => request(`/search?${withLocale(new URLSearchParams({ q }))}`),
   getQuiz: ({ type, level, count, includeAnswers } = {}) => {
     const params = new URLSearchParams();
     if (type) params.set('type', type);
@@ -75,6 +76,8 @@ export const api = {
   },
   submitKanaWrite: (payload) => request('/quiz/kana-write/submit', { method: 'POST', body: JSON.stringify(payload) }),
   getKanaWriteWrong: (script) => request(`/quiz/kana-write/wrong${script ? `?script=${script}` : ''}`),
+  submitKanjiWrite: (payload) => request('/quiz/kanji-write/submit', { method: 'POST', body: JSON.stringify(payload) }),
+  getKanjiWriteWrong: (level) => request(`/quiz/kanji-write/wrong${level ? `?level=${level}` : ''}`),
   getProgress: () => request('/progress'),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
   clearProgress: ({ itemType, itemId }) => request(`/progress/${itemType}/${itemId}`, { method: 'DELETE' }),

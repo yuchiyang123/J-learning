@@ -10,6 +10,7 @@ export const QUIZ_TYPE_LABEL_KEYS = {
   listening: 'type_listening',
   kana: 'type_kana',
   kana_write: 'type_kana_write',
+  kanji_write: 'type_kanji_write',
   jlpt_mock: 'type_jlpt_mock',
 };
 

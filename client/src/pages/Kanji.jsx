@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { X, Check, Search } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
@@ -7,9 +8,14 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { KanjiGridSkeleton } from '../components/Skeleton.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
+import KanjiWritePractice from './KanjiWritePractice.jsx';
+import KanjiWriteQuiz from './KanjiWriteQuiz.jsx';
 
 export default function Kanji() {
-  const [level, setLevel] = useState('N5');
+  const [searchParams] = useSearchParams();
+  const urlLevel = searchParams.get('level');
+  const [level, setLevel] = useState(/^N[1-5]$/.test(urlLevel) ? urlLevel : 'N5');
+  const [mode, setMode] = useState('browse'); // 'browse' | 'write' | 'writequiz'
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
   const [progress, setProgress] = useState([]);
@@ -79,73 +85,88 @@ export default function Kanji() {
   return (
     <div className="page">
       <h1>{t('kanji_title')}</h1>
-      <LevelPicker level={level} onChange={setLevel} />
-
       <div className="filter-row">
-        <div className="search-box">
-          <Search size={16} />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('kanji_search_placeholder')}
-          />
-          {query && (
-            <button type="button" className="search-clear" onClick={() => setQuery('')} aria-label={t('btn_clear')}>
-              <X size={14} />
-            </button>
-          )}
+        <LevelPicker level={level} onChange={setLevel} />
+        <div className="filter-group">
+          <span className="filter-label">{t('mode_label')}</span>
+          <button className={mode === 'browse' ? 'active' : ''} onClick={() => setMode('browse')}>{t('kanji_mode_browse')}</button>
+          <button className={mode === 'write' ? 'active' : ''} onClick={() => setMode('write')}>{t('kana_mode_write')}</button>
+          <button className={mode === 'writequiz' ? 'active' : ''} onClick={() => setMode('writequiz')}>{t('kana_mode_writequiz')}</button>
         </div>
-        {isLoggedIn && (
-          <div className="filter-group">
-            <span className="filter-label">{t('vocab_filter_label')}</span>
-            <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>{t('vocab_filter_all')}</button>
-            <button className={filter === 'unknown' ? 'active' : ''} onClick={() => setFilter('unknown')}>{t('vocab_filter_unknown')}</button>
-          </div>
-        )}
       </div>
 
-      {combinedLoading && <KanjiGridSkeleton />}
-
-      {!combinedLoading && list && (
-      <div className="kanji-grid">
-        {filteredList.map((k) => {
-          const srs = progressByKey.get(k.id);
-          return (
-            <div className="kanji-card" key={k.id}>
-              <div className="kanji-char" onClick={() => speak(k.kunyomi?.split('、')[0] || k.character)}>
-                {k.character}
-              </div>
-              <div className="kanji-readings">
-                <div><strong>{t('onyomi')}</strong> {k.onyomi || '—'}</div>
-                <div><strong>{t('kunyomi')}</strong> {k.kunyomi || '—'}</div>
-                <div><strong>{t('meaning')}</strong> {k.meaning}</div>
-                <div className="muted">{t('stroke_count')} {k.stroke_count}</div>
-              </div>
-              {isLoggedIn && (
-                <div className="kanji-mark">
-                  <button
-                    className={`kanji-mark-btn bad${srs === 0 ? ' is-active' : ''}`}
-                    title={t('btn_dont_know')}
-                    onClick={() => mark(k, false)}
-                  >
-                    <X size={15} />
-                  </button>
-                  <button
-                    className={`kanji-mark-btn good${srs > 0 ? ' is-active' : ''}`}
-                    title={t('btn_remember')}
-                    onClick={() => mark(k, true)}
-                  >
-                    <Check size={15} />
-                  </button>
-                </div>
+      {mode === 'browse' && (
+        <>
+          <div className="filter-row">
+            <div className="search-box">
+              <Search size={16} />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t('kanji_search_placeholder')}
+              />
+              {query && (
+                <button type="button" className="search-clear" onClick={() => setQuery('')} aria-label={t('btn_clear')}>
+                  <X size={14} />
+                </button>
               )}
             </div>
-          );
-        })}
-        {filteredList.length === 0 && <p>{t(emptyMessageKey)}</p>}
-      </div>
+            {isLoggedIn && (
+              <div className="filter-group">
+                <span className="filter-label">{t('vocab_filter_label')}</span>
+                <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>{t('vocab_filter_all')}</button>
+                <button className={filter === 'unknown' ? 'active' : ''} onClick={() => setFilter('unknown')}>{t('vocab_filter_unknown')}</button>
+              </div>
+            )}
+          </div>
+
+          {combinedLoading && <KanjiGridSkeleton />}
+
+          {!combinedLoading && list && (
+          <div className="kanji-grid">
+            {filteredList.map((k) => {
+              const srs = progressByKey.get(k.id);
+              return (
+                <div className="kanji-card" key={k.id}>
+                  <div className="kanji-char" onClick={() => speak(k.kunyomi?.split('、')[0] || k.character)}>
+                    {k.character}
+                  </div>
+                  <div className="kanji-readings">
+                    <div><strong>{t('onyomi')}</strong> {k.onyomi || '—'}</div>
+                    <div><strong>{t('kunyomi')}</strong> {k.kunyomi || '—'}</div>
+                    <div><strong>{t('meaning')}</strong> {k.meaning}</div>
+                    <div className="muted">{t('stroke_count')} {k.stroke_count}</div>
+                  </div>
+                  {isLoggedIn && (
+                    <div className="kanji-mark">
+                      <button
+                        className={`kanji-mark-btn bad${srs === 0 ? ' is-active' : ''}`}
+                        title={t('btn_dont_know')}
+                        onClick={() => mark(k, false)}
+                      >
+                        <X size={15} />
+                      </button>
+                      <button
+                        className={`kanji-mark-btn good${srs > 0 ? ' is-active' : ''}`}
+                        title={t('btn_remember')}
+                        onClick={() => mark(k, true)}
+                      >
+                        <Check size={15} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {filteredList.length === 0 && <p>{t(emptyMessageKey)}</p>}
+          </div>
+          )}
+        </>
       )}
+
+      {mode === 'write' && list && <KanjiWritePractice list={list} />}
+      {mode === 'writequiz' && list && <KanjiWriteQuiz level={level} list={list} />}
     </div>
   );
 }

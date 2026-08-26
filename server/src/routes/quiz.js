@@ -214,4 +214,60 @@ router.get('/kana-write/wrong', requireAuth, (req, res) => {
   res.json(wrong);
 });
 
+// POST /api/quiz/kanji-write/submit { level, items: [{char, meaning, isCorrect, strokes}] }
+// Same self-graded shape as kana-write above, with `level` (N5..N1) standing
+// in for kana's `script` as the grouping/level column.
+router.post('/kanji-write/submit', optionalAuth, (req, res) => {
+  const { level, items = [] } = req.body;
+  if (!level || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'level and items required' });
+  }
+  const userId = req.user?.id;
+  if (userId) touchUser(userId);
+
+  let correct = 0;
+  const detail = items.map((item) => {
+    const isCorrect = !!item.isCorrect;
+    if (isCorrect) correct++;
+    return {
+      questionId: `kanji:${item.char}`,
+      prompt: item.meaning,
+      selected: isCorrect ? item.char : '',
+      correctAnswer: item.char,
+      isCorrect,
+      strokes: Array.isArray(item.strokes) ? item.strokes : [],
+    };
+  });
+  const total = detail.length;
+
+  if (userId) {
+    db.prepare(
+      'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
+    ).run(userId, 'kanji_write', level, total, correct, JSON.stringify(detail));
+  }
+
+  res.json({ total, correct, detail });
+});
+
+// GET /api/quiz/kanji-write/wrong?level=N5
+router.get('/kanji-write/wrong', requireAuth, (req, res) => {
+  const { level } = req.query;
+  let sql = "SELECT detail FROM quiz_results WHERE user_id = ? AND type = 'kanji_write'";
+  const params = [req.user.id];
+  if (level) { sql += ' AND level = ?'; params.push(level); }
+  sql += ' ORDER BY taken_at DESC LIMIT 300';
+  const rows = db.prepare(sql).all(...params);
+
+  const lastOutcome = new Map();
+  for (const r of rows) {
+    for (const d of JSON.parse(r.detail || '[]')) {
+      if (!lastOutcome.has(d.questionId)) lastOutcome.set(d.questionId, d);
+    }
+  }
+  const wrong = [...lastOutcome.values()]
+    .filter((d) => !d.isCorrect)
+    .map((d) => ({ char: d.correctAnswer, meaning: d.prompt }));
+  res.json(wrong);
+});
+
 export default router;
