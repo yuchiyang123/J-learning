@@ -659,6 +659,23 @@ button { cursor: pointer; font-family: inherit; }
 .kanji-mark-btn.good:hover { background: var(--accent-2-soft); color: var(--accent-2); }
 .kanji-mark-btn.good.is-active { background: var(--accent-2); color: #fff; }
 
+/* ---------- Search box (generic, currently used by Grammar) ---------- */
+.search-box {
+  display: flex; align-items: center; gap: 0.5rem; flex: 1 1 240px; max-width: 360px;
+  border: 1px solid var(--line); background: var(--paper-raised); border-radius: 999px;
+  padding: 0.5rem 0.9rem; color: var(--muted-2);
+}
+.search-box:focus-within { border-color: var(--accent); color: var(--ink-soft); }
+.search-box input {
+  border: none; background: none; outline: none; flex: 1; font: inherit; color: var(--ink); min-width: 0;
+}
+.search-box input::placeholder { color: var(--muted-2); }
+.search-clear {
+  border: none; background: none; color: var(--muted-2); cursor: pointer; display: inline-flex;
+  padding: 2px; border-radius: 999px; transition: color 0.15s ease, background 0.15s ease;
+}
+.search-clear:hover { color: var(--accent-dark); background: var(--accent-soft); }
+
 /* ---------- Grammar ---------- */
 .grammar-list { display: flex; flex-direction: column; gap: 1.1rem; }
 .grammar-card {
@@ -666,9 +683,15 @@ button { cursor: pointer; font-family: inherit; }
   border: 1px solid var(--line); border-left: 4px solid var(--accent); transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 .grammar-card:hover { box-shadow: var(--shadow-md); transform: translateX(2px); }
+.grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
 .grammar-pattern { font-size: 1.35rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
 .grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
-.grammar-explanation { color: var(--ink-soft); line-height: 1.6; }
+.grammar-formation {
+  display: inline-block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-2);
+  background: var(--accent-2-soft); border-radius: 8px; padding: 0.3rem 0.6rem; font-weight: 600;
+}
+.grammar-formation-label { font-weight: 800; }
+.grammar-explanation { color: var(--ink-soft); line-height: 1.6; margin-top: 0.6rem; }
 
 .tiny-btn { border: none; background: none; font-size: 1rem; cursor: pointer; transition: transform 0.15s ease; color: var(--ink); }
 .tiny-btn:hover { transform: scale(1.2); }
