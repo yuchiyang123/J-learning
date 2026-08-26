@@ -56,6 +56,14 @@ export default function WritingPractice({ script }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, script]);
 
+  // Selecting a character (picker click or prev/next) plays its pronunciation
+  // instead of the practice showing romaji text — the learner hears the
+  // reading rather than reading it off the screen.
+  useEffect(() => {
+    speak(char);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, script]);
+
   useEffect(redraw, [showGuide, penSize]);
 
   function clearCanvas() {
@@ -89,7 +97,6 @@ export default function WritingPractice({ script }) {
       <div className="writing-stage">
         <div className="writing-toolbar">
           <button className="tiny-btn icon-btn" onClick={() => speak(current.hira)}><Volume2 size={16} /> {t('btn_play_audio')}</button>
-          <span className="writing-romaji">{current.romaji}</span>
           <button className="tiny-btn icon-btn" onClick={() => setShowGuide((g) => !g)}>
             {showGuide ? <Eye size={16} /> : <EyeOff size={16} />} {t('writing_char_ref')}
           </button>
