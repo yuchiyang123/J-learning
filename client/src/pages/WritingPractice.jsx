@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Eraser, Undo2, Volume2, Eye, EyeOff } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
-import { drawKanaStrokeGuide, drawKanaFallbackGlyph } from '../lib/kanaStrokeGuide.js';
+import { drawKanaStrokeGuide, drawKanaFallbackGlyph, animateKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
-import { getKanaWriteAutoplay } from '../lib/kanaWritePrefs.js';
+import { getKanaWriteAutoplay, getStrokeAnimation } from '../lib/kanaWritePrefs.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
 const CANVAS_SIZE = 480;
@@ -18,6 +18,7 @@ export default function WritingPractice({ script }) {
   const [showGuide, setShowGuide] = useState(true);
   const [penSize, setPenSize] = useState(10);
   const canvasRef = useRef(null);
+  const cancelAnimRef = useRef(null);
   const { strokesRef, pointerDown, pointerMove, pointerUp, clearStrokes, undoStroke, drawInkStrokes } =
     useKanaCanvas(canvasRef, penSize);
   const { t } = useLocale();
@@ -25,7 +26,9 @@ export default function WritingPractice({ script }) {
   const current = flatList[index];
   const char = script === 'hira' ? current.hira : current.kata;
 
-  function redraw() {
+  // Grid + the learner's own ink only — the part every frame needs
+  // regardless of whether the stroke guide is static or animating.
+  function redrawBase() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -44,18 +47,49 @@ export default function WritingPractice({ script }) {
     ctx.setLineDash([]);
     ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    if (showGuide && !drawKanaStrokeGuide(ctx, canvas.width, char)) {
-      drawKanaFallbackGlyph(ctx, canvas.width, canvas.height, char);
-    }
-
     drawInkStrokes(ctx);
   }
 
+  function stopAnimation() {
+    cancelAnimRef.current?.();
+    cancelAnimRef.current = null;
+  }
+
+  // Static redraw: base + the full stroke guide (or fallback glyph) painted
+  // all at once. Used whenever something other than a character switch
+  // changes (guide toggle, pen size) — those shouldn't replay the animation.
+  function redraw() {
+    stopAnimation();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    redrawBase();
+    if (showGuide && !drawKanaStrokeGuide(ctx, canvas.width, char)) {
+      drawKanaFallbackGlyph(ctx, canvas.width, canvas.height, char);
+    }
+  }
+
+  // Must run before the [index, script] effect below on mount (React fires
+  // same-commit effects in declaration order) — otherwise this one's static
+  // redraw would immediately cut off the animation that effect just started
+  // for the very first character.
+  useEffect(redraw, [showGuide, penSize]);
+
   useEffect(() => {
     strokesRef.current = [];
-    redraw();
+    stopAnimation();
+    const canvas = canvasRef.current;
+    if (canvas && showGuide && getStrokeAnimation()) {
+      const ctx = canvas.getContext('2d');
+      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, char, { prepareFrame: redrawBase });
+      if (!cancelAnimRef.current) redraw(); // no stroke data for this char — fall back to the static glyph
+    } else {
+      redraw();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, script]);
+
+  useEffect(() => stopAnimation, []);
 
   // Selecting a character (picker click or prev/next) plays its pronunciation
   // instead of the practice showing romaji text — the learner hears the
@@ -67,8 +101,6 @@ export default function WritingPractice({ script }) {
     if (getKanaWriteAutoplay()) speak(char);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, script]);
-
-  useEffect(redraw, [showGuide, penSize]);
 
   function clearCanvas() {
     clearStrokes();

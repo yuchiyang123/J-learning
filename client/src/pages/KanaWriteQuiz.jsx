@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, X, Undo2, Eraser, RefreshCw, Volume2 } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
-import { drawKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
+import { drawKanaStrokeGuide, animateKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
+import { getStrokeAnimation } from '../lib/kanaWritePrefs.js';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
@@ -48,6 +49,7 @@ export default function KanaWriteQuiz({ script }) {
   const [submitting, setSubmitting] = useState(false);
 
   const canvasRef = useRef(null);
+  const cancelAnimRef = useRef(null);
   const { strokesRef, pointerDown, pointerMove, pointerUp, clearStrokes, undoStroke, drawInkStrokes } =
     useKanaCanvas(canvasRef, PEN_SIZE);
 
@@ -103,13 +105,7 @@ export default function KanaWriteQuiz({ script }) {
 
   const current = queue[qIndex];
 
-  // `revealed` defaults to the current render's state, but the "new
-  // question" effect below calls this in the same tick as setRevealed(false)
-  // — state updates aren't applied until the next render, so without the
-  // explicit override this would still see the *previous* question's
-  // revealed=true and briefly paint its stroke-order answer onto the new
-  // question before the next render clears it. That flash was the bug.
-  function redraw(revealedOverride = revealed) {
+  function redrawBase() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -127,9 +123,27 @@ export default function KanaWriteQuiz({ script }) {
     ctx.setLineDash([]);
     ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
-
     drawInkStrokes(ctx);
+  }
+
+  function stopAnimation() {
+    cancelAnimRef.current?.();
+    cancelAnimRef.current = null;
+  }
+
+  // `revealed` defaults to the current render's state, but the "new
+  // question" effect below calls this in the same tick as setRevealed(false)
+  // — state updates aren't applied until the next render, so without the
+  // explicit override this would still see the *previous* question's
+  // revealed=true and briefly paint its stroke-order answer onto the new
+  // question before the next render clears it. That flash was the bug.
+  function redraw(revealedOverride = revealed) {
+    stopAnimation();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    redrawBase();
+    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
   }
 
   useEffect(() => {
@@ -140,7 +154,22 @@ export default function KanaWriteQuiz({ script }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qIndex, stage]);
 
-  useEffect(redraw, [revealed]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (revealed && current && canvas && getStrokeAnimation()) {
+      const ctx = canvas.getContext('2d');
+      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, current.char, {
+        color: '#1f6f5c',
+        prepareFrame: redrawBase,
+      });
+      if (!cancelAnimRef.current) redraw(true); // no stroke data — fall back to static (no-op guide)
+    } else {
+      redraw(revealed);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealed]);
+
+  useEffect(() => stopAnimation, []);
 
   // Audio prompt mode: no romaji is shown at all, so the question is only
   // ever heard, never read — auto-play it as each new question comes up

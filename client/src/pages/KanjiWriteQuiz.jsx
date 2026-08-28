@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, X, Undo2, Eraser, RefreshCw } from 'lucide-react';
-import { drawKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
+import { drawKanaStrokeGuide, animateKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
+import { getStrokeAnimation } from '../lib/kanaWritePrefs.js';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
@@ -39,6 +40,7 @@ export default function KanjiWriteQuiz({ level, list }) {
   const [submitting, setSubmitting] = useState(false);
 
   const canvasRef = useRef(null);
+  const cancelAnimRef = useRef(null);
   const { strokesRef, pointerDown, pointerMove, pointerUp, clearStrokes, undoStroke, drawInkStrokes } =
     useKanaCanvas(canvasRef, PEN_SIZE);
 
@@ -72,7 +74,7 @@ export default function KanjiWriteQuiz({ level, list }) {
 
   const current = queue[qIndex];
 
-  function redraw(revealedOverride = revealed) {
+  function redrawBase() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -90,9 +92,21 @@ export default function KanjiWriteQuiz({ level, list }) {
     ctx.setLineDash([]);
     ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
-
     drawInkStrokes(ctx);
+  }
+
+  function stopAnimation() {
+    cancelAnimRef.current?.();
+    cancelAnimRef.current = null;
+  }
+
+  function redraw(revealedOverride = revealed) {
+    stopAnimation();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    redrawBase();
+    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
   }
 
   useEffect(() => {
@@ -103,7 +117,22 @@ export default function KanjiWriteQuiz({ level, list }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qIndex, stage]);
 
-  useEffect(redraw, [revealed]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (revealed && current && canvas && getStrokeAnimation()) {
+      const ctx = canvas.getContext('2d');
+      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, current.char, {
+        color: '#1f6f5c',
+        prepareFrame: redrawBase,
+      });
+      if (!cancelAnimRef.current) redraw(true);
+    } else {
+      redraw(revealed);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealed]);
+
+  useEffect(() => stopAnimation, []);
 
   function clearCanvas() {
     clearStrokes();

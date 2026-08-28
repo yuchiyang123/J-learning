@@ -19,3 +19,25 @@ export function setKanaWriteAutoplay(enabled) {
     // storage unavailable (private mode etc.) — preference just won't persist
   }
 }
+
+const ANIMATION_KEY = 'jp_stroke_animation';
+
+// Whether the stroke-order guide (in writing practice and the handwriting
+// quizzes' reveal) plays as a progressive draw animation vs. showing all
+// strokes at once. Defaults on.
+export function getStrokeAnimation() {
+  try {
+    const v = localStorage.getItem(ANIMATION_KEY);
+    return v === null ? true : v === '1';
+  } catch {
+    return true;
+  }
+}
+
+export function setStrokeAnimation(enabled) {
+  try {
+    localStorage.setItem(ANIMATION_KEY, enabled ? '1' : '0');
+  } catch {
+    // storage unavailable (private mode etc.) — preference just won't persist
+  }
+}

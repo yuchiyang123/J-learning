@@ -3,16 +3,22 @@ import { Link } from 'react-router-dom';
 import { LogIn, UserCircle, Type } from 'lucide-react';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { getKanaWriteAutoplay, setKanaWriteAutoplay } from '../lib/kanaWritePrefs.js';
+import { getKanaWriteAutoplay, setKanaWriteAutoplay, getStrokeAnimation, setStrokeAnimation } from '../lib/kanaWritePrefs.js';
 
 export default function Settings() {
   const { t } = useLocale();
   const { isLoggedIn, user, loading } = useAuth();
   const [kanaAutoplay, setKanaAutoplayState] = useState(getKanaWriteAutoplay);
+  const [strokeAnimation, setStrokeAnimationState] = useState(getStrokeAnimation);
 
   function toggleKanaAutoplay(value) {
     setKanaAutoplayState(value);
     setKanaWriteAutoplay(value);
+  }
+
+  function toggleStrokeAnimation(value) {
+    setStrokeAnimationState(value);
+    setStrokeAnimation(value);
   }
 
   if (loading) return <div className="page" />;
@@ -57,6 +63,17 @@ export default function Settings() {
               {t('settings_toggle_on')}
             </button>
             <button className={!kanaAutoplay ? 'active' : ''} onClick={() => toggleKanaAutoplay(false)}>
+              {t('settings_toggle_off')}
+            </button>
+          </div>
+        </div>
+        <div className="settings-row">
+          <span className="filter-label">{t('settings_stroke_animation_label')}</span>
+          <div className="filter-group">
+            <button className={strokeAnimation ? 'active' : ''} onClick={() => toggleStrokeAnimation(true)}>
+              {t('settings_toggle_on')}
+            </button>
+            <button className={!strokeAnimation ? 'active' : ''} onClick={() => toggleStrokeAnimation(false)}>
               {t('settings_toggle_off')}
             </button>
           </div>
