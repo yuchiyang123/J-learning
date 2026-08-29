@@ -651,6 +651,7 @@ button { cursor: pointer; font-family: inherit; }
 /* ---------- Kanji grid ---------- */
 .kanji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
 .kanji-card {
+  display: flex; flex-direction: column;
   background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem; box-shadow: var(--shadow-sm);
   text-align: center; border: 1px solid var(--line); transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -665,7 +666,14 @@ button { cursor: pointer; font-family: inherit; }
 
 .kanji-mark {
   display: inline-flex;
-  margin-top: 0.9rem;
+  /* Cards in the same grid row are already stretched to equal height (CSS
+     Grid's default align-items: stretch), but readings text of varying
+     length still pushed this button row to a different height per card.
+     margin-top: auto (this is now a flex column) pins it to the bottom of
+     every card uniformly instead. */
+  margin-top: auto;
+  padding-top: 0.9rem;
+  align-self: center;
   border: 1px solid var(--line);
   border-radius: 999px;
   overflow: hidden;
