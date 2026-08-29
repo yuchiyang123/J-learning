@@ -162,7 +162,7 @@ export default function Kanji() {
                   <div className="kanji-readings">
                     <div><strong>{t('onyomi')}</strong> {k.onyomi || '—'}</div>
                     <div><strong>{t('kunyomi')}</strong> {k.kunyomi || '—'}</div>
-                    <div><strong>{t('meaning')}</strong> {k.meaning}</div>
+                    <div><strong>{t('meaning')}</strong> <span className="kanji-readings-clamp" title={k.meaning}>{k.meaning}</span></div>
                     <div className="muted">{t('stroke_count')} {k.stroke_count}</div>
                   </div>
                   {isLoggedIn && (

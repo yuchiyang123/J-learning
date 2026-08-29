@@ -662,6 +662,14 @@ button { cursor: pointer; font-family: inherit; }
 }
 .kanji-char:hover { transform: scale(1.08); }
 .kanji-readings { font-size: 0.85rem; text-align: left; margin-top: 0.7rem; line-height: 1.6; color: var(--ink); }
+/* A handful of kanji have long onyomi/kunyomi/meaning lists (many
+   readings, or several distinct senses joined by '、'). Without a cap,
+   one such card silently drags every other card in its grid row up to
+   match its height (grid rows share height), leaving the shorter cards'
+   now-bottom-pinned mark buttons stranded under a large empty gap. */
+.kanji-readings-clamp {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
 .muted { color: var(--muted-2); }
 
 .kanji-mark {
