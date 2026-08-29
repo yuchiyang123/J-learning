@@ -680,7 +680,6 @@ button { cursor: pointer; font-family: inherit; }
      margin-top: auto (this is now a flex column) pins it to the bottom of
      every card uniformly instead. */
   margin-top: auto;
-  padding-top: 0.9rem;
   align-self: center;
   border: 1px solid var(--line);
   border-radius: 999px;
