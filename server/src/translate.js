@@ -10,6 +10,8 @@ export const CACHE_PATH = path.join(__dirname, '..', 'data', 'translations.json'
 
 const DELIM = ' ||| ';
 const BATCH_SIZE = 20;
+const RATE_LIMIT_RETRIES = 4;
+const RATE_LIMIT_BASE_BACKOFF_MS = 15000; // doubles each retry: 15s, 30s, 60s, 120s
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,7 +21,11 @@ async function translateBatch(texts, targetLang, sourceLang) {
   const q = encodeURIComponent(texts.join(DELIM));
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${q}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`translate HTTP ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(`translate HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
   const json = await res.json();
   const translated = json[0].map((seg) => seg[0]).join('');
   const parts = translated.split('|||').map((s) => s.trim());
@@ -27,19 +33,35 @@ async function translateBatch(texts, targetLang, sourceLang) {
   return parts;
 }
 
-// Resolves a chunk of texts, bisecting on failure so a single bad item never
-// loses its whole batch — a single-item "batch" always has exactly 1 segment,
-// so this always terminates successfully (modulo real network failures, which
-// get one retry before that item is left untranslated).
+// Retries the *same* chunk (not bisected — bisecting a rate limit just turns
+// one throttled request into several more) with growing backoff. A 429 means
+// the endpoint is actively telling us to slow down, so this is the one error
+// worth waiting out rather than giving up on.
+async function translateWithRateLimitRetry(texts, targetLang, sourceLang) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await translateBatch(texts, targetLang, sourceLang);
+    } catch (err) {
+      if (err.status !== 429 || attempt >= RATE_LIMIT_RETRIES) throw err;
+      await sleep(RATE_LIMIT_BASE_BACKOFF_MS * 2 ** attempt);
+    }
+  }
+}
+
+// Resolves a chunk of texts, bisecting on non-rate-limit failure so a single
+// bad item never loses its whole batch — a single-item "batch" always has
+// exactly 1 segment, so this always terminates successfully (modulo real
+// network failures, which get one retry before that item is left
+// untranslated).
 async function resolveChunk(texts, targetLang, sourceLang) {
   if (texts.length === 0) return [];
   try {
-    return await translateBatch(texts, targetLang, sourceLang);
+    return await translateWithRateLimitRetry(texts, targetLang, sourceLang);
   } catch (err) {
     if (texts.length === 1) {
       await sleep(300);
       try {
-        return await translateBatch(texts, targetLang, sourceLang);
+        return await translateWithRateLimitRetry(texts, targetLang, sourceLang);
       } catch {
         return [null]; // give up on this one item; caller falls back to source text
       }
@@ -84,7 +106,7 @@ export async function translateAllCached(texts, targetLang, { sourceLang = 'zh-T
     });
     onProgress?.(i + chunk.length, unique.length, failures ? `${failures} item(s) failed` : undefined);
     saveCache(cache);
-    await sleep(100);
+    await sleep(500);
   }
 
   return (text) => bucket[text] ?? text;

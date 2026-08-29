@@ -6,8 +6,21 @@
 // zh-CN is NOT translated here — it's derived deterministically from zh-TW via
 // opencc-js at request time (see server/src/locale.js), since it's a character
 // conversion, not a real translation.
-import { words, kanji, grammar, bulkWords } from '../src/seed.js';
+// Pull bulk data straight from the loaders rather than seed.js's own
+// bulkWords/bulkKanji exports — seed.js mutates those meaning fields in
+// place to whatever's already cached (English -> Chinese, for any entry a
+// prior translate run already resolved), so re-reading them here on a
+// second run would feed already-Chinese text back in as fake "English"
+// source text for every previously-successful entry, silently polluting
+// the cache with round-tripped garbage. (Caught this the hard way — see
+// git history around this comment if it recurs.)
+import { words, kanji, grammar } from '../src/seed.js';
+import { loadBulkVocab } from '../src/importVocab.js';
+import { loadBulkKanji } from '../src/importKanji.js';
 import { translateAllCached, loadCache, saveCache } from '../src/translate.js';
+
+const bulkWords = loadBulkVocab(words.map(([, k, kana]) => `${k || ''}|${kana}`));
+const bulkKanji = loadBulkKanji(kanji.map((k) => k[1]));
 
 function log(label) {
   return (done, total, note) => {
@@ -24,15 +37,24 @@ async function main() {
   console.log(`Translating ${new Set(bulkMeaningsEn).size} unique bulk word meanings EN -> ZH-TW...`);
   await translateAllCached(bulkMeaningsEn, 'zh-TW', { sourceLang: 'en', onProgress: log('bulk EN->ZH') });
 
+  // Same treatment for bulk kanji meanings (davidluzgouveia/kanji-data gives
+  // English too — see importKanji.js).
+  const bulkKanjiMeaningsEn = bulkKanji.map((k) => k[4]);
+  console.log(`Translating ${new Set(bulkKanjiMeaningsEn).size} unique bulk kanji meanings EN -> ZH-TW...`);
+  await translateAllCached(bulkKanjiMeaningsEn, 'zh-TW', { sourceLang: 'en', onProgress: log('bulk kanji EN->ZH') });
+
   // Re-load the cache to get the freshly-translated Chinese text for step 2/3.
   const cache = loadCache();
   const bulkMeaningsZh = bulkMeaningsEn.map((en) => cache['zh-TW']?.[en] ?? en);
+  const bulkKanjiMeaningsZh = bulkKanjiMeaningsEn.map((en) => cache['zh-TW']?.[en] ?? en);
 
-  // Bulk words already had a real (source) English meaning before we translated
-  // them to Chinese above — reuse it as their "en" locale text directly instead
-  // of machine-translating the Chinese back to English (lossy round trip).
+  // Bulk words/kanji already had a real (source) English meaning before we
+  // translated them to Chinese above — reuse it as their "en" locale text
+  // directly instead of machine-translating the Chinese back to English
+  // (lossy round trip).
   cache.en ??= {};
   bulkMeaningsZh.forEach((zh, i) => { cache.en[zh] ??= bulkMeaningsEn[i]; });
+  bulkKanjiMeaningsZh.forEach((zh, i) => { cache.en[zh] ??= bulkKanjiMeaningsEn[i]; });
   saveCache(cache);
 
   // 2) English: curated (already-Chinese) words + kanji + grammar need EN.
@@ -54,10 +76,11 @@ async function main() {
 
   // 3) Korean: everything, from its final Chinese text.
   const allWordMeaningsZh = [...curatedMeaningsZh, ...bulkMeaningsZh];
+  const allKanjiMeaningsZh = [...kanjiMeaningsZh, ...bulkKanjiMeaningsZh];
   console.log(`Translating ${new Set(allWordMeaningsZh).size} unique word meanings ZH -> KO...`);
   await translateAllCached(allWordMeaningsZh, 'ko', { onProgress: log('words ZH->KO') });
-  console.log('Translating kanji meanings ZH -> KO...');
-  await translateAllCached(kanjiMeaningsZh, 'ko', { onProgress: log('kanji ZH->KO') });
+  console.log(`Translating ${new Set(allKanjiMeaningsZh).size} unique kanji meanings ZH -> KO...`);
+  await translateAllCached(allKanjiMeaningsZh, 'ko', { onProgress: log('kanji ZH->KO') });
   console.log('Translating grammar meanings ZH -> KO...');
   await translateAllCached(grammarMeaningsZh, 'ko', { onProgress: log('grammar meaning ZH->KO') });
   console.log('Translating grammar explanations ZH -> KO...');

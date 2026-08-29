@@ -1,6 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import { db } from './db.js';
 import { loadBulkVocab } from './importVocab.js';
+import { loadBulkKanji } from './importKanji.js';
 import { loadCache } from './translate.js';
 
 export const words = [
@@ -452,6 +453,24 @@ if (untranslatedBulkCount > 0) {
   console.warn(`${untranslatedBulkCount} bulk word meaning(s) have no zh-TW translation yet — left in English. Run "npm run translate" to fix.`);
 }
 
+// Same bulk-import-then-translate treatment as bulkWords above, for kanji
+// (see importKanji.js — davidluzgouveia/kanji-data, MIT licensed).
+const existingKanjiChars = kanji.map((k) => k[1]);
+export const bulkKanji = loadBulkKanji(existingKanjiChars);
+
+let untranslatedBulkKanjiCount = 0;
+for (const k of bulkKanji) {
+  const en = k[4];
+  const zh = zhTwCache[en];
+  if (zh) k[4] = zh;
+  else untranslatedBulkKanjiCount++;
+}
+if (untranslatedBulkKanjiCount > 0) {
+  console.warn(`${untranslatedBulkKanjiCount} bulk kanji meaning(s) have no zh-TW translation yet — left in English. Run "npm run translate" to fix.`);
+}
+
+const allKanji = [...kanji, ...bulkKanji];
+
 const allWords = [...words, ...bulkWords]; // [level, kanji, kana, meaning, pos, ex_jp, ex_reading, ex_zh]
 
 const wordsByLevel = {};
@@ -527,10 +546,10 @@ for (const level of ['N5', 'N4', 'N3', 'N2', 'N1']) {
 // kanji quiz: one meaning question + one reading question per kanji entry.
 // Distractors are drawn from the full kanji list (not just the same level) so
 // sparsely-populated levels still get enough choices.
-for (const k of kanji) {
+for (const k of allKanji) {
   const [level, character, onyomi, kunyomi, meaning] = k;
 
-  const meaningDistractors = shuffleArr(kanji.filter((x) => x[4] !== meaning && x[1] !== character))
+  const meaningDistractors = shuffleArr(allKanji.filter((x) => x[4] !== meaning && x[1] !== character))
     .slice(0, 3)
     .map((x) => x[4]);
   if (meaningDistractors.length === 3) {
@@ -540,7 +559,7 @@ for (const k of kanji) {
   const firstReading = (str) => (str && str !== '-' ? str.split('、')[0].replace(/-.*/, '') : '');
   const reading = firstReading(kunyomi) || firstReading(onyomi);
   if (reading) {
-    const readingDistractors = shuffleArr(kanji.filter((x) => x[1] !== character))
+    const readingDistractors = shuffleArr(allKanji.filter((x) => x[1] !== character))
       .map((x) => firstReading(x[3]) || firstReading(x[2]))
       .filter((r) => r && r !== reading);
     const uniqueDistractors = [...new Set(readingDistractors)].slice(0, 3);
@@ -579,14 +598,14 @@ function run() {
   const insertAll = db.transaction(() => {
     for (const w of words) insertWord.run(...w);
     for (const w of bulkWords) insertWord.run(...w);
-    for (const k of kanji) insertKanji.run(...k);
+    for (const k of allKanji) insertKanji.run(...k);
     for (const g of grammar) insertGrammar.run(...g);
     for (const q of quizRows) insertQuiz.run(...q);
   });
   insertAll();
 
   const totalWords = words.length + bulkWords.length;
-  console.log(`Seeded ${totalWords} words (${words.length} curated + ${bulkWords.length} bulk JLPT list), ${kanji.length} kanji, ${grammar.length} grammar points, ${quizRows.length} quiz questions.`);
+  console.log(`Seeded ${totalWords} words (${words.length} curated + ${bulkWords.length} bulk JLPT list), ${allKanji.length} kanji (${kanji.length} curated + ${bulkKanji.length} bulk JLPT list), ${grammar.length} grammar points, ${quizRows.length} quiz questions.`);
 }
 
 export { run };
