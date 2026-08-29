@@ -494,16 +494,27 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 .level-picker, .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.3rem; align-items: center; }
 .filter-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-right: 1rem; }
 .filter-label { font-weight: 700; margin-right: 0.3rem; color: var(--ink-soft); font-size: 0.9rem; }
+/* .level-picker's own margin-bottom (for its standalone usage — directly
+   under a page's <h1>) throws off vertical centering when it's nested as
+   a flex item inside .filter-row next to a .filter-group (e.g. Kanji's
+   level picker + mode picker row): flex align-items: center centers each
+   item's margin box, so the extra bottom margin on just one of the two
+   items shifted its pills ~10px above the other group's. */
+.filter-row > .level-picker { margin-bottom: 0; }
 
 /* A .filter-row with two+ groups (e.g. level picker + mode picker) was
    letting them compete for the same line at phone widths — one group's
    buttons would wrap away from its own label mid-row while the other
-   group started its line, reading as disjointed. Stacking each group onto
-   its own full-width row keeps every group's label with all of its own
-   buttons. */
+   group started its line, reading as disjointed. Forcing every direct
+   child onto its own full-width line (via flex-basis, not
+   flex-direction: column) fixes that while keeping the row's main axis
+   horizontal — switching to column previously made .search-box's
+   `flex: 1 1 240px` (sized for horizontal growth) instead grow tall along
+   the now-vertical main axis, which with its pill border-radius rendered
+   as a giant circle. */
 @media (max-width: 560px) {
-  .filter-row { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
-  .filter-row .filter-group, .filter-row .level-picker { margin-right: 0; }
+  .filter-row { align-items: stretch; gap: 0.8rem; }
+  .filter-row > * { flex-basis: 100%; margin-right: 0; }
 }
 
 button { cursor: pointer; font-family: inherit; }

@@ -212,7 +212,7 @@ export default function ProgressPage() {
 
               <div className="history-pagination">
                 <div className="filter-group">
-                  <span className="filter-label">{t('progress_page_size_label')}</span>
+                  <span className="filter-label">{t('pagination_page_size_label')}</span>
                   {PAGE_SIZE_OPTIONS.map((n) => (
                     <button key={n} className={pageSize === n ? 'active' : ''} onClick={() => setPageSize(n)}>
                       {n}
@@ -221,13 +221,13 @@ export default function ProgressPage() {
                 </div>
                 <div className="pagination-controls">
                   <button className="secondary-btn" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
-                    {t('progress_page_prev')}
+                    {t('pagination_prev')}
                   </button>
                   <span className="pagination-indicator">
-                    {t('progress_page_indicator', { page: page + 1, total: totalPages })}
+                    {t('pagination_indicator', { page: page + 1, total: totalPages })}
                   </span>
                   <button className="secondary-btn" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
-                    {t('progress_page_next')}
+                    {t('pagination_next')}
                   </button>
                 </div>
               </div>

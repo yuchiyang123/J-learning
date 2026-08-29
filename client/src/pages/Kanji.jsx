@@ -20,6 +20,8 @@ export default function Kanji() {
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
+  const [pageSize, setPageSize] = useState(40);
+  const [page, setPage] = useState(0);
   const { t, locale } = useLocale();
   const { isLoggedIn } = useAuth();
 
@@ -70,6 +72,17 @@ export default function Kanji() {
     }
     return result;
   }, [list, filter, progressByKey, query]);
+
+  // N1 alone is ~1230 kanji — rendering every card in one grid made the
+  // browse view painfully long to scroll (and slow to paint). Reset to
+  // page 1 whenever the underlying list changes so a stale page index
+  // from a previous level/filter/search doesn't leave the view empty.
+  useEffect(() => { setPage(0); }, [filteredList.length]);
+  const totalPages = Math.max(Math.ceil(filteredList.length / pageSize), 1);
+  const pagedList = useMemo(
+    () => filteredList.slice(page * pageSize, page * pageSize + pageSize),
+    [filteredList, page, pageSize]
+  );
 
   async function mark(k, correct) {
     const currentSrs = progressByKey.get(k.id);
@@ -134,7 +147,7 @@ export default function Kanji() {
 
           {!combinedLoading && list && (
           <div className="kanji-grid">
-            {filteredList.map((k) => {
+            {pagedList.map((k) => {
               const srs = progressByKey.get(k.id);
               return (
                 <div className="kanji-card" key={k.id}>
@@ -170,6 +183,28 @@ export default function Kanji() {
             })}
             {filteredList.length === 0 && <p>{t(emptyMessageKey)}</p>}
           </div>
+          )}
+
+          {!combinedLoading && filteredList.length > 0 && (
+            <div className="history-pagination">
+              <div className="filter-group">
+                <span className="filter-label">{t('pagination_page_size_label')}</span>
+                {[40, 80, 120].map((n) => (
+                  <button key={n} className={pageSize === n ? 'active' : ''} onClick={() => setPageSize(n)}>{n}</button>
+                ))}
+              </div>
+              <div className="pagination-controls">
+                <button className="secondary-btn" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+                  {t('pagination_prev')}
+                </button>
+                <span className="pagination-indicator">
+                  {t('pagination_indicator', { page: page + 1, total: totalPages })}
+                </span>
+                <button className="secondary-btn" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+                  {t('pagination_next')}
+                </button>
+              </div>
+            </div>
           )}
         </>
       )}
