@@ -12,8 +12,12 @@ export default function SearchPage() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
+  // locale is a dependency too — switching language while results are
+  // already showing needs to re-fetch with the new locale, otherwise the
+  // nav/labels translate but the result text (meanings) stays stale in
+  // whatever language was active when the search last ran.
   useEffect(() => {
     const q = query.trim();
     if (!q) { setResults(null); setLoading(false); return; }
@@ -22,7 +26,7 @@ export default function SearchPage() {
       api.search(q).then(setResults).finally(() => setLoading(false));
     }, 300);
     return () => clearTimeout(handle);
-  }, [query]);
+  }, [query, locale]);
 
   const hasQuery = query.trim().length > 0;
   const totalHits = results ? results.words.length + results.kanji.length + results.grammar.length : 0;
