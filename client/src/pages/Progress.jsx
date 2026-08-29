@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, Lightbulb } from 'lucide-react';
+import { LogIn, Lightbulb, Inbox } from 'lucide-react';
 import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { StatGridSkeleton, QuizSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import RadarChart from '../components/RadarChart.jsx';
 import CategoryBarChart from '../components/CategoryBarChart.jsx';
@@ -129,7 +130,7 @@ export default function ProgressPage() {
       {!loading && (
         <>
           <h2>{t('progress_quiz_history')}</h2>
-          {history.length === 0 && <p>{t('progress_no_history')}</p>}
+          {history.length === 0 && <EmptyState icon={<Inbox size={32} />} message={t('progress_no_history')} />}
           {history.length > 0 && (
             <>
               <table>

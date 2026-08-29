@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Volume2, Mic, ArrowRight, Info } from 'lucide-react';
+import { Volume2, Mic, ArrowRight, Info, Inbox } from 'lucide-react';
 import { api } from '../api.js';
 import { speak, isRecognitionSupported, createRecognizer, similarityScore } from '../speech.js';
 import { isVisualizerSupported, startVisualizer } from '../audioVisualizer.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { SpeakingSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 
 // Desktop Chrome reliably auto-stops recognition a moment after it detects
 // silence, but that "end of speech" detection isn't consistent on mobile —
@@ -173,7 +174,7 @@ export default function Speaking() {
           )}
         </div>
       ) : (
-        <p>{t('speaking_no_data')}</p>
+        <EmptyState icon={<Inbox size={32} />} message={t('speaking_no_data')} />
       ))}
 
       {history.length > 0 && (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Inbox } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
 import { speak } from '../speech.js';
 import { api } from '../api.js';
@@ -8,6 +8,7 @@ import WritingPractice from './WritingPractice.jsx';
 import KanaWriteQuiz from './KanaWriteQuiz.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { QuizSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 
 export default function Kana() {
   const [script, setScript] = useState('hira'); // 'hira' | 'kata'
@@ -92,7 +93,7 @@ function KanaQuiz() {
   return (
     <div>
       {questions === null && <QuizSkeleton count={5} />}
-      {questions && questions.length === 0 && <p>{t('no_kana_quiz')}</p>}
+      {questions && questions.length === 0 && <EmptyState icon={<Inbox size={32} />} message={t('no_kana_quiz')} />}
       {questions && questions.length > 0 && (
         <QuizRunner
           key={sessionKey}

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { X, Check, Search } from 'lucide-react';
+import { X, Check, Search, SearchX } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { KanjiGridSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import KanjiWritePractice from './KanjiWritePractice.jsx';
 import KanjiWriteQuiz from './KanjiWriteQuiz.jsx';
@@ -145,7 +146,11 @@ export default function Kanji() {
 
           {combinedLoading && <KanjiGridSkeleton />}
 
-          {!combinedLoading && list && (
+          {!combinedLoading && list && filteredList.length === 0 && (
+            <EmptyState icon={<SearchX size={32} />} message={t(emptyMessageKey)} />
+          )}
+
+          {!combinedLoading && list && filteredList.length > 0 && (
           <div className="kanji-grid">
             {pagedList.map((k) => {
               const srs = progressByKey.get(k.id);
@@ -181,7 +186,6 @@ export default function Kanji() {
                 </div>
               );
             })}
-            {filteredList.length === 0 && <p>{t(emptyMessageKey)}</p>}
           </div>
           )}
 

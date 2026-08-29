@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search as SearchIcon, X } from 'lucide-react';
+import { Search as SearchIcon, SearchX, X } from 'lucide-react';
 import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 
 // The only cross-level, cross-content-type lookup in the app — Vocabulary/
 // Kanji/Grammar each require picking a level first and only search within
@@ -48,7 +49,9 @@ export default function SearchPage() {
 
       {!hasQuery && <p className="muted">{t('search_hint')}</p>}
       {hasQuery && loading && <p className="muted">{t('search_loading')}</p>}
-      {hasQuery && !loading && results && totalHits === 0 && <p>{t('search_no_results')}</p>}
+      {hasQuery && !loading && results && totalHits === 0 && (
+        <EmptyState icon={<SearchX size={32} />} message={t('search_no_results')} />
+      )}
 
       {hasQuery && !loading && results && totalHits > 0 && (
         <div className="search-results">

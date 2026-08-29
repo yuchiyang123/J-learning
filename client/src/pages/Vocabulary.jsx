@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2 } from 'lucide-react';
+import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2, Inbox } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { FlashcardSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 
@@ -175,7 +176,7 @@ export default function Vocabulary() {
       )}
 
       {loading && <FlashcardSkeleton />}
-      {!loading && !current && <p>{t('no_data_level')}</p>}
+      {!loading && !current && <EmptyState icon={<Inbox size={32} />} message={t('no_data_level')} />}
 
       {!loading && current && (
         <div className="flashcard-wrap">

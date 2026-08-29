@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Volume2, Search, X, Check } from 'lucide-react';
+import { Volume2, Search, SearchX, X, Check } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { GrammarListSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 
 // Most seeded explanations read as "<formation clause>，<usage description>"
@@ -131,7 +132,11 @@ export default function Grammar() {
 
       {combinedLoading && <GrammarListSkeleton />}
 
-      {!combinedLoading && list && (
+      {!combinedLoading && list && filteredList.length === 0 && (
+        <EmptyState icon={<SearchX size={32} />} message={t(emptyMessageKey)} />
+      )}
+
+      {!combinedLoading && list && filteredList.length > 0 && (
         <div className="grammar-list">
           {filteredList.map((g) => {
             const srs = progressByKey.get(g.id);
@@ -179,7 +184,6 @@ export default function Grammar() {
               </div>
             );
           })}
-          {filteredList.length === 0 && <p>{t(emptyMessageKey)}</p>}
         </div>
       )}
     </div>

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Timer } from 'lucide-react';
+import { Timer, Inbox } from 'lucide-react';
 import { api } from '../api.js';
 import QuizRunner from '../components/QuizRunner.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { QuizSkeleton } from '../components/Skeleton.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 const DURATION_SEC = 10 * 60; // 10 minute mock test
@@ -84,7 +85,7 @@ export default function JlptMock() {
               }
             />
           ) : (
-            <p>{t('jlpt_not_enough')}</p>
+            <EmptyState icon={<Inbox size={32} />} message={t('jlpt_not_enough')} />
           )}
         </>
       )}
