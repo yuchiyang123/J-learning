@@ -144,7 +144,10 @@ export default function Grammar() {
             return (
               <div className="grammar-card" key={g.id}>
                 <div className="grammar-card-head">
-                  <div className="grammar-pattern">{g.pattern}</div>
+                  <div className="grammar-pattern">
+                    {g.pattern}{' '}
+                    <button className="tiny-btn" onClick={() => speak(g.pattern)}><Volume2 size={16} /></button>
+                  </div>
                   {isLoggedIn && (
                     <div className="kanji-mark">
                       <button

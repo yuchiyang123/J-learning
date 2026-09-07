@@ -744,9 +744,9 @@ button { cursor: pointer; font-family: inherit; }
 .grammar-list { display: flex; flex-direction: column; gap: 1.1rem; }
 .grammar-card {
   background: var(--paper-raised); border-radius: var(--radius); padding: 1.3rem 1.4rem; box-shadow: var(--shadow-sm);
-  border: 1px solid var(--line); border-left: 4px solid var(--accent); transition: box-shadow 0.15s ease, transform 0.15s ease;
+  border: 1px solid var(--line); transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
-.grammar-card:hover { box-shadow: var(--shadow-md); transform: translateX(2px); }
+.grammar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
 .grammar-pattern { font-size: 1.35rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
 .grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
