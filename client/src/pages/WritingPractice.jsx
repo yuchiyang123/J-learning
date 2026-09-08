@@ -102,6 +102,18 @@ export default function WritingPractice({ script }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, script]);
 
+  // Starting to draw interrupts the stroke-order animation instead of
+  // racing it: the animation's per-frame redraw wipes the whole canvas
+  // (including whatever the pointer had just drawn, since an in-progress
+  // stroke isn't committed to strokesRef until pointerUp), so writing while
+  // it was still playing meant every animation frame erased the current
+  // line — extremely janky. Snapping to the static full guide here still
+  // leaves a reference to trace, just without the fight over the canvas.
+  function handlePointerDown(e) {
+    if (cancelAnimRef.current) redraw();
+    pointerDown(e);
+  }
+
   function clearCanvas() {
     clearStrokes();
     redraw();
@@ -145,7 +157,7 @@ export default function WritingPractice({ script }) {
             width={CANVAS_SIZE}
             height={CANVAS_SIZE}
             className="writing-canvas"
-            onPointerDown={pointerDown}
+            onPointerDown={handlePointerDown}
             onPointerMove={pointerMove}
             onPointerUp={pointerUp}
             onPointerLeave={pointerUp}
