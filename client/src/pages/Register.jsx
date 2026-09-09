@@ -91,7 +91,7 @@ export default function Register() {
               />
             </label>
             {codeError && <p className="warning">{codeError}</p>}
-            <button className="submit-btn" type="submit" disabled={confirming}>{t('confirm_code_btn')}</button>
+            <button className="submit-btn login-submit-btn" type="submit" disabled={confirming}>{t('confirm_code_btn')}</button>
           </form>
           <p className="auth-switch">
             {resent ? t('confirm_code_resent') : (
@@ -126,7 +126,7 @@ export default function Register() {
             <input type="password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} required minLength={6} />
           </label>
           {error && <p className="warning">{error}</p>}
-          <button className="submit-btn" type="submit" disabled={submitting}>{t('register_btn')}</button>
+          <button className="submit-btn login-submit-btn" type="submit" disabled={submitting}>{t('register_btn')}</button>
         </form>
         <p className="auth-switch">
           {t('register_has_account')} <Link to="/login">{t('login_title')}</Link>

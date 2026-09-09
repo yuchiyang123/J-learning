@@ -34,7 +34,7 @@ export default function ForgotPassword() {
             {t('username_label')}
             <input value={userName} onChange={(e) => setUserName(e.target.value)} required autoFocus />
           </label>
-          <button className="submit-btn" type="submit" disabled={requesting}>{t('reset_password_request_btn')}</button>
+          <button className="submit-btn login-submit-btn" type="submit" disabled={requesting}>{t('reset_password_request_btn')}</button>
         </form>
         <p className="auth-switch">
           <Link to="/login">{t('login_title')}</Link>
