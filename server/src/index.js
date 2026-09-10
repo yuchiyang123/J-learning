@@ -45,6 +45,17 @@ app.use(helmet({
 }));
 app.use(compression());
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
+
+// The handwriting-quiz submits bundle the raw stroke points for every
+// character in the set. A 30+ character set easily blows past the default
+// 50kb body cap, and express.json() then 413s the whole submit — which the
+// client used to swallow silently, so the session looked like it saved but
+// never did. Give just those two routes headroom; everything else stays at
+// the tight default.
+app.use(
+  ['/api/quiz/kana-write/submit', '/api/quiz/kanji-write/submit'],
+  express.json({ limit: '4mb' })
+);
 app.use(express.json({ limit: '50kb' }));
 app.use(cookieParser());
 

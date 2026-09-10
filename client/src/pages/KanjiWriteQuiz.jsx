@@ -38,6 +38,7 @@ export default function KanjiWriteQuiz({ level, list }) {
   const [suggestion, setSuggestion] = useState(null);
   const [results, setResults] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const canvasRef = useRef(null);
   const cancelAnimRef = useRef(null);
@@ -56,6 +57,7 @@ export default function KanjiWriteQuiz({ level, list }) {
     setResults([]);
     setRevealed(false);
     setSuggestion(null);
+    setSubmitError(false);
     clearStrokes();
     setStage('active');
   }
@@ -170,6 +172,8 @@ export default function KanjiWriteQuiz({ level, list }) {
         invalidateCache(wrongKey);
         reloadWrong(true);
       }
+    } catch {
+      setSubmitError(true);
     } finally {
       setSubmitting(false);
       setStage('done');
@@ -245,6 +249,7 @@ export default function KanjiWriteQuiz({ level, list }) {
       {stage === 'done' && (
         <div className="writequiz-done">
           <h2>{t('kana_writequiz_finished')}</h2>
+          {submitError && <p className="warning">{t('writequiz_submit_failed')}</p>}
           <div className="quiz-result">
             {t('score_result')}：{results.filter((r) => r.isCorrect).length} / {results.length}
           </div>

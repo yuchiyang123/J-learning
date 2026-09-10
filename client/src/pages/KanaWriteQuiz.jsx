@@ -47,6 +47,7 @@ export default function KanaWriteQuiz({ script }) {
   const [suggestion, setSuggestion] = useState(null);
   const [results, setResults] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const canvasRef = useRef(null);
   const cancelAnimRef = useRef(null);
@@ -80,6 +81,7 @@ export default function KanaWriteQuiz({ script }) {
     setResults([]);
     setRevealed(false);
     setSuggestion(null);
+    setSubmitError(false);
     clearStrokes();
     setStage('active');
   }
@@ -219,6 +221,11 @@ export default function KanaWriteQuiz({ script }) {
         invalidateCache(wrongKey);
         reloadWrong(true);
       }
+    } catch {
+      // Was silently swallowed before: a failed submit (e.g. a big set
+      // exceeding the body-size cap, or a flaky network) would still show
+      // the "finished" screen as if the run had been recorded.
+      setSubmitError(true);
     } finally {
       setSubmitting(false);
       setStage('done');
@@ -331,6 +338,7 @@ export default function KanaWriteQuiz({ script }) {
       {stage === 'done' && (
         <div className="writequiz-done">
           <h2>{t('kana_writequiz_finished')}</h2>
+          {submitError && <p className="warning">{t('writequiz_submit_failed')}</p>}
           <div className="quiz-result">
             {t('score_result')}：{results.filter((r) => r.isCorrect).length} / {results.length}
           </div>
