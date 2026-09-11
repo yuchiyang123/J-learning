@@ -133,7 +133,7 @@ export default function ProgressPage() {
           {history.length === 0 && <EmptyState icon={<Inbox size={32} />} message={t('progress_no_history')} />}
           {history.length > 0 && (
             <>
-              <table>
+              <table className="history-table">
                 <thead>
                   <tr><th>{t('col_time')}</th><th>{t('col_type')}</th><th>{t('level_label')}</th><th>{t('col_result')}</th><th /></tr>
                 </thead>
@@ -144,10 +144,10 @@ export default function ProgressPage() {
                     return (
                       <Fragment key={h.id}>
                         <tr>
-                          <td>{formatServerTimestamp(h.taken_at)}</td>
-                          <td>{t(QUIZ_TYPE_LABEL_KEYS[h.type] ?? h.type)}</td>
-                          <td>{QUIZ_TYPES_WITHOUT_LEVEL.has(h.type) ? '-' : h.level}</td>
-                          <td>{h.correct} / {h.total}</td>
+                          <td data-label={t('col_time')}>{formatServerTimestamp(h.taken_at)}</td>
+                          <td data-label={t('col_type')}>{t(QUIZ_TYPE_LABEL_KEYS[h.type] ?? h.type)}</td>
+                          <td data-label={t('level_label')}>{QUIZ_TYPES_WITHOUT_LEVEL.has(h.type) ? '-' : h.level}</td>
+                          <td data-label={t('col_result')}>{h.correct} / {h.total}</td>
                           <td>
                             <button className="secondary-btn history-view-btn" onClick={() => toggleDetail(h.id)}>
                               {isOpen ? t('quiz_hide_detail_btn') : t('quiz_view_detail_btn')}
