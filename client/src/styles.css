@@ -750,6 +750,35 @@ button { cursor: pointer; font-family: inherit; }
 .search-result-reading { color: var(--ink-soft); font-size: 0.85rem; flex-shrink: 0; }
 .search-result-sub { color: var(--ink-soft); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* ---------- Nav search (live dropdown, replaces the old /search page) ---------- */
+.nav-search { position: relative; }
+.nav-search-desktop { width: 190px; transition: width 0.15s ease; }
+.nav-search-desktop:focus-within { width: 250px; }
+.nav-search-desktop .search-box { max-width: none; padding: 0.4rem 0.8rem; }
+.nav-search-panel {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+  width: 380px; max-width: min(90vw, 420px); max-height: 70vh; overflow-y: auto;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 0.9rem;
+}
+.nav-search-results { display: flex; flex-direction: column; gap: 1rem; }
+.nav-search-results h3 {
+  font-size: 0.72rem; font-weight: 800; color: var(--muted-2); text-transform: uppercase;
+  letter-spacing: 0.05em; margin-bottom: 0.4rem;
+}
+.nav-search-panel .search-result-list { gap: 0.35rem; }
+.nav-search-panel .empty-state { padding: 1rem 0; }
+.sk-search-result { align-items: center; }
+/* Drawer copy renders inline (no popover chrome, it's already inside a
+   scrollable panel) and takes the drawer's full width. */
+.nav-search-drawer { padding: 0.8rem 1.1rem; }
+.nav-search-drawer .nav-search-panel {
+  position: static; width: 100%; max-width: none; box-shadow: none; margin-top: 0.6rem;
+}
+@media (max-width: 860px) {
+  .nav-search-desktop { display: none; }
+}
+
 /* ---------- Grammar ---------- */
 .grammar-list { display: flex; flex-direction: column; gap: 1.1rem; }
 .grammar-card {

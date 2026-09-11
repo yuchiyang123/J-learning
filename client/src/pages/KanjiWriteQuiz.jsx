@@ -137,6 +137,18 @@ export default function KanjiWriteQuiz({ level, list }) {
 
   useEffect(() => stopAnimation, []);
 
+  // See KanaWriteQuiz.jsx for why this is the native browser prompt rather
+  // than a custom dialog — it's the only option for a real page unload.
+  useEffect(() => {
+    if (stage !== 'active') return;
+    function onBeforeUnload(e) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [stage]);
+
   function clearCanvas() {
     clearStrokes();
     redraw();

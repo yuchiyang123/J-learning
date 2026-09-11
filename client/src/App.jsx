@@ -19,7 +19,6 @@ const Quiz = lazy(() => import('./pages/Quiz.jsx'));
 const JlptMock = lazy(() => import('./pages/JlptMock.jsx'));
 const Progress = lazy(() => import('./pages/Progress.jsx'));
 const Settings = lazy(() => import('./pages/Settings.jsx'));
-const Search = lazy(() => import('./pages/Search.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'));
@@ -48,7 +47,6 @@ export default function App() {
             <Route path="/jlpt" element={<JlptMock />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/search" element={<Search />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

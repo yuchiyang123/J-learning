@@ -176,6 +176,22 @@ export default function KanaWriteQuiz({ script }) {
 
   useEffect(() => stopAnimation, []);
 
+  // Warn before an actual browser-level exit (reload, close tab/window,
+  // typing a new URL) while a run is in progress — there's no autosave, so
+  // that would silently lose every answer given so far. Browsers ignore any
+  // custom message here and show their own generic prompt; that's a
+  // platform restriction (abused alert-spam sites ruined it for everyone),
+  // not something a custom dialog could improve on for this specific event.
+  useEffect(() => {
+    if (stage !== 'active') return;
+    function onBeforeUnload(e) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [stage]);
+
   // Audio prompt mode: no romaji is shown at all, so the question is only
   // ever heard, never read — auto-play it as each new question comes up
   // (the on-screen 發音 button lets them replay it).

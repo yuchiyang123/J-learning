@@ -4,13 +4,16 @@ import { GraduationCap, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 import AccountMenu from './AccountMenu.jsx';
+import NavSearch from './NavSearch.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 
 // "學習進度" intentionally isn't here — it lives in AccountMenu now, since
 // it's only ever relevant once you're logged in (see AccountMenu.jsx).
+// "搜尋" isn't here either anymore — it used to link to a dedicated /search
+// page, now it's the live NavSearch box rendered directly in the bar (and
+// in the drawer below on mobile) instead of a nav link.
 const links = [
   { to: '/', key: 'nav_home', end: true },
-  { to: '/search', key: 'nav_search' },
   { to: '/kana', key: 'nav_kana' },
   { to: '/vocabulary', key: 'nav_vocab' },
   { to: '/kanji', key: 'nav_kanji' },
@@ -52,6 +55,8 @@ export default function Navbar() {
           ))}
         </div>
 
+        <NavSearch variant="desktop" />
+
         <div className="navbar-actions">
           {/* Hidden on mobile (see @media in styles.css) — the drawer's
               inline AccountMenu below is the mobile entry point instead, so
@@ -90,6 +95,8 @@ export default function Navbar() {
             <X size={20} />
           </button>
         </div>
+
+        <NavSearch variant="drawer" />
 
         <div className="nav-drawer-links">
           {links.map((l) => (

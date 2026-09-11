@@ -74,6 +74,20 @@ export function GrammarListSkeleton({ count = 5 }) {
   );
 }
 
+export function SearchResultsSkeleton({ count = 4 }) {
+  return (
+    <div className="search-result-list skeleton-wrap" aria-hidden="true">
+      {Array.from({ length: count }).map((_, i) => (
+        <div className="search-result-item sk-search-result" key={i}>
+          <SkeletonBlock className="sk-pill" />
+          <SkeletonBlock className="sk-line short" />
+          <SkeletonBlock className="sk-line" style={{ flex: 1 }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function SpeakingSkeleton() {
   return (
     <div className="speaking-card skeleton-wrap" aria-hidden="true">
