@@ -1213,6 +1213,11 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .history-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .history-heading-row h2 { margin: 0; }
 .history-page-size { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+/* Dropdown's default trigger/menu sizing is tuned for the navbar (a much
+   bigger control next to a page heading looked out of proportion here). */
+.history-page-size .dropdown-trigger { padding: 0.3rem 0.6rem; font-size: 0.8rem; gap: 0.3rem; }
+.history-page-size .dropdown-menu { min-width: 90px; }
+.history-page-size .dropdown-option { padding: 0.4rem 0.6rem; font-size: 0.85rem; }
 /* Page-size picker moved up next to the section heading (a row of buttons
    sitting on its own beneath the table, apart from the prev/next controls,
    read as orphaned) — this row is now just the prev/page/next group, so
