@@ -17,7 +17,29 @@ function getCsrfToken(forceRefresh = false) {
   return csrfTokenPromise;
 }
 
-async function request(path, options = {}) {
+// Mini-SSO's access token (the "token" cookie) only lives 60 minutes, but a
+// 30/90-day refresh token rides along with it — this app just never used it,
+// so anyone idle for over an hour got silently logged out mid-session even
+// though the whole point of the refresh token was to prevent exactly that.
+// One shared in-flight promise (same pattern as csrfTokenPromise above) so
+// several requests 401ing at once trigger a single refresh, not one each.
+const AUTH_BASE = 'https://auth.matthewyu.uk';
+let refreshPromise = null;
+export function refreshSession() {
+  refreshPromise ??= fetch(`${AUTH_BASE}/api/auth/csrf`, { credentials: 'include' })
+    .then((r) => r.json())
+    .then(({ csrfToken }) => fetch(`${AUTH_BASE}/api/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'X-CSRF-TOKEN': csrfToken },
+    }))
+    .then((r) => r.ok)
+    .catch(() => false)
+    .finally(() => { refreshPromise = null; });
+  return refreshPromise;
+}
+
+async function request(path, options = {}, isRetry = false) {
   const method = (options.method || 'GET').toUpperCase();
   const isWrite = WRITE_METHODS.has(method);
   const headers = { 'Content-Type': 'application/json', ...options.headers };
@@ -27,6 +49,13 @@ async function request(path, options = {}) {
   if (res.status === 403 && isWrite) {
     headers['X-CSRF-TOKEN'] = await getCsrfToken(true);
     res = await fetch(BASE + path, { credentials: 'include', ...options, headers });
+  }
+
+  // Capped at one retry — if the refresh itself succeeds but the replayed
+  // request still 401s, the refresh token is no good either and this should
+  // fall through to a real "please log in again" rather than loop forever.
+  if (res.status === 401 && !isRetry && (await refreshSession())) {
+    return request(path, options, true);
   }
 
   if (!res.ok) {

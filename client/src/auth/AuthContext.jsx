@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { refreshSession } from '../api.js';
 
 // Mini-SSO: a separate service (its own repo) shared across everything under
 // matthewyu.uk. It issues an HttpOnly JWT cookie scoped to the whole
@@ -31,6 +32,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => { refresh(); }, [refresh]);
+
+  // The access token cookie only lives 60 minutes; a much longer-lived
+  // refresh token rides along but nothing was ever calling it, so a study
+  // session longer than an hour silently logged the user out mid-session.
+  // Renewing it every 45 min (before it actually expires) while the app
+  // stays open covers that — including the quiz-submit endpoints, which
+  // don't 401 on an expired token at all (optionalAuth just grades them as
+  // a logged-out guest instead), so they'd never trigger api.js's reactive
+  // retry-after-401 refresh on their own.
+  useEffect(() => {
+    if (!user) return;
+    const id = setInterval(() => { refreshSession(); }, 45 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [user]);
 
   const login = useCallback(async (userName, password) => {
     const csrfToken = await getCsrfToken();
