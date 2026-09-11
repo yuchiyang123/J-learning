@@ -48,7 +48,7 @@ export default function NavSearch({ variant = 'desktop' }) {
           value={query}
           onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
           onFocus={() => { if (hasQuery) setOpen(true); }}
-          placeholder={t('search_placeholder')}
+          placeholder={t('nav_search')}
         />
         {query && (
           <button type="button" className="search-clear" onClick={reset} aria-label={t('btn_clear')}>

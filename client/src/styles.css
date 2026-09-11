@@ -752,8 +752,10 @@ button { cursor: pointer; font-family: inherit; }
 
 /* ---------- Nav search (live dropdown, replaces the old /search page) ---------- */
 .nav-search { position: relative; }
-.nav-search-desktop { width: 190px; transition: width 0.15s ease; }
-.nav-search-desktop:focus-within { width: 250px; }
+/* Fixed width, not an expand-on-focus animation — the box already does
+   its one job (opening the results panel) once you start typing, so
+   widening it too had nothing to justify itself with. */
+.nav-search-desktop { width: 170px; }
 .nav-search-desktop .search-box { max-width: none; padding: 0.4rem 0.8rem; }
 .nav-search-panel {
   position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;

@@ -55,9 +55,11 @@ export default function Navbar() {
           ))}
         </div>
 
-        <NavSearch variant="desktop" />
-
         <div className="navbar-actions">
+          {/* Right side, grouped with the other utility controls rather than
+              sitting between the nav links and here — that spot put it right
+              in the busiest, most crowded part of the bar. */}
+          <NavSearch variant="desktop" />
           {/* Hidden on mobile (see @media in styles.css) — the drawer's
               inline AccountMenu below is the mobile entry point instead, so
               there's only ever one place to find it per screen size. */}
