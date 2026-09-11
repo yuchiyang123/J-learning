@@ -233,7 +233,12 @@ body {
 /* Below this width the full link list no longer fits on one line and starts
    wrapping messily across the top bar — collapse it into a hamburger menu
    that opens the left-side drawer (below) instead of letting it wrap. */
-@media (max-width: 860px) {
+/* Was 860px — measured where the bar actually still fits on one line now
+   that NavSearch lives in it (1310px was the real cutoff; a chunk of that,
+   900–1100px, wrapped even before NavSearch existed, so raising this also
+   folds a pre-existing bug into the same fix rather than leaving a gap
+   where nothing — not the full bar, not the hamburger drawer — fit). */
+@media (max-width: 1320px) {
   .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
   .navbar-toggle { display: inline-flex; }
   .navbar-links { display: none; }
@@ -241,6 +246,7 @@ body {
      section (AccountMenu variant="inline") — one entry point per screen
      size, not two, so it isn't there to be mistaken for something else. */
   .navbar-account-slot { display: none; }
+  .nav-search-desktop { display: none; }
 }
 
 /* On genuinely narrow phones (not just tablet-portrait-and-below), the
@@ -777,9 +783,10 @@ button { cursor: pointer; font-family: inherit; }
 .nav-search-drawer .nav-search-panel {
   position: static; width: 100%; max-width: none; box-shadow: none; margin-top: 0.6rem;
 }
-@media (max-width: 860px) {
-  .nav-search-desktop { display: none; }
-}
+/* .nav-search-desktop's own hide rule now lives with the rest of the
+   navbar->hamburger collapse (see the 1320px block near .navbar-toggle) —
+   they have to switch together or there's a width range where neither the
+   full bar nor the drawer has search in it. */
 
 /* ---------- Grammar ---------- */
 .grammar-list { display: flex; flex-direction: column; gap: 1.1rem; }
