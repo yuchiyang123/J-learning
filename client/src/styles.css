@@ -329,6 +329,10 @@ body {
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .dropdown-trigger:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.dropdown-trigger-light {
+  border-color: var(--line); background: var(--paper-raised); color: var(--ink);
+}
+.dropdown-trigger-light:hover { background: var(--cream-4); border-color: var(--accent); }
 .dropdown-trigger-label { white-space: nowrap; }
 .dropdown-label-short { display: none; }
 .dropdown-chevron { transition: transform 0.15s ease; opacity: 0.85; }
@@ -1209,12 +1213,6 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .history-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .history-heading-row h2 { margin: 0; }
 .history-page-size { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
-.history-page-size select {
-  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink);
-  padding: 0.3rem 0.6rem; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer;
-}
-.history-page-size select:hover { border-color: var(--accent); }
-.history-page-size select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 /* Page-size picker moved up next to the section heading (a row of buttons
    sitting on its own beneath the table, apart from the prev/next controls,
    read as orphaned) — this row is now just the prev/page/next group, so

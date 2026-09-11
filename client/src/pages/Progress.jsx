@@ -6,6 +6,7 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { StatGridSkeleton, QuizSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
+import Dropdown from '../components/Dropdown.jsx';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import RadarChart from '../components/RadarChart.jsx';
 import CategoryBarChart from '../components/CategoryBarChart.jsx';
@@ -24,6 +25,7 @@ const CATEGORY_LABEL_KEYS = {
 };
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
+const PAGE_SIZE_DROPDOWN_OPTIONS = PAGE_SIZE_OPTIONS.map((n) => ({ value: n, label: String(n) }));
 
 export default function ProgressPage() {
   const [stats, setStats] = useState(null);
@@ -132,14 +134,16 @@ export default function ProgressPage() {
           <div className="history-heading-row">
             <h2>{t('progress_quiz_history')}</h2>
             {history.length > 0 && (
-              <label className="history-page-size">
-                {t('pagination_page_size_label')}
-                <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
-                  {PAGE_SIZE_OPTIONS.map((n) => (
-                    <option key={n} value={n}>{n}</option>
-                  ))}
-                </select>
-              </label>
+              <div className="history-page-size">
+                <span>{t('pagination_page_size_label')}</span>
+                <Dropdown
+                  light
+                  options={PAGE_SIZE_DROPDOWN_OPTIONS}
+                  value={pageSize}
+                  onChange={setPageSize}
+                  ariaLabel={t('pagination_page_size_label')}
+                />
+              </div>
             )}
           </div>
           {history.length === 0 && <EmptyState icon={<Inbox size={32} />} message={t('progress_no_history')} />}
