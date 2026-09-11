@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, X, Undo2, Eraser, RefreshCw, Volume2 } from 'lucide-react';
+import { Check, X, Undo2, Eraser, RefreshCw, Volume2, Loader2 } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
 import { drawKanaStrokeGuide, animateKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
@@ -48,6 +48,9 @@ export default function KanaWriteQuiz({ script }) {
   const [results, setResults] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  // Which grade button triggered the in-flight submit (the last question's
+  // "我寫對了"/"我寫錯了" click), so only that one shows the spinner.
+  const [pendingCorrect, setPendingCorrect] = useState(null);
 
   const canvasRef = useRef(null);
   const cancelAnimRef = useRef(null);
@@ -211,6 +214,7 @@ export default function KanaWriteQuiz({ script }) {
       return;
     }
     setSubmitting(true);
+    setPendingCorrect(isCorrect);
     try {
       if (isLoggedIn) {
         await api.submitKanaWrite({ script, items: nextResults });
@@ -228,6 +232,7 @@ export default function KanaWriteQuiz({ script }) {
       setSubmitError(true);
     } finally {
       setSubmitting(false);
+      setPendingCorrect(null);
       setStage('done');
     }
   }
@@ -324,10 +329,12 @@ export default function KanaWriteQuiz({ script }) {
               )}
               <div className="writequiz-grade-actions">
                 <button className="secondary-btn icon-btn writequiz-correct" disabled={submitting} onClick={() => grade(true)}>
-                  <Check size={16} /> {t('kana_writequiz_self_correct')}
+                  {pendingCorrect === true ? <Loader2 size={16} className="spin" /> : <Check size={16} />}
+                  {pendingCorrect === true ? t('writequiz_saving') : t('kana_writequiz_self_correct')}
                 </button>
                 <button className="secondary-btn icon-btn writequiz-wrong" disabled={submitting} onClick={() => grade(false)}>
-                  <X size={16} /> {t('kana_writequiz_self_wrong')}
+                  {pendingCorrect === false ? <Loader2 size={16} className="spin" /> : <X size={16} />}
+                  {pendingCorrect === false ? t('writequiz_saving') : t('kana_writequiz_self_wrong')}
                 </button>
               </div>
             </>

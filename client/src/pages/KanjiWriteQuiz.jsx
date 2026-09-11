@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, X, Undo2, Eraser, RefreshCw } from 'lucide-react';
+import { Check, X, Undo2, Eraser, RefreshCw, Loader2 } from 'lucide-react';
 import { drawKanaStrokeGuide, animateKanaStrokeGuide } from '../lib/kanaStrokeGuide.js';
 import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
@@ -39,6 +39,7 @@ export default function KanjiWriteQuiz({ level, list }) {
   const [results, setResults] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [pendingCorrect, setPendingCorrect] = useState(null);
 
   const canvasRef = useRef(null);
   const cancelAnimRef = useRef(null);
@@ -166,6 +167,7 @@ export default function KanjiWriteQuiz({ level, list }) {
       return;
     }
     setSubmitting(true);
+    setPendingCorrect(isCorrect);
     try {
       if (isLoggedIn) {
         await api.submitKanjiWrite({ level, items: nextResults });
@@ -176,6 +178,7 @@ export default function KanjiWriteQuiz({ level, list }) {
       setSubmitError(true);
     } finally {
       setSubmitting(false);
+      setPendingCorrect(null);
       setStage('done');
     }
   }
@@ -235,10 +238,12 @@ export default function KanjiWriteQuiz({ level, list }) {
               )}
               <div className="writequiz-grade-actions">
                 <button className="secondary-btn icon-btn writequiz-correct" disabled={submitting} onClick={() => grade(true)}>
-                  <Check size={16} /> {t('kana_writequiz_self_correct')}
+                  {pendingCorrect === true ? <Loader2 size={16} className="spin" /> : <Check size={16} />}
+                  {pendingCorrect === true ? t('writequiz_saving') : t('kana_writequiz_self_correct')}
                 </button>
                 <button className="secondary-btn icon-btn writequiz-wrong" disabled={submitting} onClick={() => grade(false)}>
-                  <X size={16} /> {t('kana_writequiz_self_wrong')}
+                  {pendingCorrect === false ? <Loader2 size={16} className="spin" /> : <X size={16} />}
+                  {pendingCorrect === false ? t('writequiz_saving') : t('kana_writequiz_self_wrong')}
                 </button>
               </div>
             </>
