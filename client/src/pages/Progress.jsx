@@ -129,7 +129,19 @@ export default function ProgressPage() {
 
       {!loading && (
         <>
-          <h2>{t('progress_quiz_history')}</h2>
+          <div className="history-heading-row">
+            <h2>{t('progress_quiz_history')}</h2>
+            {history.length > 0 && (
+              <label className="history-page-size">
+                {t('pagination_page_size_label')}
+                <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
+                  {PAGE_SIZE_OPTIONS.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
           {history.length === 0 && <EmptyState icon={<Inbox size={32} />} message={t('progress_no_history')} />}
           {history.length > 0 && (
             <>
@@ -212,14 +224,6 @@ export default function ProgressPage() {
               </table>
 
               <div className="history-pagination">
-                <div className="filter-group">
-                  <span className="filter-label">{t('pagination_page_size_label')}</span>
-                  {PAGE_SIZE_OPTIONS.map((n) => (
-                    <button key={n} className={pageSize === n ? 'active' : ''} onClick={() => setPageSize(n)}>
-                      {n}
-                    </button>
-                  ))}
-                </div>
                 <div className="pagination-controls">
                   <button className="secondary-btn" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
                     {t('pagination_prev')}

@@ -1162,18 +1162,21 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .history-answer-line strong { color: var(--ink); }
 .history-view-btn { font-size: 0.82rem; padding: 0.3rem 0.7rem; }
-/* Grid instead of flex space-between so the prev/page/next group can sit
-   truly centered (its own grid column) rather than pinned to whichever
-   side space-between left it on. */
-.history-pagination {
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; margin-top: 1rem;
+.history-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.history-heading-row h2 { margin: 0; }
+.history-page-size { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+.history-page-size select {
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink);
+  padding: 0.3rem 0.6rem; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer;
 }
-.history-pagination .filter-group { grid-column: 1; margin-right: 0; }
-.history-pagination .pagination-controls { grid-column: 2; }
-@media (max-width: 480px) {
-  .history-pagination { grid-template-columns: 1fr; justify-items: center; gap: 0.8rem; }
-  .history-pagination .filter-group, .history-pagination .pagination-controls { grid-column: 1; }
-}
+.history-page-size select:hover { border-color: var(--accent); }
+.history-page-size select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* Page-size picker moved up next to the section heading (a row of buttons
+   sitting on its own beneath the table, apart from the prev/next controls,
+   read as orphaned) — this row is now just the prev/page/next group, so
+   centering it is a plain flex center instead of the previous 3-column
+   grid trick. */
+.history-pagination { display: flex; justify-content: center; margin-top: 1rem; }
 .pagination-controls { display: flex; align-items: center; gap: 0.8rem; }
 .pagination-controls button:disabled { opacity: 0.45; cursor: default; }
 .pagination-indicator { font-size: 0.88rem; color: var(--ink-soft); font-weight: 600; }
