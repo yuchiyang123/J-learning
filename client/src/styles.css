@@ -1045,6 +1045,8 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writequiz-row-chip:hover { border-color: var(--accent); color: var(--accent-dark); }
 .writequiz-row-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .writequiz-row-chip input { accent-color: var(--accent); }
+.writequiz-count-row { margin-top: -0.2rem; }
+.writequiz-pool-size { font-size: 0.85rem; }
 .writequiz-setup-footer { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
 .writequiz-wrongbook { border-top: 1px dashed var(--line); padding-top: 1rem; }
 

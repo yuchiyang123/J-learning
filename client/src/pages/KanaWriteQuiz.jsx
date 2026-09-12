@@ -7,6 +7,7 @@ import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
 import { getStrokeAnimation } from '../lib/kanaWritePrefs.js';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
+import Dropdown from '../components/Dropdown.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 import { api } from '../api.js';
@@ -27,6 +28,10 @@ function shuffle(arr) {
   return a;
 }
 
+// 'all' = every character in the selected rows (previous, only behaviour);
+// otherwise a fixed count randomly sampled from that same pool.
+const QUESTION_COUNT_OPTIONS = ['all', 10, 20, 30, 40];
+
 // Handwriting quiz: pick rows -> shuffled romaji prompts -> draw the kana ->
 // reveal the reference stroke order -> self-grade. Revealing also runs a
 // cheap shape-similarity heuristic (see lib/kanaStrokeRecognition.js) as a
@@ -41,6 +46,7 @@ export default function KanaWriteQuiz({ script }) {
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
   const [promptMode, setPromptMode] = useState('romaji'); // 'romaji' | 'audio'
   const [selectedRows, setSelectedRows] = useState(() => new Set());
+  const [questionCount, setQuestionCount] = useState('all');
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -99,7 +105,9 @@ export default function KanaWriteQuiz({ script }) {
       }
     }
     if (chars.length === 0) return;
-    beginQueue(shuffle(chars));
+    const shuffled = shuffle(chars);
+    const picked = questionCount === 'all' ? shuffled : shuffled.slice(0, questionCount);
+    beginQueue(picked);
   }
 
   async function startWrongBook() {
@@ -253,6 +261,15 @@ export default function KanaWriteQuiz({ script }) {
     }
   }
 
+  const poolSize = allRows.reduce(
+    (n, row) => (selectedRows.has(row.label) ? n + row.cells.filter(Boolean).length : n),
+    0
+  );
+  const questionCountOptions = QUESTION_COUNT_OPTIONS.map((n) => ({
+    value: n,
+    label: n === 'all' ? t('kana_writequiz_count_all') : t('kana_writequiz_count_n', { count: n }),
+  }));
+
   return (
     <div className="kana-writequiz">
       {stage === 'setup' && (
@@ -284,6 +301,14 @@ export default function KanaWriteQuiz({ script }) {
                 {row.label}
               </label>
             ))}
+          </div>
+
+          <div className="writequiz-setup-actions writequiz-count-row">
+            <span className="filter-label">{t('kana_writequiz_question_count')}</span>
+            <Dropdown light options={questionCountOptions} value={questionCount} onChange={setQuestionCount} ariaLabel={t('kana_writequiz_question_count')} />
+            {selectedRows.size > 0 && (
+              <span className="muted writequiz-pool-size">{t('kana_writequiz_pool_size', { count: poolSize })}</span>
+            )}
           </div>
 
           <div className="writequiz-setup-footer">
