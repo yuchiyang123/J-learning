@@ -230,27 +230,37 @@ body {
 }
 .navbar-toggle:hover { background: rgba(255,255,255,0.22); }
 
-/* Below this width the full link list no longer fits on one line and starts
-   wrapping messily across the top bar — collapse it into a hamburger menu
-   that opens the left-side drawer (below) instead of letting it wrap. */
-/* Was 860px — measured where the bar actually still fits on one line now
-   that NavSearch lives in it (1310px was the real cutoff; a chunk of that,
-   900–1100px, wrapped even before NavSearch existed, so raising this also
-   folds a pre-existing bug into the same fix rather than leaving a gap
-   where nothing — not the full bar, not the hamburger drawer — fit). */
-@media (max-width: 1320px) {
+/* Whether the full bar (links + search + account + language + theme) fits
+   on one line depends on things a fixed breakpoint can't see — the active
+   locale's label lengths, whether a username is showing and how long it
+   is — so a hard-coded px cutoff kept needing to be re-tuned every time one
+   of those changed (860px, then 1320px, still wrapped once a logged-in
+   account button entered the mix). Navbar.jsx now measures the bar's own
+   content against its available width at runtime and toggles this class
+   instead, so it collapses exactly when it stops fitting, for whichever
+   locale/login state is actually on screen. */
+.navbar.is-cramped { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
+.navbar.is-cramped .navbar-toggle { display: inline-flex; }
+.navbar.is-cramped .navbar-links { display: none; }
+/* The account popover is redundant with the drawer's own inline account
+   section (AccountMenu variant="inline") — one entry point per screen
+   size, not two, so it isn't there to be mistaken for something else. */
+.navbar.is-cramped .navbar-account-slot { display: none; }
+.navbar.is-cramped .nav-search-desktop { display: none; }
+
+/* Safety net for genuinely narrow phones in case the JS measurement above
+   never runs (e.g. disabled JS) — real phone widths always need the
+   hamburger regardless of locale or login state. */
+@media (max-width: 480px) {
   .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
   .navbar-toggle { display: inline-flex; }
   .navbar-links { display: none; }
-  /* The account popover is redundant with the drawer's own inline account
-     section (AccountMenu variant="inline") — one entry point per screen
-     size, not two, so it isn't there to be mistaken for something else. */
   .navbar-account-slot { display: none; }
   .nav-search-desktop { display: none; }
 }
 
 /* On genuinely narrow phones (not just tablet-portrait-and-below), the
-   860px tightening above still isn't quite enough headroom for
+   tightening above still isn't quite enough headroom for
    brand + language + theme + hamburger to all fit on one row. */
 @media (max-width: 400px) {
   .navbar { padding: 0.55rem 0.6rem; gap: 0.5rem 0.3rem; }

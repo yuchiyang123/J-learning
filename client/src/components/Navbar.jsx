@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { GraduationCap, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle.jsx';
@@ -28,10 +28,75 @@ const links = [
 export default function Navbar() {
   const { t } = useLocale();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [cramped, setCramped] = useState(false);
+  const navRef = useRef(null);
   const location = useLocation();
 
   // Collapse the mobile drawer whenever the route changes (link click, back/forward).
   useEffect(() => { setDrawerOpen(false); }, [location.pathname]);
+
+  // Whether the full bar fits on one line depends on things a fixed CSS
+  // breakpoint can't see (the active locale's label lengths, whether a
+  // username is showing and how long it is), so measure it directly
+  // instead of guessing another px cutoff. Force nowrap for the
+  // measurement (temporarily undoing .is-cramped so hidden elements are
+  // back in flow) and compare the natural content width against the
+  // available one.
+  const measure = useCallback(() => {
+    const el = navRef.current;
+    if (!el) return;
+    // Just forcing the outer bar to nowrap isn't enough: with flex-wrap:wrap
+    // still active on .navbar-links/.navbar-actions, and default
+    // flex-shrink:1 on everything, a single-line layout would just shrink
+    // those two by wrapping (or squeezing) their own children instead of
+    // overflowing — hiding exactly the overflow we're trying to detect.
+    // Pin every direct child to its natural width (flex-shrink:0) and
+    // force nowrap through both levels so scrollWidth reflects the real,
+    // unsquashed single-row width.
+    const children = Array.from(el.children);
+    const innerWrapTargets = [el.querySelector('.navbar-links'), el.querySelector('.navbar-actions')].filter(Boolean);
+    const wasCramped = el.classList.contains('is-cramped');
+    if (wasCramped) el.classList.remove('is-cramped');
+    const prevOuterWrap = el.style.flexWrap;
+    const prevOverflow = el.style.overflow;
+    const prevShrinks = children.map((c) => c.style.flexShrink);
+    const prevInnerWraps = innerWrapTargets.map((t) => t.style.flexWrap);
+    el.style.flexWrap = 'nowrap';
+    // scrollWidth only reports genuine content overflow when the element
+    // isn't overflow:visible (its default here) — with overflow:visible,
+    // most engines just report scrollWidth === clientWidth regardless of
+    // how much the content actually spills out, which silently broke this
+    // whole measurement. Force it to hidden just for the read.
+    el.style.overflow = 'hidden';
+    children.forEach((c) => { c.style.flexShrink = '0'; });
+    innerWrapTargets.forEach((t) => { t.style.flexWrap = 'nowrap'; });
+
+    const fits = el.scrollWidth <= el.clientWidth + 1;
+
+    el.style.flexWrap = prevOuterWrap;
+    el.style.overflow = prevOverflow;
+    children.forEach((c, i) => { c.style.flexShrink = prevShrinks[i]; });
+    innerWrapTargets.forEach((t, i) => { t.style.flexWrap = prevInnerWraps[i]; });
+    if (wasCramped) el.classList.add('is-cramped');
+    setCramped(!fits);
+  }, []);
+
+  // Re-measure on mount and whenever the bar's own box size changes
+  // (viewport resize), or when .navbar-links/.navbar-actions' content
+  // changes size for a reason that doesn't re-render Navbar itself — the
+  // account button swapping "登入" for a username once the auth check
+  // resolves is exactly that: it's AccountMenu (a child) re-rendering
+  // on its own, not something Navbar's own effect deps would ever see.
+  // ResizeObserver catches both cases uniformly instead of trying to
+  // enumerate every prop/state that could change the content width.
+  useLayoutEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const targets = [el, el.querySelector('.navbar-links'), el.querySelector('.navbar-actions')].filter(Boolean);
+    const ro = new ResizeObserver(() => measure());
+    targets.forEach((t) => ro.observe(t));
+    return () => ro.disconnect();
+  }, [measure]);
 
   // A drawer open behind it shouldn't let the page underneath scroll too.
   useEffect(() => {
@@ -41,7 +106,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar">
+      <nav className={`navbar${cramped ? ' is-cramped' : ''}`} ref={navRef}>
         <Link to="/" className="navbar-brand">
           <GraduationCap size={20} />
           {t('brand')}
