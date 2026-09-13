@@ -996,20 +996,32 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 /* ---------- Writing practice ---------- */
 .writing-practice { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; align-items: start; }
 .writing-picker {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
   max-height: 560px; overflow-y: auto; padding-right: 0.3rem;
 }
+.writing-picker-row-label { font-size: 0.72rem; color: var(--ink-soft); font-weight: 700; padding-left: 0.15rem; margin-bottom: 0.25rem; }
+.writing-picker-cells { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.35rem; }
 .writing-picker-btn {
-  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 8px; padding: 0.5rem 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 8px; padding: 0.4rem 0;
   font-size: 1rem; font-weight: 700; font-family: var(--font-heading);
   transition: all 0.15s ease;
 }
 .writing-picker-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
 .writing-picker-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.writing-picker-btn.active .writing-picker-romaji { color: rgba(255,255,255,0.85); }
+/* や行/わ行/ん keep their empty slots instead of compacting — same
+   positions as the kana chart, just invisible rather than a hollow box. */
+.writing-picker-btn.empty { visibility: hidden; border: none; background: none; }
+.writing-picker-char { font-size: 1rem; }
+.writing-picker-romaji { font-size: 0.65rem; font-weight: 600; color: var(--ink-soft); }
 
 .writing-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 0; width: 100%; }
 .writing-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-.writing-romaji { font-weight: 700; color: var(--ink-soft); letter-spacing: 0.05em; }
+.writing-romaji {
+  font-weight: 700; color: var(--accent-dark); letter-spacing: 0.05em; text-transform: uppercase;
+  background: var(--accent-soft); border-radius: 999px; padding: 0.3rem 0.9rem; font-size: 0.95rem;
+}
 
 .writing-canvas-wrap { display: flex; align-items: center; gap: 0.6rem; width: 100%; }
 .writing-canvas {
@@ -1031,13 +1043,10 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 @media (max-width: 860px) {
   .writing-practice { grid-template-columns: 1fr; gap: 1rem; }
   .writing-stage { order: 1; }
-  .writing-picker {
-    order: 2; grid-template-columns: repeat(8, 1fr); max-height: none; overflow-y: visible;
-  }
+  .writing-picker { order: 2; max-height: none; overflow-y: visible; }
 }
 
 @media (max-width: 480px) {
-  .writing-picker { grid-template-columns: repeat(6, 1fr); }
   .writing-nav { width: 34px; height: 34px; flex-basis: 34px; }
   .writing-toolbar { gap: 0.6rem; }
 }

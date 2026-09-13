@@ -9,7 +9,8 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 
 const CANVAS_SIZE = 480;
 
-const flatList = [...seion, ...dakuon, ...handakuon].flatMap((row) =>
+const allRows = [...seion, ...dakuon, ...handakuon];
+const flatList = allRows.flatMap((row) =>
   row.cells.filter(Boolean).map(([hira, kata, romaji]) => ({ hira, kata, romaji }))
 );
 
@@ -128,22 +129,42 @@ export default function WritingPractice({ script }) {
     setIndex((i) => (i + delta + flatList.length) % flatList.length);
   }
 
+  // Same row/column layout as the kana chart (including the gaps — や行
+  // only has ya/yu/yo, so this leaves two blank slots rather than
+  // compacting them) so muscle memory from the chart carries over here
+  // instead of the picker being a differently-shaped flat list.
+  let flatIdx = -1;
+
   return (
     <div className="writing-practice">
       <div className="writing-picker">
-        {flatList.map((k, i) => (
-          <button
-            key={i}
-            className={`writing-picker-btn${i === index ? ' active' : ''}`}
-            onClick={() => setIndex(i)}
-          >
-            {script === 'hira' ? k.hira : k.kata}
-          </button>
+        {allRows.map((row) => (
+          <div className="writing-picker-row" key={row.label}>
+            <div className="writing-picker-row-label">{row.label}</div>
+            <div className="writing-picker-cells">
+              {row.cells.map((cell, i) => {
+                if (!cell) return <div key={i} className="writing-picker-btn empty" />;
+                const thisIndex = ++flatIdx;
+                const [hira, kata, romaji] = cell;
+                return (
+                  <button
+                    key={i}
+                    className={`writing-picker-btn${thisIndex === index ? ' active' : ''}`}
+                    onClick={() => setIndex(thisIndex)}
+                  >
+                    <span className="writing-picker-char">{script === 'hira' ? hira : kata}</span>
+                    <span className="writing-picker-romaji">{romaji}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </div>
 
       <div className="writing-stage">
         <div className="writing-toolbar">
+          <span className="writing-romaji">{current.romaji}</span>
           <button className="tiny-btn icon-btn" onClick={() => speak(current.hira)}><Volume2 size={16} /> {t('btn_play_audio')}</button>
           <button className="tiny-btn icon-btn" onClick={() => setShowGuide((g) => !g)}>
             {showGuide ? <Eye size={16} /> : <EyeOff size={16} />} {t('writing_char_ref')}
