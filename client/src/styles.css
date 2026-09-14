@@ -319,9 +319,15 @@ body {
 }
 .nav-drawer-account .navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); transform: none; }
 
-@media (min-width: 861px) {
-  .nav-drawer, .nav-drawer-backdrop { display: none; }
-}
+/* No "hide above Npx" media query here on purpose: the drawer only ever
+   opens via .navbar-toggle, which is itself only visible when the navbar
+   is in its JS-measured cramped/hamburger state (see Navbar.jsx) — a state
+   that can now kick in at any width depending on content, not a fixed
+   breakpoint. A stale `@media (min-width: 861px) { display: none }` here
+   used to force the drawer invisible (even with .is-open set) whenever
+   cramped triggered above 861px, which is routine now. The closed state
+   is already fully handled above via transform/opacity + pointer-events,
+   so no width-based override is needed at all. */
 
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center;
