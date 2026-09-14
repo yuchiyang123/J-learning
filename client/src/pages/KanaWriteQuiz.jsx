@@ -6,6 +6,7 @@ import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
 import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
 import { getStrokeAnimation } from '../lib/kanaWritePrefs.js';
+import { getAccent2Color, getGridLineColor, onThemeChange } from '../theme.js';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import Dropdown from '../components/Dropdown.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
@@ -124,7 +125,7 @@ export default function KanaWriteQuiz({ script }) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = '#d9d3ca';
+    ctx.strokeStyle = getGridLineColor();
     ctx.lineWidth = 1.5;
     ctx.setLineDash([6, 6]);
     ctx.beginPath();
@@ -156,7 +157,7 @@ export default function KanaWriteQuiz({ script }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     redrawBase();
-    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: '#1f6f5c' });
+    if (revealedOverride && current) drawKanaStrokeGuide(ctx, canvas.width, current.char, { color: getAccent2Color() });
   }
 
   useEffect(() => {
@@ -172,7 +173,7 @@ export default function KanaWriteQuiz({ script }) {
     if (revealed && current && canvas && getStrokeAnimation()) {
       const ctx = canvas.getContext('2d');
       cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, current.char, {
-        color: '#1f6f5c',
+        color: getAccent2Color(),
         prepareFrame: redrawBase,
       });
       if (!cancelAnimRef.current) redraw(true); // no stroke data — fall back to static (no-op guide)
@@ -183,6 +184,12 @@ export default function KanaWriteQuiz({ script }) {
   }, [revealed]);
 
   useEffect(() => stopAnimation, []);
+
+  // Ink and the reference guide are painted onto the canvas in plain hex,
+  // not styled via CSS — switching theme mid-session otherwise leaves
+  // whatever was already drawn stuck in the old theme's colors until the
+  // next unrelated redraw.
+  useEffect(() => onThemeChange(() => redraw()));
 
   // Warn before an actual browser-level exit (reload, close tab/window,
   // typing a new URL) while a run is in progress — there's no autosave, so

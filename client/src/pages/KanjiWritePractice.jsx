@@ -5,6 +5,7 @@ import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
 import { getStrokeAnimation } from '../lib/kanaWritePrefs.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { getAccentColor, getGridLineColor, onThemeChange } from '../theme.js';
 
 const CANVAS_SIZE = 480;
 
@@ -33,7 +34,7 @@ export default function KanjiWritePractice({ list }) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = '#d9d3ca';
+    ctx.strokeStyle = getGridLineColor();
     ctx.lineWidth = 1.5;
     ctx.setLineDash([6, 6]);
     ctx.beginPath();
@@ -59,8 +60,8 @@ export default function KanjiWritePractice({ list }) {
     if (!canvas || !char) return;
     const ctx = canvas.getContext('2d');
     redrawBase();
-    if (showGuide && !drawKanaStrokeGuide(ctx, canvas.width, char)) {
-      drawKanaFallbackGlyph(ctx, canvas.width, canvas.height, char);
+    if (showGuide && !drawKanaStrokeGuide(ctx, canvas.width, char, { color: getAccentColor() })) {
+      drawKanaFallbackGlyph(ctx, canvas.width, canvas.height, char, { color: getAccentColor() });
     }
   }
 
@@ -76,7 +77,7 @@ export default function KanjiWritePractice({ list }) {
     const canvas = canvasRef.current;
     if (canvas && char && showGuide && getStrokeAnimation()) {
       const ctx = canvas.getContext('2d');
-      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, char, { prepareFrame: redrawBase });
+      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, char, { color: getAccentColor(), prepareFrame: redrawBase });
       if (!cancelAnimRef.current) redraw();
     } else {
       redraw();
@@ -85,6 +86,12 @@ export default function KanjiWritePractice({ list }) {
   }, [index, list]);
 
   useEffect(() => stopAnimation, []);
+
+  // Ink and the reference guide are painted onto the canvas in plain hex,
+  // not styled via CSS — switching theme mid-session otherwise leaves
+  // whatever was already drawn stuck in the old theme's colors until the
+  // next unrelated redraw (e.g. changing character).
+  useEffect(() => onThemeChange(redraw));
 
   function clearCanvas() {
     clearStrokes();

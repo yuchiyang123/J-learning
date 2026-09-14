@@ -6,6 +6,7 @@ import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
 import { speak } from '../speech.js';
 import { getKanaWriteAutoplay, getStrokeAnimation } from '../lib/kanaWritePrefs.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import { getAccentColor, getGridLineColor, onThemeChange } from '../theme.js';
 
 const CANVAS_SIZE = 480;
 
@@ -36,7 +37,7 @@ export default function WritingPractice({ script }) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // guide grid (十字線)
-    ctx.strokeStyle = '#d9d3ca';
+    ctx.strokeStyle = getGridLineColor();
     ctx.lineWidth = 1.5;
     ctx.setLineDash([6, 6]);
     ctx.beginPath();
@@ -65,8 +66,8 @@ export default function WritingPractice({ script }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     redrawBase();
-    if (showGuide && !drawKanaStrokeGuide(ctx, canvas.width, char)) {
-      drawKanaFallbackGlyph(ctx, canvas.width, canvas.height, char);
+    if (showGuide && !drawKanaStrokeGuide(ctx, canvas.width, char, { color: getAccentColor() })) {
+      drawKanaFallbackGlyph(ctx, canvas.width, canvas.height, char, { color: getAccentColor() });
     }
   }
 
@@ -82,7 +83,7 @@ export default function WritingPractice({ script }) {
     const canvas = canvasRef.current;
     if (canvas && showGuide && getStrokeAnimation()) {
       const ctx = canvas.getContext('2d');
-      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, char, { prepareFrame: redrawBase });
+      cancelAnimRef.current = animateKanaStrokeGuide(ctx, canvas.width, char, { color: getAccentColor(), prepareFrame: redrawBase });
       if (!cancelAnimRef.current) redraw(); // no stroke data for this char — fall back to the static glyph
     } else {
       redraw();
@@ -91,6 +92,12 @@ export default function WritingPractice({ script }) {
   }, [index, script]);
 
   useEffect(() => stopAnimation, []);
+
+  // Ink and the reference guide are painted onto the canvas in plain hex,
+  // not styled via CSS — switching theme mid-session otherwise leaves
+  // whatever was already drawn stuck in the old theme's colors until the
+  // next unrelated redraw (e.g. changing character).
+  useEffect(() => onThemeChange(redraw));
 
   // Selecting a character (picker click or prev/next) plays its pronunciation
   // instead of the practice showing romaji text — the learner hears the

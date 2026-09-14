@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { getInkColor } from '../theme.js';
 
 // Shared pointer-drawing logic for the kana canvases (free-form writing
 // practice + the handwriting quiz). Captures raw stroke point sequences in
@@ -19,7 +20,7 @@ export function useKanaCanvas(canvasRef, penSize = 10) {
   }, [canvasRef]);
 
   const setInkStyle = useCallback((ctx) => {
-    ctx.strokeStyle = '#262421';
+    ctx.strokeStyle = getInkColor();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.lineWidth = penSize;
