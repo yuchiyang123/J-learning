@@ -7,6 +7,7 @@ import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { FlashcardSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
+import Modal from '../components/Modal.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 
@@ -166,14 +167,14 @@ export default function Vocabulary() {
         </div>
       )}
 
-      {showAddForm && (
+      <Modal open={showAddForm} onClose={() => setShowAddForm(false)} label={t('vocab_add_word_title')}>
         <AddWordForm
           level={level}
           t={t}
           onAdded={() => { setShowAddForm(false); reloadWordsAfterMutation(); }}
           onCancel={() => setShowAddForm(false)}
         />
-      )}
+      </Modal>
 
       {loading && <FlashcardSkeleton />}
       {!loading && !current && <EmptyState icon={<Inbox size={32} />} message={t('no_data_level')} />}
