@@ -167,7 +167,7 @@ export default function Vocabulary() {
         </div>
       )}
 
-      <Modal open={showAddForm} onClose={() => setShowAddForm(false)} label={t('vocab_add_word_title')}>
+      <Modal open={showAddForm} onClose={() => setShowAddForm(false)} label={t('vocab_add_word_title')} dismissible={false}>
         <AddWordForm
           level={level}
           t={t}
@@ -264,6 +264,17 @@ function AddWordForm({ level, t, onAdded, onCancel }) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
+  // The X button is the only way to close this dialog (see the Modal's
+  // dismissible={false} in the parent) — an accidental backdrop click or
+  // Escape shouldn't silently throw away a half-filled form, but the X is
+  // an explicit choice, so it still needs its own confirm if there's
+  // anything typed to lose.
+  function requestClose() {
+    const isDirty = Object.values(form).some((v) => v.trim() !== '');
+    if (isDirty && !window.confirm(t('vocab_add_word_discard_confirm'))) return;
+    onCancel();
+  }
+
   async function submit(e) {
     e.preventDefault();
     setError('');
@@ -284,7 +295,12 @@ function AddWordForm({ level, t, onAdded, onCancel }) {
 
   return (
     <form className="auth-form add-word-form" onSubmit={submit}>
-      <h2>{t('vocab_add_word_title')}</h2>
+      <div className="modal-header">
+        <h2>{t('vocab_add_word_title')}</h2>
+        <button type="button" className="modal-close-btn" onClick={requestClose} aria-label={t('close')}>
+          <X size={18} />
+        </button>
+      </div>
       <label>
         {t('vocab_field_kanji')}
         <input value={form.kanji} onChange={(e) => update('kanji', e.target.value)} />
@@ -314,10 +330,7 @@ function AddWordForm({ level, t, onAdded, onCancel }) {
         <input value={form.example_zh} onChange={(e) => update('example_zh', e.target.value)} />
       </label>
       {error && <p className="warning">{error}</p>}
-      <div className="quiz-actions">
-        <button className="submit-btn" type="submit" disabled={submitting}>{t('btn_save')}</button>
-        <button className="secondary-btn" type="button" onClick={onCancel}>{t('close')}</button>
-      </div>
+      <button className="submit-btn login-submit-btn" type="submit" disabled={submitting}>{t('btn_save')}</button>
     </form>
   );
 }
