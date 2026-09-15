@@ -29,6 +29,24 @@ function shuffle(arr) {
   return a;
 }
 
+// じ/ぢ and ず/づ are two different characters that romanize identically
+// (yotsugana — they've merged in pronunciation in modern standard
+// Japanese), so a romaji-only or audio-only prompt genuinely can't tell
+// you which one is wanted: "ji" alone doesn't say whether to draw じ or
+// ぢ. Since rows are selected explicitly at setup, which 行 a character
+// belongs to disambiguates it without giving away the character itself —
+// shown alongside the prompt for every question (not just the ambiguous
+// ones) so it's a consistent hint rather than a tell that "this one's a
+// tricky one".
+function findRowLabel(char, forScript) {
+  for (const row of allRows) {
+    for (const cell of row.cells) {
+      if (cell && cell[forScript === 'hira' ? 0 : 1] === char) return row.label;
+    }
+  }
+  return '';
+}
+
 // 'all' = every character in the selected rows (previous, only behaviour);
 // otherwise a fixed count randomly sampled from that same pool.
 const QUESTION_COUNT_OPTIONS = ['all', 10, 20, 30, 40];
@@ -102,7 +120,7 @@ export default function KanaWriteQuiz({ script }) {
       if (!selectedRows.has(row.label)) continue;
       for (const cell of row.cells) {
         if (!cell) continue;
-        chars.push({ char: script === 'hira' ? cell[0] : cell[1], romaji: cell[2] });
+        chars.push({ char: script === 'hira' ? cell[0] : cell[1], romaji: cell[2], rowLabel: row.label });
       }
     }
     if (chars.length === 0) return;
@@ -114,7 +132,7 @@ export default function KanaWriteQuiz({ script }) {
   async function startWrongBook() {
     const rows = await api.getKanaWriteWrong(script);
     if (rows.length === 0) return;
-    beginQueue(shuffle(rows.map((r) => ({ char: r.char, romaji: r.romaji }))));
+    beginQueue(shuffle(rows.map((r) => ({ char: r.char, romaji: r.romaji, rowLabel: findRowLabel(r.char, script) }))));
   }
 
   const current = queue[qIndex];
@@ -347,6 +365,11 @@ export default function KanaWriteQuiz({ script }) {
               <Volume2 size={18} /> {t('btn_play_audio')}
             </button>
           )}
+          {/* じ/ぢ and ず/づ share a romaji and an identical pronunciation
+              (see findRowLabel above) — the row is the only thing that
+              still tells them apart, so it's shown for every question
+              rather than just those two so this isn't itself a tell. */}
+          <div className="writequiz-row-hint">{current.rowLabel}</div>
           <canvas
             ref={canvasRef}
             width={CANVAS_SIZE}
