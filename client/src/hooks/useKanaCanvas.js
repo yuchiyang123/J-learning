@@ -35,6 +35,7 @@ export function useKanaCanvas(canvasRef, penSize = 10) {
 
   const pointerMove = useCallback((e) => {
     if (!drawingRef.current) return;
+    e.preventDefault();
     const pt = getPoint(e);
     currentStrokeRef.current.push(pt);
     const ctx = canvasRef.current.getContext('2d');

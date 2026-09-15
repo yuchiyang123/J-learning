@@ -38,10 +38,21 @@ function shuffle(arr) {
 // shown alongside the prompt for every question (not just the ambiguous
 // ones) so it's a consistent hint rather than a tell that "this one's a
 // tricky one".
+//
+// row.label (e.g. 'ざ行') is named after that row's own first kana, so
+// using it directly as the hint handed the answer straight to whichever
+// question WAS that row's first character (romaji 'za' + hint 'ざ行' spells
+// it out). Built from romaji instead — 'za行' still disambiguates ざ行 from
+// だ行 without ever putting a kana glyph in the hint.
+function romajiRowLabel(row) {
+  const firstCell = row.cells.find(Boolean);
+  return firstCell ? `${firstCell[2]}行` : row.label;
+}
+
 function findRowLabel(char, forScript) {
   for (const row of allRows) {
     for (const cell of row.cells) {
-      if (cell && cell[forScript === 'hira' ? 0 : 1] === char) return row.label;
+      if (cell && cell[forScript === 'hira' ? 0 : 1] === char) return romajiRowLabel(row);
     }
   }
   return '';
@@ -120,7 +131,7 @@ export default function KanaWriteQuiz({ script }) {
       if (!selectedRows.has(row.label)) continue;
       for (const cell of row.cells) {
         if (!cell) continue;
-        chars.push({ char: script === 'hira' ? cell[0] : cell[1], romaji: cell[2], rowLabel: row.label });
+        chars.push({ char: script === 'hira' ? cell[0] : cell[1], romaji: cell[2], rowLabel: romajiRowLabel(row) });
       }
     }
     if (chars.length === 0) return;

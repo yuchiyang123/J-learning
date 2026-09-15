@@ -1041,18 +1041,25 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writing-picker-char { font-size: 1rem; }
 .writing-picker-romaji { font-size: 0.65rem; font-weight: 600; color: var(--ink-soft); }
 
-.writing-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 0; width: 100%; }
+.writing-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 0; width: 100%; user-select: none; -webkit-user-select: none; }
 .writing-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
 .writing-romaji {
   font-weight: 700; color: var(--accent-dark); letter-spacing: 0.05em; text-transform: uppercase;
   background: var(--accent-soft); border-radius: 999px; padding: 0.3rem 0.9rem; font-size: 0.95rem;
 }
 
-.writing-canvas-wrap { display: flex; align-items: center; gap: 0.6rem; width: 100%; }
+.writing-canvas-wrap { display: flex; align-items: center; gap: 0.6rem; width: 100%; user-select: none; -webkit-user-select: none; }
 .writing-canvas {
   flex: 1 1 auto; min-width: 0; max-width: 420px; aspect-ratio: 1 / 1; height: auto;
   background: var(--paper-raised); border-radius: 16px;
   box-shadow: var(--shadow-lg); border: 1px solid var(--line); touch-action: none; cursor: crosshair;
+  /* touch-action:none stops scroll/zoom gestures but not text selection —
+     a quick short stroke (e.g. the two dakuten strokes on 濁音) landing
+     with an Apple Pencil could still start a native selection drag that
+     highlighted the page underneath the canvas instead of drawing.
+     -webkit-touch-callout also blocks the copy/paste bubble that a
+     stalled pen contact can trigger on iOS Safari. */
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
 }
 .writing-canvas.locked { cursor: default; border-color: var(--accent-2); }
 .writing-nav {
@@ -1094,7 +1101,7 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writequiz-setup-footer { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
 .writequiz-wrongbook { border-top: 1px dashed var(--line); padding-top: 1rem; }
 
-.writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
+.writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; user-select: none; -webkit-user-select: none; }
 /* .submit-btn defaults to align-self:flex-start (it usually sits inside its
    own row of buttons) — the reading quiz's reveal button is a lone direct
    child of this centered column instead, so it needs the override here. */
