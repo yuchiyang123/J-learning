@@ -105,6 +105,8 @@ export const api = {
   },
   submitKanaWrite: (payload) => request('/quiz/kana-write/submit', { method: 'POST', body: JSON.stringify(payload) }),
   getKanaWriteWrong: (script) => request(`/quiz/kana-write/wrong${script ? `?script=${script}` : ''}`),
+  submitKanaRead: (payload) => request('/quiz/kana-read/submit', { method: 'POST', body: JSON.stringify(payload) }),
+  getKanaReadWrong: (script) => request(`/quiz/kana-read/wrong${script ? `?script=${script}` : ''}`),
   submitKanjiWrite: (payload) => request('/quiz/kanji-write/submit', { method: 'POST', body: JSON.stringify(payload) }),
   getKanjiWriteWrong: (level) => request(`/quiz/kanji-write/wrong${level ? `?level=${level}` : ''}`),
   getProgress: () => request('/progress'),

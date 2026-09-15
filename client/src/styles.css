@@ -1095,9 +1095,13 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .writequiz-wrongbook { border-top: 1px dashed var(--line); padding-top: 1rem; }
 
 .writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
+/* .submit-btn defaults to align-self:flex-start (it usually sits inside its
+   own row of buttons) — the reading quiz's reveal button is a lone direct
+   child of this centered column instead, so it needs the override here. */
+.writequiz-stage > .submit-btn { align-self: center; }
 .writequiz-progress { font-weight: 700; color: var(--ink-soft); }
 .writequiz-romaji { font-size: 2rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); letter-spacing: 0.06em; }
-.writequiz-romaji.revealed-romaji { font-size: 1.2rem; }
+.writequiz-romaji.revealed-romaji { font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
 .writequiz-play-btn { font-size: 1rem; padding: 0.6rem 1.2rem; }
 .writequiz-suggestion {
   font-size: 0.85rem; font-weight: 600; padding: 0.5rem 0.9rem; border-radius: 8px; max-width: 420px; text-align: center;
@@ -1130,6 +1134,21 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .stroke-thumbnail { display: block; border-radius: 6px; }
 .stroke-thumbnail-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
 .stroke-thumbnail-ink { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Kana reading-recall quiz ---------- */
+/* Shown the kana, say its reading out loud, then reveal — the opposite
+   direction of the handwriting quiz above, so it reuses most of its
+   .writequiz-* classes (progress line, romaji display, grade buttons,
+   done screen) but swaps the drawing canvas for a plain big-character
+   display, since there's nothing to draw here. */
+.readquiz-char-display {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 380px; aspect-ratio: 1 / 1;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: var(--shadow-lg); font-size: 7rem; font-weight: 900;
+  font-family: var(--font-heading); color: var(--ink);
+}
+.readquiz-review-char { font-size: 1.8rem; }
 
 /* The quiz canvas has no side elements (unlike writing-practice's prev/next
    nav buttons) squeezing its width down, so on a narrow phone it renders

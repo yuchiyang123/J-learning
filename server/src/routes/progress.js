@@ -98,9 +98,10 @@ router.get('/stats', (req, res) => {
   }
 
   // Per-category accuracy for the Progress page's radar/bar charts. 'kana'
-  // (MC quiz) and 'kana_write' (handwriting quiz) are two different
-  // quiz_results.type values but the same practice area from the learner's
-  // point of view, so they're summed into one 五十音 bucket here.
+  // (MC quiz), 'kana_write' (handwriting quiz) and 'kana_read' (reading
+  // recall drill) are three different quiz_results.type values but the
+  // same practice area from the learner's point of view, so they're summed
+  // into one 五十音 bucket here.
   const byType = new Map();
   for (const r of results) {
     const bucket = byType.get(r.type) || { total: 0, correct: 0 };
@@ -110,9 +111,11 @@ router.get('/stats', (req, res) => {
   }
   const kana = byType.get('kana') || { total: 0, correct: 0 };
   const kanaWrite = byType.get('kana_write') || { total: 0, correct: 0 };
+  const kanaRead = byType.get('kana_read') || { total: 0, correct: 0 };
   const accuracyOf = (bucket) => (bucket.total ? Math.round((bucket.correct / bucket.total) * 100) : null);
+  const kanaTotal = { total: kana.total + kanaWrite.total + kanaRead.total, correct: kana.correct + kanaWrite.correct + kanaRead.correct };
   const categoryBreakdown = [
-    { type: 'kana', total: kana.total + kanaWrite.total, accuracy: accuracyOf({ total: kana.total + kanaWrite.total, correct: kana.correct + kanaWrite.correct }) },
+    { type: 'kana', total: kanaTotal.total, accuracy: accuracyOf(kanaTotal) },
     { type: 'vocab', total: (byType.get('vocab') || { total: 0 }).total, accuracy: accuracyOf(byType.get('vocab') || { total: 0, correct: 0 }) },
     { type: 'kanji', total: (byType.get('kanji') || { total: 0 }).total, accuracy: accuracyOf(byType.get('kanji') || { total: 0, correct: 0 }) },
     { type: 'grammar', total: (byType.get('grammar') || { total: 0 }).total, accuracy: accuracyOf(byType.get('grammar') || { total: 0, correct: 0 }) },
