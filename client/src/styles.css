@@ -411,6 +411,15 @@ h1 {
   letter-spacing: 0.02em;
 }
 h2 { font-family: var(--font-heading); font-weight: 700; }
+/* Applied to the whole page (not just the canvas) while a handwriting
+   mode is active — see Kana.jsx/Kanji.jsx. A short, fast stroke (the two
+   dakuten strokes on 濁音, especially) could still start a native
+   selection drag with an Apple Pencil even with the canvas itself locked
+   down, and it just grabbed the nearest selectable text elsewhere on the
+   page instead (the mode picker buttons above the canvas, not necessarily
+   anything under it). */
+.no-select-page { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
 .page-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .page-head-row h1 { margin-bottom: 0; }
 .subtitle { color: var(--ink-soft); margin-top: -0.6rem; }

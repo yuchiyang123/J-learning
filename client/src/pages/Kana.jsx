@@ -16,8 +16,16 @@ export default function Kana() {
   const [mode, setMode] = useState('chart'); // 'chart' | 'quiz' | 'write' | 'writequiz' | 'readquiz'
   const { t } = useLocale();
 
+  // Scoping user-select:none to just the canvas/its wrapper wasn't enough —
+  // an Apple Pencil stroke that still started a native selection drag just
+  // grabbed the nearest selectable text instead (e.g. the mode picker
+  // buttons above), so the whole page needs it while an actual drawing
+  // mode is active. Not applied to chart/quiz/readquiz, which have no
+  // drawing surface to fight over in the first place.
+  const isDrawingMode = mode === 'write' || mode === 'writequiz';
+
   return (
-    <div className="page">
+    <div className={`page${isDrawingMode ? ' no-select-page' : ''}`}>
       <h1>{t('kana_title')}</h1>
       <p className="subtitle">{t('kana_subtitle')}</p>
 

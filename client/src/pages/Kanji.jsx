@@ -105,8 +105,14 @@ export default function Kanji() {
   const combinedLoading = loading || progressLoading;
   const emptyMessageKey = query.trim() || filter === 'unknown' ? 'kanji_no_match' : 'no_data_level';
 
+  // See Kana.jsx for why this needs to cover the whole page rather than
+  // just the canvas: an Apple Pencil stroke that still started a native
+  // selection drag just grabbed the nearest selectable text instead (the
+  // mode picker buttons above), not necessarily anything under the canvas.
+  const isDrawingMode = mode === 'write' || mode === 'writequiz';
+
   return (
-    <div className="page">
+    <div className={`page${isDrawingMode ? ' no-select-page' : ''}`}>
       <h1>{t('kanji_title')}</h1>
       <div className="filter-row">
         <LevelPicker level={level} onChange={setLevel} />
