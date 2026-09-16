@@ -410,21 +410,33 @@ const kanaRows = [
   ['ぱ', 'パ', 'pa'], ['ぴ', 'ピ', 'pi'], ['ぷ', 'プ', 'pu'], ['ぺ', 'ペ', 'pe'], ['ぽ', 'ポ', 'po'],
 ];
 
-const allRomaji = kanaRows.map((r) => r[2]);
+// じ/ぢ and ず/づ share a romaji (see kanaRows above), so allRomaji has two
+// 'ji's and two 'zu's — deduped here so a question's 3 distractors can
+// never end up with the same romaji text twice.
+const allRomaji = [...new Set(kanaRows.map((r) => r[2]))];
 
 // Generate one multiple-choice question per kana: given the kana (spoken via TTS
 // and shown in the prompt), pick the correct romaji reading among 3 distractors.
+//
+// addQuiz shuffles the options and computes the answer key itself — it
+// expects options[0] to be the correct choice, unshuffled (see its own
+// comment above). This used to pre-shuffle here and pass its own computed
+// answerKey, which addQuiz completely ignores (`_answerIgnored`); addQuiz
+// then took the ALREADY-SHUFFLED options[0] — an essentially random
+// choice — as "the correct answer", shuffled again, and stored a key
+// pointing at that random value instead of the real romaji. Every kana MC
+// question in the DB had roughly a 1-in-4 chance of being graded right
+// even when answered correctly. Don't pre-shuffle or compute a key here —
+// just hand addQuiz [romaji, ...distractors] like every other call site.
 for (const [hira, kata, romaji] of kanaRows) {
   const distractorPool = shuffleArr(allRomaji.filter((r) => r !== romaji)).slice(0, 3);
-  const options = shuffleArr([romaji, ...distractorPool]);
-  const answerKey = ['a', 'b', 'c', 'd'][options.indexOf(romaji)];
   addQuiz(
     'kana',
     'N5',
     `「${hira}（${kata}）」の読み方はどれですか？`,
     hira,
-    options,
-    answerKey,
+    [romaji, ...distractorPool],
+    null,
     `${hira}／${kata} ＝ ${romaji}`
   );
 }
