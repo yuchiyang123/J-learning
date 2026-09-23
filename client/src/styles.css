@@ -1,106 +1,132 @@
+/* ---------- 和紙と墨 (washi & sumi) design tokens ----------
+   The palette is built from traditional Japanese colors (和色): 生成り washi
+   paper as the ground, 墨 ink for text, 朱 vermilion (the color of a hanko
+   seal) as the single loud accent, 藍 indigo as the calm secondary, 松葉 pine
+   for "correct", and a restrained 金 gold for streaks/highlights. Flat color
+   only — depth comes from paper texture, rules, and shadow, never gradients. */
 :root {
-  --ink: #2a2420;
-  --ink-soft: #6b5f56;
-  --muted-2: #b0aaa1;
-  --paper: #faf6ef;
-  --paper-raised: #ffffff;
-  --line: #e8ddcd;
-  --accent: #c23a2e;
-  --accent-dark: #9c2c22;
-  --accent-soft: #fbe9e4;
-  --accent-2: #1f6f5c;
-  --accent-2-soft: #e4f3ee;
-  --gold: #c99a3a;
-  --cream: #fff7ee;
-  --cream-pink: #fff5f3;
-  --cream-3: #fbf6ec;
-  --cream-4: #f4ecdf;
-  --warn-bg: #fff6dd;
-  --warn-text: #a37a00;
-  --disabled-bg: #d9d3ca;
+  --ink: #1f1b17;
+  --ink-soft: #5f564d;
+  --muted-2: #a49b8f;
+  --paper: #f4efe4;
+  --paper-raised: #fbf8f1;
+  --line: #dfd5c3;
+  --line-strong: #c9bda6;
+  --accent: #b7282e;
+  --accent-dark: #8e1f24;
+  --accent-soft: #f6e4e2;
+  --accent-2: #2e6a4e;
+  --accent-2-soft: #e3efe8;
+  --indigo: #2c4f73;
+  --indigo-soft: #e4ebf2;
+  --gold: #b8933f;
+  --cream: #f8f2e6;
+  --cream-pink: #f7ece6;
+  --cream-3: #f6f1e7;
+  --cream-4: #eee6d6;
+  --warn-bg: #f7efd6;
+  --warn-text: #8a6a12;
+  --disabled-bg: #d6cfc2;
   --glow-1: #fdf1e2;
   --glow-2: #fbeae6;
-  --shadow-sm: 0 1px 2px rgba(40, 25, 15, 0.06), 0 1px 3px rgba(40, 25, 15, 0.08);
-  --shadow-md: 0 4px 10px rgba(40, 25, 15, 0.08), 0 2px 4px rgba(40, 25, 15, 0.06);
-  --shadow-lg: 0 12px 32px rgba(40, 25, 15, 0.14), 0 4px 12px rgba(40, 25, 15, 0.08);
+  --seal-shadow: rgba(183, 40, 46, 0.22);
+  --sheen-color: rgba(255, 255, 255, 0.6);
+  --shadow-sm: 0 1px 2px rgba(31, 27, 23, 0.05), 0 1px 3px rgba(31, 27, 23, 0.07);
+  --shadow-md: 0 4px 12px rgba(31, 27, 23, 0.08), 0 2px 4px rgba(31, 27, 23, 0.05);
+  --shadow-lg: 0 14px 36px rgba(31, 27, 23, 0.14), 0 4px 12px rgba(31, 27, 23, 0.07);
+  --washi-opacity: 0.5;
   /* Every script we display (zh-TW/zh-CN/ja/ko/en) needs its own Noto face listed
      so glyphs never fall through to a mismatched system font — that mismatch is
      what reads as "inconsistent weight" when switching locale. Keep this list in
      sync with the families loaded in index.html. */
   --font-body: "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, sans-serif;
-  --font-heading: "Zen Maru Gothic", "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", sans-serif;
-  --radius: 14px;
-}
-
-/* Zen Maru Gothic is a small, hand-picked Japanese decorative font — it only
-   covers Joyo-kanji + kana, not the full CJK Unified Ideograph set. When a
-   heading string mixes a covered character (e.g. 学) with an uncovered one
-   (e.g. simplified-only 习), the browser silently falls through to a *different*
-   font per-character, so the word renders in two visibly different typefaces.
-   Zen Maru Gothic's coverage is good enough for zh-TW (its target look), but not
-   for zh-CN/ko/en — those locales skip it entirely and use the same broad-coverage
-   Noto stack as body text, so every character in a heading matches. */
-:root[data-locale="zh-CN"],
-:root[data-locale="ko"],
-:root[data-locale="en"] {
-  --font-heading: var(--font-body);
+  /* Headings are set in Mincho (明朝) — the Noto Serif CJK family shares one
+     design across JP/TC/SC/KR, so a heading that mixes scripts (or a
+     Traditional-only glyph next to a kanji) still renders in one typeface;
+     that per-glyph fallback mismatch is why Zen Maru Gothic was previously
+     restricted to zh-TW only. */
+  --font-heading: "Noto Serif TC", "Noto Serif JP", "Noto Serif SC", "Noto Serif KR", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  /* Japanese *content* (kana chart, kanji cards, flashcard faces, the hero's
+     vertical text) gets Shippori Mincho — a classic book-Mincho with far more
+     character than Noto — falling back to the Noto Serif stack for anything
+     outside its Japanese coverage. */
+  --font-jp: "Shippori Mincho", "Noto Serif JP", "Noto Serif TC", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --radius: 10px;
+  --radius-lg: 16px;
 }
 
 /* Dark palette: applied when the OS prefers dark and the user hasn't explicitly
    chosen light, or when the user explicitly toggles dark via [data-theme]. */
+/* Night palette (夜の提灯): sumi-black paper with a breath of indigo, and the
+   accents warmed up like lantern light so vermilion still reads as a seal
+   rather than an error state. Keep in sync with the [data-theme="dark"] copy
+   below — CSS can't share one block between a media query and an attribute
+   selector. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink: #ece5db;
-    --ink-soft: #b3a89b;
-    --muted-2: #8f8375;
-    --paper: #1b1714;
-    --paper-raised: #262019;
-    --line: #3d352c;
-    --accent: #e2564a;
-    --accent-dark: #ff8177;
-    --accent-soft: #3a2420;
-    --accent-2: #3ecfa8;
-    --accent-2-soft: #163229;
-    --gold: #e6c07a;
-    --cream: #2c2419;
-    --cream-pink: #2c211f;
-    --cream-3: #241f19;
-    --cream-4: #2a2318;
-    --warn-bg: #3a2f14;
-    --warn-text: #e6c07a;
-    --disabled-bg: #46403a;
-    --glow-1: rgba(226, 86, 74, 0.1);
-    --glow-2: rgba(230, 192, 122, 0.07);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
+    --ink: #ebe4d6;
+    --ink-soft: #b6ab9b;
+    --muted-2: #857b6e;
+    --paper: #141210;
+    --paper-raised: #1f1b17;
+    --line: #372f27;
+    --line-strong: #4a4036;
+    --accent: #e05a4f;
+    --accent-dark: #f08a80;
+    --accent-soft: #3b2220;
+    --accent-2: #4fbf94;
+    --accent-2-soft: #17302a;
+    --indigo: #7fa7c9;
+    --indigo-soft: #1c2733;
+    --gold: #e2c07a;
+    --cream: #221d18;
+    --cream-pink: #241c1a;
+    --cream-3: #1d1915;
+    --cream-4: #26201a;
+    --warn-bg: #382e14;
+    --warn-text: #e2c07a;
+    --disabled-bg: #3d3730;
+    --glow-1: rgba(224, 90, 79, 0.1);
+    --glow-2: rgba(226, 192, 122, 0.07);
+    --seal-shadow: rgba(224, 90, 79, 0.3);
+    --sheen-color: rgba(255, 235, 205, 0.08);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.32);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.38);
+    --washi-opacity: 0.22;
   }
 }
 :root[data-theme="dark"] {
-  --ink: #ece5db;
-  --ink-soft: #b3a89b;
-  --muted-2: #8f8375;
-  --paper: #1b1714;
-  --paper-raised: #262019;
-  --line: #3d352c;
-  --accent: #e2564a;
-  --accent-dark: #ff8177;
-  --accent-soft: #3a2420;
-  --accent-2: #3ecfa8;
-  --accent-2-soft: #163229;
-  --gold: #e6c07a;
-  --cream: #2c2419;
-  --cream-pink: #2c211f;
-  --cream-3: #241f19;
-  --cream-4: #2a2318;
-  --warn-bg: #3a2f14;
-  --warn-text: #e6c07a;
-  --disabled-bg: #46403a;
-  --glow-1: rgba(226, 86, 74, 0.1);
-  --glow-2: rgba(230, 192, 122, 0.07);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
+  --ink: #ebe4d6;
+  --ink-soft: #b6ab9b;
+  --muted-2: #857b6e;
+  --paper: #141210;
+  --paper-raised: #1f1b17;
+  --line: #372f27;
+  --line-strong: #4a4036;
+  --accent: #e05a4f;
+  --accent-dark: #f08a80;
+  --accent-soft: #3b2220;
+  --accent-2: #4fbf94;
+  --accent-2-soft: #17302a;
+  --indigo: #7fa7c9;
+  --indigo-soft: #1c2733;
+  --gold: #e2c07a;
+  --cream: #221d18;
+  --cream-pink: #241c1a;
+  --cream-3: #1d1915;
+  --cream-4: #26201a;
+  --warn-bg: #382e14;
+  --warn-text: #e2c07a;
+  --disabled-bg: #3d3730;
+  --glow-1: rgba(224, 90, 79, 0.1);
+  --glow-2: rgba(226, 192, 122, 0.07);
+  --seal-shadow: rgba(224, 90, 79, 0.3);
+  --sheen-color: rgba(255, 235, 205, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.38);
+  --washi-opacity: 0.22;
 }
 
 * { box-sizing: border-box; }
@@ -108,70 +134,131 @@
 body {
   margin: 0;
   font-family: var(--font-body);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, var(--glow-1) 0%, transparent 55%),
-    radial-gradient(900px 500px at 110% 0%, var(--glow-2) 0%, transparent 50%),
-    var(--paper);
+  background: var(--paper);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+/* Washi paper grain: a fixed, full-viewport fractal-noise layer (feTurbulence,
+   inline SVG so it costs no request) multiplied over the flat paper color.
+   This is the whole "texture" of the site — where the old design faked depth
+   with radial gradients, this reads as actual fibrous paper and stays put
+   while the page scrolls under it. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--washi-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.3 0 0 0 0.35 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");
+  background-size: 300px 300px;
+}
+:root[data-theme="dark"] body::before { mix-blend-mode: screen; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before { mix-blend-mode: screen; }
+}
 
-/* ---------- Navbar ---------- */
+.app-shell { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- Navbar: an editorial washi bar ----------
+   Ink on paper instead of white-on-red-gradient. The only color in the bar
+   is the vermilion seal in the brand, the brush-stroke underline on the
+   active link, and the 青海波 (seigaiha) wave band along its bottom edge. */
 .navbar {
   display: flex;
   align-items: center;
-  gap: 1.6rem;
-  padding: 0.85rem 1.75rem;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-  color: #fff;
+  gap: 1.4rem;
+  padding: 0.7rem 1.75rem;
+  background: color-mix(in srgb, var(--paper-raised) 90%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
+  color: var(--ink);
   flex-wrap: wrap;
   position: sticky;
   top: 0;
   z-index: 20;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid var(--line);
+}
+/* Seigaiha band: a vermilion background revealed only through the wave
+   strokes of an alpha mask, so it recolors with the theme for free. */
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -10px;
+  height: 10px;
+  pointer-events: none;
+  background-color: var(--accent);
+  opacity: 0.28;
+  -webkit-mask-image: var(--seigaiha);
+  mask-image: var(--seigaiha);
+  -webkit-mask-size: 40px 20px;
+  mask-size: 40px 20px;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
 }
 .navbar-brand {
-  font-weight: 900;
-  font-size: 1.25rem;
-  letter-spacing: 0.06em;
-  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.14em;
+  font-family: var(--font-jp);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.55rem;
   /* Now a <Link> (so clicking the logo goes home) — reset the browser's
      default anchor color/underline instead of inheriting them. */
-  color: inherit;
+  color: var(--ink);
   text-decoration: none;
   transition: opacity 0.15s ease;
 }
-.navbar-brand:hover { opacity: 0.85; }
-.navbar-links { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
+.navbar-brand .hanko { color: var(--accent); filter: drop-shadow(0 1px 2px var(--seal-shadow)); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.navbar-brand:hover .hanko { transform: rotate(4deg) scale(1.08); }
+.navbar-links { display: flex; gap: 0.15rem; flex-wrap: wrap; align-items: center; }
 .navbar-links a {
-  color: rgba(255,255,255,0.88);
+  position: relative;
+  color: var(--ink-soft);
   text-decoration: none;
   font-size: 0.92rem;
-  font-weight: 500;
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  font-weight: 600;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  transition: color 0.15s ease;
 }
-.navbar-links a:hover { background: rgba(255,255,255,0.16); color: #fff; transform: translateY(-1px); }
-.navbar-links a.active { background: var(--paper-raised); color: var(--accent-dark); font-weight: 700; box-shadow: var(--shadow-sm); }
+/* Brush-stroke underline: grows from the left on hover, sits fully drawn
+   under the active link. Slightly tapered ends via border-radius so it
+   reads as a stroke, not a border. */
+.navbar-links a::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem; right: 0.7rem; bottom: 0.2rem;
+  height: 3px;
+  border-radius: 3px 2px 3px 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0.55;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+.navbar-links a:hover { color: var(--ink); }
+.navbar-links a:hover::after { transform: scaleX(0.55); }
+.navbar-links a.active { color: var(--accent-dark); font-weight: 700; }
+.navbar-links a.active::after { transform: scaleX(1); opacity: 1; }
 
 .navbar-auth-link {
   display: inline-flex; align-items: center; gap: 0.35rem;
-  color: rgba(255,255,255,0.88); background: transparent; border: none; cursor: pointer;
-  text-decoration: none; font-size: 0.92rem; font-weight: 500; font-family: inherit;
-  padding: 0.4rem 0.75rem; border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  color: var(--ink-soft); background: transparent; border: none; cursor: pointer;
+  text-decoration: none; font-size: 0.92rem; font-weight: 600; font-family: inherit;
+  padding: 0.4rem 0.75rem; border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.navbar-auth-link:hover { background: rgba(255,255,255,0.16); color: #fff; transform: translateY(-1px); }
-.navbar-auth-link.active { background: rgba(255,255,255,0.16); color: #fff; font-weight: 700; }
+.navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); }
+.navbar-auth-link.active { background: var(--accent-soft); color: var(--accent-dark); font-weight: 700; }
 
-.navbar-actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+.navbar-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
 
 /* ---------- Login / Register ---------- */
 .auth-page { display: flex; justify-content: center; padding-top: 2rem; }
@@ -225,10 +312,10 @@ body {
 .navbar-toggle {
   display: none;
   align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12); color: #fff; transition: background 0.15s ease;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: var(--paper-raised); color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
-.navbar-toggle:hover { background: rgba(255,255,255,0.22); }
+.navbar-toggle:hover { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent); }
 
 /* Whether the full bar (links + search + account + language + theme) fits
    on one line depends on things a fixed breakpoint can't see — the active
@@ -331,20 +418,22 @@ body {
 
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12); color: #fff; transition: background 0.15s ease, transform 0.15s ease;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: var(--paper-raised); color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-.theme-toggle:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.theme-toggle:hover { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent); }
+.theme-toggle:hover svg { animation: toggle-spin 0.5s ease; }
+@keyframes toggle-spin { from { transform: rotate(-30deg) scale(0.8); } to { transform: rotate(0) scale(1); } }
 
 /* ---------- Dropdown (generic, replaces native <select> for custom theming) ---------- */
 .dropdown { position: relative; }
 .dropdown-trigger {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: #fff;
-  border-radius: 999px; padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 600;
-  transition: background 0.15s ease, transform 0.15s ease;
+  border: 1px solid var(--line-strong); background: var(--paper-raised); color: var(--ink-soft);
+  border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
-.dropdown-trigger:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.dropdown-trigger:hover { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent); }
 .dropdown-trigger-light {
   border-color: var(--line); background: var(--paper-raised); color: var(--ink);
 }
@@ -408,9 +497,24 @@ h1 {
   margin-top: 0;
   font-family: var(--font-heading);
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
 }
-h2 { font-family: var(--font-heading); font-weight: 700; }
+h2 { font-family: var(--font-heading); font-weight: 700; letter-spacing: 0.03em; }
+/* Section headings carry a short vermilion 朱線 (red rule) on the left — the
+   one recurring mark that ties every page back to the seal in the header. */
+.page h2 {
+  position: relative;
+  padding-left: 0.85rem;
+}
+.page h2::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.28em; bottom: 0.22em;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
 /* Applied to the whole page (not just the canvas) while a handwriting
    mode is active — see Kana.jsx/Kanji.jsx. A short, fast stroke (the two
    dakuten strokes on 濁音, especially) could still start a native
@@ -426,12 +530,22 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 
 /* ---------- JLPT countdown card ---------- */
 .jlpt-card {
-  background: linear-gradient(155deg, var(--paper-raised) 0%, var(--cream) 100%);
-  border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem 1.5rem;
+  position: relative;
+  background: var(--paper-raised);
+  border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: 1.3rem 1.5rem;
   margin: 1.3rem 0; box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+/* Faint 験 (exam) watermark in the corner, set in Mincho. */
+.jlpt-card::after {
+  content: "験";
+  position: absolute; right: 0.6rem; bottom: -0.55rem;
+  font-family: var(--font-jp); font-size: 5.5rem; font-weight: 700; line-height: 1;
+  color: var(--ink); opacity: 0.045; pointer-events: none;
 }
 .jlpt-card-head {
-  display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.05rem;
+  display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.05rem;
   color: var(--accent-dark); font-family: var(--font-heading); margin-bottom: 0.9rem;
 }
 .jlpt-rows { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -452,13 +566,23 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 /* ---------- Stat cards ---------- */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 .stat-card {
-  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem;
+  position: relative;
+  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem 1rem 1rem;
   text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.stat-value { font-size: 1.7rem; font-weight: 900; color: var(--accent); font-family: var(--font-heading); }
-.stat-label { font-size: 0.82rem; color: var(--ink-soft); margin-top: 0.3rem; }
+.stat-card::before {
+  content: "";
+  position: absolute; left: 50%; top: 0; width: 28px; height: 3px;
+  transform: translateX(-50%); border-radius: 0 0 3px 3px; background: var(--accent);
+  transition: width 0.25s ease;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+.stat-card:hover::before { width: 48px; }
+.stat-card-gold::before { background: var(--gold); }
+.stat-card-gold .stat-value { color: var(--gold); }
+.stat-value { font-size: 1.85rem; font-weight: 700; color: var(--accent); font-family: var(--font-heading); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.stat-label { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.25rem; letter-spacing: 0.04em; }
 
 /* ---------- Progress overview: radar + category bars ---------- */
 .overview-panel {
@@ -499,22 +623,13 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
   white-space: nowrap; min-width: 2.4em;
 }
 
-/* ---------- Quick links ---------- */
-.quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.9rem; }
-.quick-link {
-  display: block; padding: 1.1rem 1.2rem; background: var(--paper-raised); border-radius: var(--radius);
-  text-decoration: none; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 700;
-  border: 1px solid var(--line); transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-.quick-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
-
 /* ---------- Coming soon (features gated until login exists) ---------- */
 .badge-coming-soon {
   display: inline-block; margin-left: 0.5em; padding: 0.15em 0.55em; border-radius: 999px;
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
   background: var(--accent-soft); color: var(--accent-dark); vertical-align: middle;
 }
-.navbar-links a .badge-coming-soon { background: rgba(255,255,255,0.25); color: #fff; }
+.navbar-links a .badge-coming-soon { background: var(--cream-4); color: var(--ink-soft); }
 .navbar-links a.active .badge-coming-soon,
 .navbar-links a:hover .badge-coming-soon { background: var(--accent-soft); color: var(--accent-dark); }
 .coming-soon { display: flex; justify-content: center; padding-top: 3rem; }
@@ -600,14 +715,17 @@ button { cursor: pointer; font-family: inherit; }
 }
 .flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
 
+/* Each face is a sheet of washi with a traditional double rule (二重線)
+   frame: the outer border plus an inset hairline drawn by the pseudo
+   element, and a small vermilion seal mark in one corner. */
 .flip-card-face {
   position: absolute;
   inset: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   background: var(--paper-raised);
-  border-radius: 20px;
-  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-strong);
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
@@ -616,21 +734,32 @@ button { cursor: pointer; font-family: inherit; }
   padding: 1.8rem;
   overflow: auto;
 }
-.flip-card-front {
-  background: linear-gradient(160deg, var(--paper-raised) 0%, var(--cream) 100%);
+.flip-card-face::before {
+  content: "";
+  position: absolute; inset: 7px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius-lg) - 6px);
+  pointer-events: none;
 }
+.flip-card-face::after {
+  content: "";
+  position: absolute; left: 16px; bottom: 16px; width: 10px; height: 10px;
+  background: var(--accent); border-radius: 2px; transform: rotate(-6deg); opacity: 0.9;
+}
+.flip-card-front { background: var(--paper-raised); }
 .flip-card-back {
   transform: rotateY(180deg);
-  background: linear-gradient(160deg, var(--cream-pink) 0%, var(--paper-raised) 100%);
+  background: var(--cream);
 }
 .flip-card:hover .flip-card-inner { transform: translateY(-3px) rotateX(1deg); }
 .flip-card.is-flipped:hover .flip-card-inner { transform: rotateY(180deg) translateY(-3px); }
 
 .flashcard-main {
-  font-size: 2.5rem;
-  font-weight: 900;
-  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  font-weight: 700;
+  font-family: var(--font-jp);
   color: var(--ink);
+  letter-spacing: 0.04em;
 }
 .flashcard-sub { color: var(--ink-soft); margin-top: 0.5rem; font-size: 1.1rem; }
 .flashcard-hint {
@@ -646,10 +775,11 @@ button { cursor: pointer; font-family: inherit; }
 
 .flashcard-controls, .mark-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
 .flashcard-controls button, .mark-controls button, .secondary-btn {
-  border: 1px solid var(--line); background: var(--paper-raised); padding: 0.55rem 1.1rem; border-radius: 10px;
+  border: 1px solid var(--line-strong); background: var(--paper-raised); padding: 0.55rem 1.1rem; border-radius: 8px;
   font-weight: 600; transition: all 0.15s ease; box-shadow: var(--shadow-sm); color: var(--ink);
 }
-.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--accent); color: var(--accent-dark); transform: translateY(-1px); }
+.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); transform: translateY(-1px); }
+.flashcard-controls button:active, .secondary-btn:active { transform: translateY(0) scale(0.98); }
 .btn-good { border-color: var(--accent-2) !important; color: var(--accent-2); }
 .btn-good:hover { background: var(--accent-2-soft); }
 .btn-good.active { background: var(--accent-2); color: #fff; }
@@ -692,15 +822,30 @@ button { cursor: pointer; font-family: inherit; }
 .kana-table { display: flex; flex-direction: column; gap: 0.45rem; }
 .kana-row { display: grid; grid-template-columns: 3.2rem repeat(5, 1fr); gap: 0.45rem; align-items: stretch; }
 .kana-row-label { display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--ink-soft); font-weight: 700; }
+/* Kana cells: the glyph is the whole point, so it's set large in Shippori
+   Mincho. Hover "bleeds" vermilion ink up from the bottom edge (a clipped
+   pseudo-element growing in height) instead of just swapping a background. */
 .kana-cell {
-  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px; padding: 0.55rem 0.3rem;
+  position: relative; overflow: hidden;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.3rem;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
-  box-shadow: var(--shadow-sm); transition: all 0.15s ease; color: var(--ink);
+  box-shadow: var(--shadow-sm); transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; color: var(--ink);
 }
-.kana-cell:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.kana-cell::before {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 0;
+  background: var(--accent);
+  transition: height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+}
+.kana-cell > * { position: relative; z-index: 1; }
+.kana-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-md); color: #fff; }
+.kana-cell:hover::before { height: 100%; }
+.kana-cell:hover .kana-romaji { color: rgba(255,255,255,0.8); }
+.kana-cell:active { transform: translateY(0) scale(0.97); }
 .kana-cell.empty { background: transparent; border: none; box-shadow: none; }
-.kana-char { font-size: 1.45rem; font-weight: 700; font-family: var(--font-heading); }
-.kana-romaji { font-size: 0.75rem; color: var(--ink-soft); }
+.kana-char { font-size: 1.55rem; font-weight: 700; font-family: var(--font-jp); line-height: 1.2; }
+.kana-romaji { font-size: 0.72rem; color: var(--ink-soft); letter-spacing: 0.05em; transition: color 0.2s ease; }
 
 /* On narrow screens the fixed 3.2rem label column eats into the 5 kana
    cells' share of a much narrower row, squeezing them lopsided. Give the
@@ -721,9 +866,10 @@ button { cursor: pointer; font-family: inherit; }
 }
 .kanji-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .kanji-char {
-  font-size: 2.6rem; font-weight: 700; cursor: pointer; font-family: var(--font-heading);
-  color: var(--accent-dark); transition: transform 0.15s ease;
+  font-size: 2.9rem; font-weight: 700; cursor: pointer; font-family: var(--font-jp);
+  color: var(--ink); line-height: 1.15; transition: transform 0.2s ease, color 0.2s ease;
 }
+.kanji-card:hover .kanji-char { color: var(--accent-dark); }
 .kanji-char:hover { transform: scale(1.08); }
 .kanji-readings { font-size: 0.85rem; text-align: left; margin-top: 0.7rem; line-height: 1.6; color: var(--ink); }
 /* A handful of kanji have long onyomi/kunyomi/meaning lists (many
@@ -800,7 +946,7 @@ button { cursor: pointer; font-family: inherit; }
   flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: var(--accent-dark);
   background: var(--accent-soft); border-radius: 6px; padding: 0.1rem 0.4rem;
 }
-.search-result-main { font-weight: 900; font-family: var(--font-heading); font-size: 1.05rem; flex-shrink: 0; }
+.search-result-main { font-weight: 700; font-family: var(--font-jp); font-size: 1.1rem; flex-shrink: 0; }
 .search-result-reading { color: var(--ink-soft); font-size: 0.85rem; flex-shrink: 0; }
 .search-result-sub { color: var(--ink-soft); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -844,7 +990,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .grammar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
-.grammar-pattern { font-size: 1.35rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
+.grammar-pattern { font-size: 1.4rem; font-weight: 700; color: var(--accent-dark); font-family: var(--font-jp); letter-spacing: 0.02em; }
 .grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
 .grammar-formation {
   display: inline-block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-2);
@@ -873,11 +1019,15 @@ button { cursor: pointer; font-family: inherit; }
 .quiz-option.wrong { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
 .quiz-explanation { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); background: var(--cream-4); padding: 0.6rem 0.8rem; border-radius: 8px; }
 .quiz-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+/* Primary action: flat vermilion, the color of the seal — no gradient. */
 .submit-btn {
-  align-self: flex-start; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; border: none;
-  padding: 0.75rem 1.6rem; border-radius: 10px; font-weight: 700; box-shadow: var(--shadow-md); transition: transform 0.15s ease;
+  align-self: flex-start; background: var(--accent); color: #fff; border: none;
+  padding: 0.75rem 1.6rem; border-radius: 8px; font-weight: 700; letter-spacing: 0.03em;
+  box-shadow: 0 6px 16px var(--seal-shadow), var(--shadow-sm);
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
-.submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); background: var(--accent-dark); box-shadow: 0 10px 22px var(--seal-shadow), var(--shadow-md); }
+.submit-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
 .submit-btn:disabled { background: var(--disabled-bg); cursor: not-allowed; box-shadow: none; }
 .login-submit-btn { align-self: stretch; width: 100%; background: var(--accent); }
 .quiz-result { font-size: 1.3rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
@@ -887,7 +1037,7 @@ button { cursor: pointer; font-family: inherit; }
 
 /* ---------- Speaking ---------- */
 .speaking-card { background: var(--paper-raised); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
-.speaking-target { font-size: 1.5rem; font-weight: 900; font-family: var(--font-heading); color: var(--ink); }
+.speaking-target { font-size: 1.6rem; font-weight: 700; font-family: var(--font-jp); color: var(--ink); }
 .speaking-reading, .speaking-zh { color: var(--ink-soft); margin-top: 0.25rem; }
 .speaking-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
 .speaking-controls button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 600; transition: all 0.15s ease; }
@@ -941,7 +1091,6 @@ button { cursor: pointer; font-family: inherit; }
 }
 .icon-btn svg, .icon-row svg { flex-shrink: 0; }
 .game-best-score { display: flex; margin: 0 0 1rem; color: var(--ink-soft); font-weight: 600; }
-.quick-link.icon-btn { justify-content: flex-start; }
 .tiny-btn.icon-btn { gap: 0.3rem; }
 svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent); }
 @keyframes pulse-ring {
@@ -964,9 +1113,11 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 }
 .game-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
 .game-card-icon {
-  width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--accent-soft), var(--paper-raised)); color: var(--accent-dark); margin-bottom: 0.9rem;
+  width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-dark); margin-bottom: 0.9rem;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.game-card:hover .game-card-icon { background: var(--accent); color: #fff; transform: rotate(-6deg) scale(1.06); }
 .game-card-title { font-size: 1.15rem; font-weight: 800; font-family: var(--font-heading); margin-bottom: 0.4rem; }
 .game-card-desc { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin: 0; }
 
@@ -994,8 +1145,13 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center;
   padding: 0.4rem; font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
 }
-.memory-card-back { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; font-size: 1.4rem; }
-.memory-card-front { background: var(--paper-raised); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-heading); }
+/* Face-down cards are vermilion with the seigaiha wave pattern — the back
+   of a traditional playing card — rather than a gradient. */
+.memory-card-back {
+  background-color: var(--accent); color: #fff; font-size: 1.4rem; font-family: var(--font-jp);
+  background-image: var(--seigaiha-white); background-size: 40px 20px;
+}
+.memory-card-front { background: var(--paper-raised); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-jp); }
 .memory-card.is-matched .memory-card-front { background: var(--accent-2-soft); border-color: var(--accent-2); color: var(--accent-2); }
 
 /* ---------- Blitz challenge ---------- */
@@ -1010,15 +1166,15 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 /* ---------- Falling words ---------- */
 .falling-game { display: flex; flex-direction: column; gap: 1rem; }
 .falling-track {
-  position: relative; height: 220px; border-radius: 14px; background: linear-gradient(180deg, var(--cream-3) 0%, var(--cream-4) 100%);
+  position: relative; height: 220px; border-radius: var(--radius); background: var(--cream-3);
   border: 1px solid var(--line); overflow: hidden; transition: background 0.15s ease;
 }
 .falling-track.flash-good { background: var(--accent-2-soft); }
 .falling-track.flash-bad { background: var(--accent-soft); }
 .falling-item {
   position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-  font-size: 1.6rem; font-weight: 800; color: var(--accent-dark);
-  font-family: var(--font-heading);
+  font-size: 1.7rem; font-weight: 700; color: var(--accent-dark);
+  font-family: var(--font-jp);
   animation-name: fall-down; animation-timing-function: linear; animation-fill-mode: forwards;
 }
 @keyframes fall-down {
@@ -1161,9 +1317,9 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .readquiz-char-display {
   display: flex; align-items: center; justify-content: center;
   width: 100%; max-width: 380px; aspect-ratio: 1 / 1;
-  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
-  box-shadow: var(--shadow-lg); font-size: 7rem; font-weight: 900;
-  font-family: var(--font-heading); color: var(--ink);
+  background: var(--paper-raised); border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); font-size: 7.5rem; font-weight: 700;
+  font-family: var(--font-jp); color: var(--ink);
 }
 .readquiz-review-char { font-size: 1.8rem; }
 
@@ -1191,11 +1347,17 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 }
 .notfound-home-btn:hover { transform: translateY(-2px); background: var(--accent-dark); }
 
-/* ---------- Fade-in for page content ---------- */
-.page { animation: fade-up 0.35s ease; }
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ---------- Ink-wash reveal for page content ---------- */
+/* A page comes in the way ink soaks into paper: soft and slightly blurred,
+   then sharp, drifting up a few px as it resolves. */
+.page { animation: ink-wash 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes ink-wash {
+  from { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+  60% { filter: blur(0); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
 }
 
 /* ---------- Skeleton loading (per-page shapes instead of a text spinner) ---------- */
@@ -1312,6 +1474,259 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .option-tag {
   display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
 }
+
+/* ============================================================
+   和紙と墨 — visual layer: patterns, effects, hero, tiles, footer
+   ============================================================ */
+
+/* 青海波 (seigaiha) wave tile, 40×20, as alpha masks/images. The plain one is
+   used as a mask (so the color underneath shows through the strokes); the
+   white one is a direct background for the vermilion memory-card backs. */
+:root {
+  --seigaiha: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'><g fill='none' stroke='%23000' stroke-width='1.3'><path d='M0 20a20 20 0 0 1 40 0'/><path d='M5 20a15 15 0 0 1 30 0'/><path d='M10 20a10 10 0 0 1 20 0'/><path d='M15 20a5 5 0 0 1 10 0'/><path d='M-20 10a20 20 0 0 1 40 0'/><path d='M-15 10a15 15 0 0 1 30 0'/><path d='M-10 10a10 10 0 0 1 20 0'/><path d='M20 10a20 20 0 0 1 40 0'/><path d='M25 10a15 15 0 0 1 30 0'/><path d='M30 10a10 10 0 0 1 20 0'/></g></svg>");
+  --seigaiha-white: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'><g fill='none' stroke='%23fff' stroke-opacity='0.28' stroke-width='1.3'><path d='M0 20a20 20 0 0 1 40 0'/><path d='M5 20a15 15 0 0 1 30 0'/><path d='M10 20a10 10 0 0 1 20 0'/><path d='M15 20a5 5 0 0 1 10 0'/><path d='M-20 10a20 20 0 0 1 40 0'/><path d='M-15 10a15 15 0 0 1 30 0'/><path d='M-10 10a10 10 0 0 1 20 0'/><path d='M20 10a20 20 0 0 1 40 0'/><path d='M25 10a15 15 0 0 1 30 0'/><path d='M30 10a10 10 0 0 1 20 0'/></g></svg>");
+  --seal-paper: #f4efe4;
+}
+
+/* ---------- Sakura petals (canvas behind everything) ---------- */
+.sakura-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+/* The app shell already sits at z-index 1, so the canvas paints between the
+   paper grain (body::before) and the content. Under print, drop it. */
+@media print { .sakura-canvas { display: none; } }
+
+/* ---------- Ink drop on press ---------- */
+.ink-layer { position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden; }
+.ink-drop {
+  position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  transform: scale(0.2);
+  animation: ink-spread 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  /* Slightly irregular edge, like ink meeting paper fibres. */
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+@keyframes ink-spread {
+  from { transform: scale(0.2); opacity: 0.38; }
+  to { transform: scale(5.2); opacity: 0; }
+}
+
+/* ---------- 円相 enso ---------- */
+.enso-stroke { stroke: currentColor; stroke-dasharray: 520; stroke-dashoffset: 520; }
+.enso-stroke-heavy { stroke-width: 9; opacity: 0.9; animation: enso-draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.15s forwards; }
+.enso-stroke-light { stroke-width: 3.5; opacity: 0.5; animation: enso-draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.25s forwards; }
+@keyframes enso-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .enso-stroke { stroke-dashoffset: 0; animation: none; }
+}
+
+/* ---------- Hero (dashboard) ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.85fr);
+  align-items: center;
+  gap: 1.5rem 2rem;
+  padding: 1.2rem 0 1.6rem;
+  margin-bottom: 0.4rem;
+}
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: 1rem;
+}
+.hero-kicker .hanko { color: var(--accent); filter: drop-shadow(0 1px 2px var(--seal-shadow)); }
+.hero-title {
+  font-size: clamp(2rem, 4.2vw, 3.1rem);
+  line-height: 1.18;
+  margin: 0 0 0.8rem;
+  color: var(--ink);
+}
+.hero-subtitle { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.7; margin: 0 0 1.4rem; max-width: 34em; }
+.hero-actions { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+
+/* Two button voices used across the new pieces: the vermilion seal button
+   and a quiet ink-outlined one. */
+.btn-primary, .btn-ghost {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.75rem 1.4rem; border-radius: 8px; font-weight: 700; letter-spacing: 0.03em;
+  text-decoration: none; font-size: 0.95rem; border: 1px solid transparent;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 16px var(--seal-shadow); }
+.btn-primary:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 10px 22px var(--seal-shadow); }
+.btn-primary:hover svg { transform: translateX(3px); }
+.btn-primary svg { transition: transform 0.2s ease; }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn-ghost:hover { border-color: var(--ink); background: var(--paper-raised); transform: translateY(-2px); }
+.btn-primary:active, .btn-ghost:active { transform: translateY(0) scale(0.98); }
+
+/* The art column: an enso being painted, a large 学 breathing inside it, and
+   a vertical (縦書き) line of text standing beside like a hanging scroll. */
+.hero-art {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 300px;
+  color: var(--ink);
+}
+.hero-enso { position: absolute; }
+.hero-kanji {
+  position: relative;
+  font-family: var(--font-jp);
+  font-size: 7.4rem; font-weight: 700; line-height: 1;
+  color: var(--accent);
+  animation: hero-kanji-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both, hero-breathe 6s ease-in-out 2.2s infinite;
+  text-shadow: 0 8px 24px var(--seal-shadow);
+}
+@keyframes hero-kanji-in {
+  from { opacity: 0; transform: scale(0.82) translateY(8px); filter: blur(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes hero-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+.hero-tategaki {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  writing-mode: vertical-rl; text-orientation: upright;
+  /* One unbroken column — without nowrap the shrink-to-fit height of an
+     absolutely positioned vertical-rl box let it wrap into a second column. */
+  white-space: nowrap;
+  font-family: var(--font-jp); font-size: 0.95rem; letter-spacing: 0.45em; font-weight: 700;
+  color: var(--ink-soft);
+  padding: 0.6rem 0.35rem;
+  border-left: 1px solid var(--line-strong);
+  animation: fade-in 0.8s ease 1.3s both;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-kanji, .hero-tategaki { animation: none; }
+}
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; padding-top: 0.4rem; }
+  .hero-art { min-height: 220px; order: -1; }
+  .hero-enso { width: 200px; height: 200px; }
+  .hero-kanji { font-size: 5.2rem; }
+  .hero-tategaki { display: none; }
+}
+
+/* ---------- Section title (h2 with the 朱線 rule, see .page h2) ---------- */
+.section-title { margin: 2rem 0 1rem; font-size: 1.35rem; }
+
+/* ---------- Quick-start tiles with kanji watermarks ---------- */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem;
+}
+.tile {
+  position: relative;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 0.35rem;
+  min-height: 118px;
+  padding: 1rem 1.1rem 0.95rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-decoration: none; color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, color 0.2s ease;
+}
+/* The watermark: the tile's kanji, huge and nearly transparent, tucked into
+   the top-right. On hover it swells and turns vermilion, and a wash of
+   accent color rises from the bottom edge. */
+.tile::before {
+  content: attr(data-kanji);
+  position: absolute; right: -0.15em; top: -0.32em;
+  font-family: var(--font-jp); font-size: 5.6rem; font-weight: 700; line-height: 1;
+  color: var(--ink); opacity: 0.06;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, color 0.3s ease;
+  pointer-events: none;
+}
+.tile::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tile:hover { border-color: var(--line-strong); box-shadow: var(--shadow-lg); }
+.tile:hover::before { opacity: 0.16; color: var(--accent); transform: translate(-6px, 6px) scale(1.12) rotate(-4deg); }
+.tile:hover::after { transform: scaleX(1); }
+.tile-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--cream-4); color: var(--ink-soft);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.tile:hover .tile-icon { background: var(--accent-soft); color: var(--accent-dark); }
+.tile-label { font-weight: 700; font-size: 1rem; font-family: var(--font-heading); letter-spacing: 0.03em; position: relative; }
+.tile-arrow {
+  position: absolute; right: 0.9rem; bottom: 0.95rem;
+  color: var(--accent); opacity: 0; transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+.tile:hover .tile-arrow { opacity: 1; transform: translateX(0); }
+
+/* ---------- 3D tilt (useTilt sets the variables) ---------- */
+.tilt {
+  transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.25s ease;
+  will-change: transform;
+}
+.tilt.is-tilting { transition: transform 0.05s linear, border-color 0.2s ease, box-shadow 0.25s ease; }
+/* Sheen: a soft spot of light following the pointer across the tilted face
+   (a pointer-driven highlight, not a decorative gradient — it only exists
+   while the card is being tilted). --sheen-color is per theme. */
+.tile.is-tilting {
+  background-image: radial-gradient(240px circle at var(--sheen-x, 50%) var(--sheen-y, 50%), var(--sheen-color) 0%, transparent 62%);
+}
+
+/* ---------- Scroll-stagger reveal (useStaggerReveal) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease var(--reveal-delay, 0ms), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+}
+.reveal.is-revealed { opacity: 1; transform: none; }
+/* A tile is both .reveal and .tilt, and both want `transform`. The reveal
+   owns it until the tile has landed; after that the tilt rule (re-stated
+   here at higher specificity so it beats .reveal.is-revealed) takes over. */
+.tilt.reveal.is-revealed {
+  transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding: 1.4rem 1.75rem 1.6rem;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  position: relative;
+}
+.site-footer::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: -1px; height: 8px;
+  background-color: var(--accent); opacity: 0.22;
+  -webkit-mask-image: var(--seigaiha); mask-image: var(--seigaiha);
+  -webkit-mask-size: 40px 20px; mask-size: 40px 20px;
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+  -webkit-mask-position: 0 -12px; mask-position: 0 -12px;
+  pointer-events: none;
+}
+.site-footer-inner {
+  max-width: 980px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.site-footer-brand { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-jp); font-weight: 700; letter-spacing: 0.12em; color: var(--ink); }
+.site-footer-brand .hanko { color: var(--accent); }
+.site-footer-motto { font-family: var(--font-jp); letter-spacing: 0.5em; color: var(--muted-2); }
+.site-footer-meta { font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
 
 /* ---------- Print ---------- */
 @media print {

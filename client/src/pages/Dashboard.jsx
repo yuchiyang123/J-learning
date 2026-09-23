@@ -1,10 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2, MailCheck, X } from 'lucide-react';
+import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2, MailCheck, X, ArrowRight } from 'lucide-react';
 import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import JlptCountdown from '../components/JlptCountdown.jsx';
+import EnsoCircle from '../components/EnsoCircle.jsx';
+import HankoSeal from '../components/HankoSeal.jsx';
 import { StatGridSkeleton } from '../components/Skeleton.jsx';
+import { useTilt } from '../hooks/useTilt.js';
+import { useStaggerReveal } from '../hooks/useStaggerReveal.js';
+
+// Each tile carries one kanji as a large watermark behind its label — the
+// character that names that practice area in Japanese. It's the tile's
+// whole visual identity; the lucide icon is just a small caption mark.
+const tiles = [
+  { to: '/kana', key: 'quick_kana', kanji: '音', icon: Type },
+  { to: '/vocabulary', key: 'quick_vocab', kanji: '語', icon: BookOpen },
+  { to: '/kanji', key: 'quick_kanji', kanji: '字', icon: PenTool },
+  { to: '/grammar', key: 'quick_grammar', kanji: '文', icon: BookText },
+  { to: '/listening', key: 'quick_listening', kanji: '聴', icon: Headphones },
+  { to: '/speaking', key: 'quick_speaking', kanji: '話', icon: Mic },
+  { to: '/quiz', key: 'quick_quiz', kanji: '問', icon: ListChecks },
+  { to: '/jlpt', key: 'quick_jlpt', kanji: '験', icon: Target },
+  { to: '/games', key: 'quick_games', kanji: '遊', icon: Gamepad2 },
+  { to: '/progress', key: 'quick_progress', kanji: '進', icon: BarChart3 },
+];
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -13,6 +33,8 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showResetBanner, setShowResetBanner] = useState(!!location.state?.passwordResetRequested);
+  const tilesRef = useRef(null);
+  const statsRef = useRef(null);
 
   useEffect(() => {
     api.getStats().then(setStats).catch(() => setStats(null)).finally(() => setLoadingStats(false));
@@ -26,8 +48,11 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useStaggerReveal(tilesRef, { step: 55 });
+  useStaggerReveal(statsRef, { step: 70, deps: [stats] });
+
   return (
-    <div className="page">
+    <div className="page dashboard">
       {showResetBanner && (
         <div className="info-banner">
           <MailCheck size={18} />
@@ -38,16 +63,35 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h1>{t('dashboard_welcome')}</h1>
-      <p className="subtitle">{t('dashboard_subtitle')}</p>
+      <section className="hero">
+        <div className="hero-text">
+          <div className="hero-kicker">
+            <HankoSeal char="学" size={22} />
+            <span>JLPT N5 – N1</span>
+          </div>
+          <h1 className="hero-title">{t('dashboard_welcome')}</h1>
+          <p className="hero-subtitle">{t('dashboard_subtitle')}</p>
+          <div className="hero-actions">
+            <Link className="btn-primary" to="/kana">
+              {t('quick_kana')} <ArrowRight size={16} />
+            </Link>
+            <Link className="btn-ghost" to="/quiz">{t('quick_quiz')}</Link>
+          </div>
+        </div>
+        <div className="hero-art" aria-hidden="true">
+          <EnsoCircle size={280} className="hero-enso" />
+          <span className="hero-kanji" lang="ja">学</span>
+          <span className="hero-tategaki" lang="ja">日本語を学ぼう</span>
+        </div>
+      </section>
 
       <JlptCountdown />
 
       {loadingStats && <StatGridSkeleton />}
       {stats && (
-        <div className="card-grid">
+        <div className="card-grid" ref={statsRef}>
           {stats.streak > 0 && (
-            <StatCard label={t('dashboard_stat_streak')} value={`${stats.streak} ${t('streak_days_unit')}`} />
+            <StatCard label={t('dashboard_stat_streak')} value={`${stats.streak} ${t('streak_days_unit')}`} accent="gold" />
           )}
           <StatCard label={t('dashboard_stat_reviewed')} value={stats.totalReviewed} />
           <StatCard label={t('dashboard_stat_mastered')} value={stats.mastered} />
@@ -56,26 +100,30 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h2>{t('dashboard_quick_start')}</h2>
-      <div className="quick-links">
-        <Link className="quick-link icon-btn" to="/kana"><Type size={18} /> {t('quick_kana')}</Link>
-        <Link className="quick-link icon-btn" to="/vocabulary"><BookOpen size={18} /> {t('quick_vocab')}</Link>
-        <Link className="quick-link icon-btn" to="/kanji"><PenTool size={18} /> {t('quick_kanji')}</Link>
-        <Link className="quick-link icon-btn" to="/grammar"><BookText size={18} /> {t('quick_grammar')}</Link>
-        <Link className="quick-link icon-btn" to="/listening"><Headphones size={18} /> {t('quick_listening')}</Link>
-        <Link className="quick-link icon-btn" to="/speaking"><Mic size={18} /> {t('quick_speaking')}</Link>
-        <Link className="quick-link icon-btn" to="/quiz"><ListChecks size={18} /> {t('quick_quiz')}</Link>
-        <Link className="quick-link icon-btn" to="/jlpt"><Target size={18} /> {t('quick_jlpt')}</Link>
-        <Link className="quick-link icon-btn" to="/games"><Gamepad2 size={18} /> {t('quick_games')}</Link>
-        <Link className="quick-link icon-btn" to="/progress"><BarChart3 size={18} /> {t('quick_progress')}</Link>
+      <h2 className="section-title">{t('dashboard_quick_start')}</h2>
+      <div className="tile-grid" ref={tilesRef}>
+        {tiles.map((tile) => (
+          <QuickTile key={tile.to} {...tile} label={t(tile.key)} />
+        ))}
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value }) {
+function QuickTile({ to, kanji, icon: Icon, label }) {
+  const tilt = useTilt(6);
   return (
-    <div className="stat-card">
+    <Link className="tile reveal tilt" to={to} data-kanji={kanji} {...tilt}>
+      <span className="tile-icon"><Icon size={16} /></span>
+      <span className="tile-label">{label}</span>
+      <span className="tile-arrow" aria-hidden="true"><ArrowRight size={15} /></span>
+    </Link>
+  );
+}
+
+function StatCard({ label, value, accent }) {
+  return (
+    <div className={`stat-card reveal${accent ? ` stat-card-${accent}` : ''}`}>
       <div className="stat-value">{value ?? '—'}</div>
       <div className="stat-label">{label}</div>
     </div>
