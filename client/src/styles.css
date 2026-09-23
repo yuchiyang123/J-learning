@@ -1,106 +1,119 @@
+/* ============================================================
+   墨 — sumi-e design tokens
+   Xuan paper and ink. One accent: the vermilion of a seal. Everything
+   structural is a brush mark — wobbly hand-drawn borders, ink washes,
+   real stroke-order calligraphy — instead of boxes and pills.
+   ============================================================ */
 :root {
-  --ink: #2a2420;
-  --ink-soft: #6b5f56;
-  --muted-2: #b0aaa1;
-  --paper: #faf6ef;
-  --paper-raised: #ffffff;
-  --line: #e8ddcd;
-  --accent: #c23a2e;
-  --accent-dark: #9c2c22;
-  --accent-soft: #fbe9e4;
-  --accent-2: #1f6f5c;
-  --accent-2-soft: #e4f3ee;
-  --gold: #c99a3a;
-  --cream: #fff7ee;
-  --cream-pink: #fff5f3;
-  --cream-3: #fbf6ec;
-  --cream-4: #f4ecdf;
-  --warn-bg: #fff6dd;
-  --warn-text: #a37a00;
-  --disabled-bg: #d9d3ca;
-  --glow-1: #fdf1e2;
-  --glow-2: #fbeae6;
-  --shadow-sm: 0 1px 2px rgba(40, 25, 15, 0.06), 0 1px 3px rgba(40, 25, 15, 0.08);
-  --shadow-md: 0 4px 10px rgba(40, 25, 15, 0.08), 0 2px 4px rgba(40, 25, 15, 0.06);
-  --shadow-lg: 0 12px 32px rgba(40, 25, 15, 0.14), 0 4px 12px rgba(40, 25, 15, 0.08);
-  /* Every script we display (zh-TW/zh-CN/ja/ko/en) needs its own Noto face listed
-     so glyphs never fall through to a mismatched system font — that mismatch is
-     what reads as "inconsistent weight" when switching locale. Keep this list in
-     sync with the families loaded in index.html. */
-  --font-body: "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, sans-serif;
-  --font-heading: "Zen Maru Gothic", "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", sans-serif;
-  --radius: 14px;
+  --ink: #171512;
+  --ink-soft: #4a4640;
+  --muted-2: #9a948a;
+  --paper: #f2ede3;
+  --paper-raised: #f9f6ef;
+  --line: #d9d2c4;
+  --line-strong: #b9b0a0;
+  --accent: #b3261e;
+  --accent-dark: #8c1c16;
+  --accent-soft: #f3e0dc;
+  --accent-2: #3a6b52;
+  --accent-2-soft: #e1ece5;
+  --gold: #a8842f;
+  --cream: #f6f1e7;
+  --cream-pink: #f5ebe6;
+  --cream-3: #f4efe5;
+  --cream-4: #ebe4d6;
+  --warn-bg: #f5eccf;
+  --warn-text: #7f6410;
+  --disabled-bg: #d6cfc2;
+  --wash-1: 0.05;
+  --wash-2: 0.1;
+  --wash-3: 0.18;
+  --wash-4: 0.3;
+  --grain-opacity: 0.55;
+  --shadow-sm: 0 1px 2px rgba(23, 21, 18, 0.05), 0 1px 3px rgba(23, 21, 18, 0.07);
+  --shadow-md: 0 4px 12px rgba(23, 21, 18, 0.09), 0 2px 4px rgba(23, 21, 18, 0.05);
+  --shadow-lg: 0 14px 36px rgba(23, 21, 18, 0.14), 0 4px 12px rgba(23, 21, 18, 0.07);
+  /* Body is set in Mincho — a serif reads right on paper. The Noto Serif
+     CJK family shares one design across JP/TC/SC/KR so mixed-script text
+     never falls back to a mismatched face mid-word. */
+  --font-body: "Noto Serif TC", "Noto Serif SC", "Noto Serif JP", "Noto Serif KR", "Noto Serif", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-heading: "Shippori Mincho", "Noto Serif TC", "Noto Serif JP", "Noto Serif SC", "Noto Serif KR", serif;
+  /* Brush calligraphy for Japanese content only (kana/kanji glyphs, scene
+     characters, the brand) — Yuji Syuku covers kana + jōyō kanji, not
+     Traditional-only glyphs, so translated UI text never uses it. */
+  --font-brush: "Yuji Syuku", "Shippori Mincho", "Noto Serif JP", serif;
+  --font-ui: "Noto Sans TC", "Noto Sans JP", "Noto Sans", system-ui, sans-serif;
+  --radius: 6px;
+  /* Hand-drawn border: uneven radii on each corner make a straight CSS box
+     read as a sheet cut by hand. Applied to cards, chips, buttons. */
+  --wobble: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --wobble-2: 15px 255px 15px 225px / 225px 15px 255px 15px;
+  --rail-w: 7.5rem;
 }
 
-/* Zen Maru Gothic is a small, hand-picked Japanese decorative font — it only
-   covers Joyo-kanji + kana, not the full CJK Unified Ideograph set. When a
-   heading string mixes a covered character (e.g. 学) with an uncovered one
-   (e.g. simplified-only 习), the browser silently falls through to a *different*
-   font per-character, so the word renders in two visibly different typefaces.
-   Zen Maru Gothic's coverage is good enough for zh-TW (its target look), but not
-   for zh-CN/ko/en — those locales skip it entirely and use the same broad-coverage
-   Noto stack as body text, so every character in a heading matches. */
-:root[data-locale="zh-CN"],
-:root[data-locale="ko"],
-:root[data-locale="en"] {
-  --font-heading: var(--font-body);
-}
-
-/* Dark palette: applied when the OS prefers dark and the user hasn't explicitly
-   chosen light, or when the user explicitly toggles dark via [data-theme]. */
+/* 夜墨: black lacquer, white ink. The mountains and washes are drawn in the
+   ink color, so they invert with nothing else to do. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink: #ece5db;
-    --ink-soft: #b3a89b;
-    --muted-2: #8f8375;
-    --paper: #1b1714;
-    --paper-raised: #262019;
-    --line: #3d352c;
-    --accent: #e2564a;
-    --accent-dark: #ff8177;
-    --accent-soft: #3a2420;
-    --accent-2: #3ecfa8;
-    --accent-2-soft: #163229;
-    --gold: #e6c07a;
-    --cream: #2c2419;
-    --cream-pink: #2c211f;
-    --cream-3: #241f19;
-    --cream-4: #2a2318;
-    --warn-bg: #3a2f14;
-    --warn-text: #e6c07a;
-    --disabled-bg: #46403a;
-    --glow-1: rgba(226, 86, 74, 0.1);
-    --glow-2: rgba(230, 192, 122, 0.07);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
+    --ink: #ece7db;
+    --ink-soft: #b5ad9f;
+    --muted-2: #7d766b;
+    --paper: #100f0d;
+    --paper-raised: #1a1815;
+    --line: #2e2b26;
+    --line-strong: #46413a;
+    --accent: #d8443a;
+    --accent-dark: #ef7b72;
+    --accent-soft: #3a1f1c;
+    --accent-2: #6fbf95;
+    --accent-2-soft: #17302a;
+    --gold: #d9b45a;
+    --cream: #1e1b17;
+    --cream-pink: #221b19;
+    --cream-3: #181613;
+    --cream-4: #262219;
+    --warn-bg: #352c12;
+    --warn-text: #d9b45a;
+    --disabled-bg: #3a352e;
+    --wash-1: 0.06;
+    --wash-2: 0.11;
+    --wash-3: 0.18;
+    --wash-4: 0.28;
+    --grain-opacity: 0.25;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.32);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.38);
   }
 }
 :root[data-theme="dark"] {
-  --ink: #ece5db;
-  --ink-soft: #b3a89b;
-  --muted-2: #8f8375;
-  --paper: #1b1714;
-  --paper-raised: #262019;
-  --line: #3d352c;
-  --accent: #e2564a;
-  --accent-dark: #ff8177;
-  --accent-soft: #3a2420;
-  --accent-2: #3ecfa8;
-  --accent-2-soft: #163229;
-  --gold: #e6c07a;
-  --cream: #2c2419;
-  --cream-pink: #2c211f;
-  --cream-3: #241f19;
-  --cream-4: #2a2318;
-  --warn-bg: #3a2f14;
-  --warn-text: #e6c07a;
-  --disabled-bg: #46403a;
-  --glow-1: rgba(226, 86, 74, 0.1);
-  --glow-2: rgba(230, 192, 122, 0.07);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
+  --ink: #ece7db;
+  --ink-soft: #b5ad9f;
+  --muted-2: #7d766b;
+  --paper: #100f0d;
+  --paper-raised: #1a1815;
+  --line: #2e2b26;
+  --line-strong: #46413a;
+  --accent: #d8443a;
+  --accent-dark: #ef7b72;
+  --accent-soft: #3a1f1c;
+  --accent-2: #6fbf95;
+  --accent-2-soft: #17302a;
+  --gold: #d9b45a;
+  --cream: #1e1b17;
+  --cream-pink: #221b19;
+  --cream-3: #181613;
+  --cream-4: #262219;
+  --warn-bg: #352c12;
+  --warn-text: #d9b45a;
+  --disabled-bg: #3a352e;
+  --wash-1: 0.06;
+  --wash-2: 0.11;
+  --wash-3: 0.18;
+  --wash-4: 0.28;
+  --grain-opacity: 0.25;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.38);
 }
 
 * { box-sizing: border-box; }
@@ -108,70 +121,121 @@
 body {
   margin: 0;
   font-family: var(--font-body);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, var(--glow-1) 0%, transparent 55%),
-    radial-gradient(900px 500px at 110% 0%, var(--glow-2) 0%, transparent 50%),
-    var(--paper);
+  background: var(--paper);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
-
-/* ---------- Navbar ---------- */
-.navbar {
-  display: flex;
-  align-items: center;
-  gap: 1.6rem;
-  padding: 0.85rem 1.75rem;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-  color: #fff;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+/* Paper grain — fixed fractal-noise fibres multiplied over the sheet. */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0.32 0'/></filter><rect width='320' height='320' filter='url(%23n)'/></svg>");
+  background-size: 320px 320px;
 }
+:root[data-theme="dark"] body::before { mix-blend-mode: screen; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { mix-blend-mode: screen; } }
+
+.app-shell { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- The rail: 題箋 title-slips hung down the left edge ---------- */
+.rail {
+  position: fixed; left: 0; top: 0; bottom: 0; width: var(--rail-w); z-index: 30;
+  display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+  padding: 1.1rem 0 1.4rem;
+  border-right: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.rail-brand { display: inline-flex; text-decoration: none; }
+/* The seal: a vermilion hanko with 学, tilted the way a stamp lands. */
+.rail-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 4px;
+  background: var(--accent); color: var(--paper);
+  font-family: var(--font-brush); font-size: 1.55rem; line-height: 1;
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3.5px var(--accent), 2px 3px 0 rgba(23, 21, 18, 0.18);
+  transform: rotate(-5deg);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.rail-brand:hover .rail-seal { transform: rotate(2deg) scale(1.06); }
+.rail-seal-sm { width: 30px; height: 30px; font-size: 1.05rem; }
+.rail-links {
+  display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+  flex: 1; min-height: 0; overflow: hidden;
+  padding-top: 0.4rem;
+}
+/* Each link is a paper slip written vertically, hanging from a thread. */
+.rail-link {
+  position: relative;
+  writing-mode: vertical-rl; text-orientation: upright;
+  font-family: var(--font-heading); font-weight: 700; font-size: 0.86rem; letter-spacing: 0.22em;
+  color: var(--ink-soft); text-decoration: none;
+  padding: 0.55rem 0.32rem;
+  border: 1px solid var(--line-strong); border-radius: var(--wobble);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-sm);
+  transition: color 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  animation: slip-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+:root[data-locale="en"] .rail-link { text-orientation: mixed; letter-spacing: 0.12em; }
+@keyframes slip-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+.rail-link:hover { color: var(--ink); transform: translateX(3px); box-shadow: var(--shadow-md); border-color: var(--ink-soft); }
+/* Active slip: a little vermilion seal dot at its top, ink-dark text. */
+.rail-link.active { color: var(--ink); border-color: var(--ink); }
+.rail-link.active::before {
+  content: "";
+  position: absolute; top: -4px; left: 50%; width: 9px; height: 9px;
+  transform: translateX(-50%) rotate(-8deg); border-radius: 2px;
+  background: var(--accent);
+}
+
+/* Floating utility controls, top-right. */
+.rail-tools {
+  position: fixed; top: 0.85rem; right: 1.1rem; z-index: 30;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
 .navbar-brand {
-  font-weight: 900;
-  font-size: 1.25rem;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
   font-family: var(--font-heading);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  /* Now a <Link> (so clicking the logo goes home) — reset the browser's
-     default anchor color/underline instead of inheriting them. */
+  gap: 0.55rem;
   color: inherit;
   text-decoration: none;
-  transition: opacity 0.15s ease;
 }
-.navbar-brand:hover { opacity: 0.85; }
-.navbar-links { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
-.navbar-links a {
-  color: rgba(255,255,255,0.88);
-  text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 500;
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-.navbar-links a:hover { background: rgba(255,255,255,0.16); color: #fff; transform: translateY(-1px); }
-.navbar-links a.active { background: var(--paper-raised); color: var(--accent-dark); font-weight: 700; box-shadow: var(--shadow-sm); }
-
 .navbar-auth-link {
   display: inline-flex; align-items: center; gap: 0.35rem;
-  color: rgba(255,255,255,0.88); background: transparent; border: none; cursor: pointer;
-  text-decoration: none; font-size: 0.92rem; font-weight: 500; font-family: inherit;
-  padding: 0.4rem 0.75rem; border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  color: var(--ink-soft); background: var(--paper-raised); border: 1px solid var(--line-strong); cursor: pointer;
+  text-decoration: none; font-size: 0.88rem; font-weight: 700; font-family: var(--font-ui);
+  padding: 0.4rem 0.75rem; border-radius: var(--wobble);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
-.navbar-auth-link:hover { background: rgba(255,255,255,0.16); color: #fff; transform: translateY(-1px); }
-.navbar-auth-link.active { background: rgba(255,255,255,0.16); color: #fff; font-weight: 700; }
+.navbar-auth-link:hover { color: var(--ink); border-color: var(--ink); }
+.navbar-auth-link.active { color: var(--accent-dark); border-color: var(--accent); }
 
-.navbar-actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+/* Ink-drop menu button (phones only). */
+.ink-fab {
+  display: none;
+  position: fixed; right: 1.1rem; bottom: 1.2rem; z-index: 35;
+  width: 54px; height: 54px; border: none; cursor: pointer;
+  background: var(--ink); color: var(--paper);
+  border-radius: 62% 38% 46% 54% / 48% 55% 45% 52%;
+  box-shadow: var(--shadow-lg);
+  align-items: center; justify-content: center;
+  animation: blob 7s ease-in-out infinite;
+}
+@keyframes blob {
+  0%, 100% { border-radius: 62% 38% 46% 54% / 48% 55% 45% 52%; }
+  50% { border-radius: 45% 55% 58% 42% / 55% 42% 58% 45%; }
+}
 
 /* ---------- Login / Register ---------- */
 .auth-page { display: flex; justify-content: center; padding-top: 2rem; }
@@ -222,49 +286,13 @@ body {
 }
 .info-banner-close:hover { opacity: 1; }
 
-.navbar-toggle {
-  display: none;
-  align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12); color: #fff; transition: background 0.15s ease;
-}
-.navbar-toggle:hover { background: rgba(255,255,255,0.22); }
-
-/* Whether the full bar (links + search + account + language + theme) fits
-   on one line depends on things a fixed breakpoint can't see — the active
-   locale's label lengths, whether a username is showing and how long it
-   is — so a hard-coded px cutoff kept needing to be re-tuned every time one
-   of those changed (860px, then 1320px, still wrapped once a logged-in
-   account button entered the mix). Navbar.jsx now measures the bar's own
-   content against its available width at runtime and toggles this class
-   instead, so it collapses exactly when it stops fitting, for whichever
-   locale/login state is actually on screen. */
-.navbar.is-cramped { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
-.navbar.is-cramped .navbar-toggle { display: inline-flex; }
-.navbar.is-cramped .navbar-links { display: none; }
-/* The account popover is redundant with the drawer's own inline account
-   section (AccountMenu variant="inline") — one entry point per screen
-   size, not two, so it isn't there to be mistaken for something else. */
-.navbar.is-cramped .navbar-account-slot { display: none; }
-.navbar.is-cramped .nav-search-desktop { display: none; }
-
-/* Safety net for genuinely narrow phones in case the JS measurement above
-   never runs (e.g. disabled JS) — real phone widths always need the
-   hamburger regardless of locale or login state. */
-@media (max-width: 480px) {
-  .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
-  .navbar-toggle { display: inline-flex; }
-  .navbar-links { display: none; }
-  .navbar-account-slot { display: none; }
-  .nav-search-desktop { display: none; }
-}
-
-/* On genuinely narrow phones (not just tablet-portrait-and-below), the
-   tightening above still isn't quite enough headroom for
-   brand + language + theme + hamburger to all fit on one row. */
-@media (max-width: 400px) {
-  .navbar { padding: 0.55rem 0.6rem; gap: 0.5rem 0.3rem; }
-  .navbar-brand { font-size: 0.95rem; gap: 0.25rem; }
+/* Below this width the rail and the top-right tools give way to the
+   ink-drop button + drawer (the drawer carries search and account too). */
+@media (max-width: 900px) {
+  :root { --rail-w: 0px; }
+  .rail { display: none; }
+  .rail-tools .nav-search-desktop, .rail-tools .navbar-account-slot { display: none; }
+  .ink-fab { display: inline-flex; }
 }
 
 /* An arbitrarily long display name would otherwise be the one thing nothing
@@ -331,20 +359,20 @@ body {
 
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12); color: #fff; transition: background 0.15s ease, transform 0.15s ease;
+  width: 36px; height: 36px; border-radius: var(--wobble-2); border: 1px solid var(--line-strong);
+  background: var(--paper-raised); color: var(--ink-soft); transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-.theme-toggle:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.theme-toggle:hover { color: var(--ink); border-color: var(--ink); transform: rotate(-8deg); }
 
 /* ---------- Dropdown (generic, replaces native <select> for custom theming) ---------- */
 .dropdown { position: relative; }
 .dropdown-trigger {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: #fff;
-  border-radius: 999px; padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 600;
-  transition: background 0.15s ease, transform 0.15s ease;
+  border: 1px solid var(--line-strong); background: var(--paper-raised); color: var(--ink-soft);
+  border-radius: var(--wobble); padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 700; font-family: var(--font-ui);
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
-.dropdown-trigger:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.dropdown-trigger:hover { color: var(--ink); border-color: var(--ink); }
 .dropdown-trigger-light {
   border-color: var(--line); background: var(--paper-raised); color: var(--ink);
 }
@@ -402,15 +430,44 @@ body {
 }
 .account-menu-inline { display: flex; flex-direction: column; gap: 0.1rem; }
 
-.app-main { flex: 1; padding: 2.2rem 1.75rem 4rem; max-width: 980px; margin: 0 auto; width: 100%; }
+/* Content sits to the right of the rail; the top-right tools need a little
+   headroom on the first line. */
+.app-main {
+  flex: 1;
+  padding: 4.2rem 1.75rem 4rem;
+  padding-left: calc(var(--rail-w) + 1.75rem);
+  max-width: calc(980px + var(--rail-w));
+  margin: 0 auto;
+  width: 100%;
+}
 
 h1 {
   margin-top: 0;
   font-family: var(--font-heading);
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
 }
-h2 { font-family: var(--font-heading); font-weight: 700; }
+h2 { font-family: var(--font-heading); font-weight: 700; letter-spacing: 0.05em; }
+/* Page titles are underlined by a single brush swash (an alpha mask over
+   the ink color, so it follows the theme); section titles carry a small
+   vermilion seal-dot instead of a rule. */
+.page > h1:first-child, .page-head-row h1 { position: relative; padding-bottom: 0.65rem; }
+.page > h1:first-child::after, .page-head-row h1::after {
+  content: "";
+  position: absolute; left: -0.2em; bottom: 0; width: 7.5em; max-width: 100%; height: 0.55em;
+  background-color: var(--ink);
+  -webkit-mask-image: var(--swash); mask-image: var(--swash);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  opacity: 0.85;
+}
+.page h2 { position: relative; padding-left: 1rem; }
+.page h2::before {
+  content: "";
+  position: absolute; left: 0; top: 0.42em; width: 9px; height: 9px; border-radius: 2px;
+  background: var(--accent); transform: rotate(-8deg);
+}
 /* Applied to the whole page (not just the canvas) while a handwriting
    mode is active — see Kana.jsx/Kanji.jsx. A short, fast stroke (the two
    dakuten strokes on 濁音, especially) could still start a native
@@ -425,14 +482,23 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 .subtitle { color: var(--ink-soft); margin-top: -0.6rem; }
 
 /* ---------- JLPT countdown card ---------- */
+/* A 掛け軸 (hanging scroll): paper sheet with rollers top and bottom. */
 .jlpt-card {
-  background: linear-gradient(155deg, var(--paper-raised) 0%, var(--cream) 100%);
-  border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem 1.5rem;
-  margin: 1.3rem 0; box-shadow: var(--shadow-sm);
+  position: relative;
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong); border-radius: var(--wobble); padding: 1.3rem 1.5rem;
+  margin: 1.6rem 0; box-shadow: var(--shadow-sm);
 }
+.jlpt-card::before, .jlpt-card::after {
+  content: "";
+  position: absolute; left: -6px; right: -6px; height: 7px; border-radius: 4px;
+  background: var(--ink); opacity: 0.85;
+}
+.jlpt-card::before { top: -6px; }
+.jlpt-card::after { bottom: -6px; }
 .jlpt-card-head {
-  display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.05rem;
-  color: var(--accent-dark); font-family: var(--font-heading); margin-bottom: 0.9rem;
+  display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.05rem;
+  color: var(--accent-dark); font-family: var(--font-heading); margin-bottom: 0.9rem; letter-spacing: 0.04em;
 }
 .jlpt-rows { display: flex; flex-direction: column; gap: 0.6rem; }
 .jlpt-row { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
@@ -452,13 +518,14 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 /* ---------- Stat cards ---------- */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 .stat-card {
-  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem;
-  text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: var(--paper-raised); border-radius: var(--wobble); padding: 1.1rem 1rem;
+  text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--line-strong);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.stat-value { font-size: 1.7rem; font-weight: 900; color: var(--accent); font-family: var(--font-heading); }
-.stat-label { font-size: 0.82rem; color: var(--ink-soft); margin-top: 0.3rem; }
+.stat-card:nth-child(even) { border-radius: var(--wobble-2); }
+.stat-card:hover { transform: translateY(-3px) rotate(-0.6deg); box-shadow: var(--shadow-md); }
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--ink); font-family: var(--font-brush); font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.25rem; letter-spacing: 0.06em; }
 
 /* ---------- Progress overview: radar + category bars ---------- */
 .overview-panel {
@@ -499,24 +566,12 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
   white-space: nowrap; min-width: 2.4em;
 }
 
-/* ---------- Quick links ---------- */
-.quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.9rem; }
-.quick-link {
-  display: block; padding: 1.1rem 1.2rem; background: var(--paper-raised); border-radius: var(--radius);
-  text-decoration: none; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 700;
-  border: 1px solid var(--line); transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-.quick-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
-
 /* ---------- Coming soon (features gated until login exists) ---------- */
 .badge-coming-soon {
   display: inline-block; margin-left: 0.5em; padding: 0.15em 0.55em; border-radius: 999px;
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
   background: var(--accent-soft); color: var(--accent-dark); vertical-align: middle;
 }
-.navbar-links a .badge-coming-soon { background: rgba(255,255,255,0.25); color: #fff; }
-.navbar-links a.active .badge-coming-soon,
-.navbar-links a:hover .badge-coming-soon { background: var(--accent-soft); color: var(--accent-dark); }
 .coming-soon { display: flex; justify-content: center; padding-top: 3rem; }
 .coming-soon-card {
   max-width: 420px; text-align: center; padding: 2.2rem 1.8rem; background: var(--paper-raised);
@@ -561,13 +616,17 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 }
 
 button { cursor: pointer; font-family: inherit; }
+/* Chips are hand-cut paper tags; the active one is stamped in vermilion. */
 .level-picker button, .filter-group button {
-  border: 1px solid var(--line); background: var(--paper-raised); padding: 0.4rem 1rem; border-radius: 999px;
-  font-size: 0.9rem; font-weight: 600; color: var(--ink); transition: all 0.15s ease;
+  border: 1px solid var(--line-strong); background: var(--paper-raised); padding: 0.4rem 1rem; border-radius: var(--wobble);
+  font-size: 0.9rem; font-weight: 700; color: var(--ink); font-family: var(--font-ui); transition: all 0.15s ease;
 }
-.level-picker button:hover, .filter-group button:hover { border-color: var(--accent); color: var(--accent-dark); }
+.level-picker button:nth-child(even), .filter-group button:nth-child(even) { border-radius: var(--wobble-2); }
+.level-picker button:hover, .filter-group button:hover { border-color: var(--ink); transform: translateY(-1px) rotate(-1deg); }
 .level-picker button.active, .filter-group button.active {
-  background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: var(--shadow-sm);
+  background: var(--accent); color: var(--paper); border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3px var(--accent);
+  transform: rotate(-1.5deg);
 }
 
 /* ---------- Flashcard flip ---------- */
@@ -600,14 +659,16 @@ button { cursor: pointer; font-family: inherit; }
 }
 .flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
 
+/* A flashcard is a sheet of paper with a hand-drawn ink frame and a small
+   seal in the corner; the word is written in brush. */
 .flip-card-face {
   position: absolute;
   inset: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   background: var(--paper-raised);
-  border-radius: 20px;
-  border: 1px solid var(--line);
+  border-radius: var(--wobble);
+  border: 2px solid var(--ink);
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
@@ -616,21 +677,22 @@ button { cursor: pointer; font-family: inherit; }
   padding: 1.8rem;
   overflow: auto;
 }
-.flip-card-front {
-  background: linear-gradient(160deg, var(--paper-raised) 0%, var(--cream) 100%);
+.flip-card-face::after {
+  content: "";
+  position: absolute; right: 18px; bottom: 18px; width: 12px; height: 12px;
+  background: var(--accent); border-radius: 2px; transform: rotate(-8deg);
 }
-.flip-card-back {
-  transform: rotateY(180deg);
-  background: linear-gradient(160deg, var(--cream-pink) 0%, var(--paper-raised) 100%);
-}
+.flip-card-front { background: var(--paper-raised); }
+.flip-card-back { transform: rotateY(180deg); background: var(--cream); border-radius: var(--wobble-2); }
 .flip-card:hover .flip-card-inner { transform: translateY(-3px) rotateX(1deg); }
 .flip-card.is-flipped:hover .flip-card-inner { transform: rotateY(180deg) translateY(-3px); }
 
 .flashcard-main {
-  font-size: 2.5rem;
-  font-weight: 900;
-  font-family: var(--font-heading);
+  font-size: 3.4rem;
+  font-weight: 400;
+  font-family: var(--font-brush);
   color: var(--ink);
+  line-height: 1.1;
 }
 .flashcard-sub { color: var(--ink-soft); margin-top: 0.5rem; font-size: 1.1rem; }
 .flashcard-hint {
@@ -646,10 +708,11 @@ button { cursor: pointer; font-family: inherit; }
 
 .flashcard-controls, .mark-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
 .flashcard-controls button, .mark-controls button, .secondary-btn {
-  border: 1px solid var(--line); background: var(--paper-raised); padding: 0.55rem 1.1rem; border-radius: 10px;
-  font-weight: 600; transition: all 0.15s ease; box-shadow: var(--shadow-sm); color: var(--ink);
+  border: 1.5px solid var(--ink); background: var(--paper-raised); padding: 0.55rem 1.1rem; border-radius: var(--wobble);
+  font-weight: 700; font-family: var(--font-ui); transition: all 0.15s ease; box-shadow: var(--shadow-sm); color: var(--ink);
 }
-.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--accent); color: var(--accent-dark); transform: translateY(-1px); }
+.flashcard-controls button:hover, .secondary-btn:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px) rotate(-1deg); }
+.flashcard-controls button:active, .secondary-btn:active { transform: translateY(0) scale(0.98); }
 .btn-good { border-color: var(--accent-2) !important; color: var(--accent-2); }
 .btn-good:hover { background: var(--accent-2-soft); }
 .btn-good.active { background: var(--accent-2); color: #fff; }
@@ -692,15 +755,36 @@ button { cursor: pointer; font-family: inherit; }
 .kana-table { display: flex; flex-direction: column; gap: 0.45rem; }
 .kana-row { display: grid; grid-template-columns: 3.2rem repeat(5, 1fr); gap: 0.45rem; align-items: stretch; }
 .kana-row-label { display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--ink-soft); font-weight: 700; }
+/* Kana chart cells are squares of practice paper (a faint cross like a
+   copybook 字帖). Hover rewrites the glyph stroke by stroke — see
+   KanaCell in Kana.jsx. */
 .kana-cell {
-  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px; padding: 0.55rem 0.3rem;
+  position: relative;
+  background: var(--paper-raised); border: 1px solid var(--line-strong); border-radius: var(--wobble); padding: 0.55rem 0.3rem;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
-  box-shadow: var(--shadow-sm); transition: all 0.15s ease; color: var(--ink);
+  box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; color: var(--ink);
+  min-height: 78px;
 }
-.kana-cell:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.kana-cell:nth-child(odd) { border-radius: var(--wobble-2); }
+.kana-cell::before {
+  content: "";
+  position: absolute; inset: 6px;
+  background:
+    linear-gradient(var(--line) 0 0) center / 100% 1px no-repeat,
+    linear-gradient(var(--line) 0 0) center / 1px 100% no-repeat;
+  opacity: 0.55; pointer-events: none;
+}
+.kana-cell:hover, .kana-cell:focus-visible { border-color: var(--ink); transform: translateY(-2px) rotate(-1deg); box-shadow: var(--shadow-md); }
+.kana-cell:active { transform: scale(0.97); }
 .kana-cell.empty { background: transparent; border: none; box-shadow: none; }
-.kana-char { font-size: 1.45rem; font-weight: 700; font-family: var(--font-heading); }
-.kana-romaji { font-size: 0.75rem; color: var(--ink-soft); }
+.kana-cell.empty::before { display: none; }
+.kana-char {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px;
+  font-size: 1.85rem; font-weight: 400; font-family: var(--font-brush); line-height: 1;
+}
+.kana-romaji { position: relative; font-size: 0.7rem; color: var(--ink-soft); letter-spacing: 0.06em; font-family: var(--font-ui); }
 
 /* On narrow screens the fixed 3.2rem label column eats into the 5 kana
    cells' share of a much narrower row, squeezing them lopsided. Give the
@@ -721,10 +805,13 @@ button { cursor: pointer; font-family: inherit; }
 }
 .kanji-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .kanji-char {
-  font-size: 2.6rem; font-weight: 700; cursor: pointer; font-family: var(--font-heading);
-  color: var(--accent-dark); transition: transform 0.15s ease;
+  font-size: 3.4rem; font-weight: 400; cursor: pointer; font-family: var(--font-brush); line-height: 1.1;
+  color: var(--ink); transition: transform 0.2s ease, color 0.2s ease;
 }
-.kanji-char:hover { transform: scale(1.08); }
+.kanji-card { border-radius: var(--wobble); border-color: var(--line-strong); }
+.kanji-card:nth-child(even) { border-radius: var(--wobble-2); }
+.kanji-card:hover .kanji-char { color: var(--accent); }
+.kanji-char:hover { transform: scale(1.08) rotate(-2deg); }
 .kanji-readings { font-size: 0.85rem; text-align: left; margin-top: 0.7rem; line-height: 1.6; color: var(--ink); }
 /* A handful of kanji have long onyomi/kunyomi/meaning lists (many
    readings, or several distinct senses joined by '、'). Without a cap,
@@ -800,7 +887,7 @@ button { cursor: pointer; font-family: inherit; }
   flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: var(--accent-dark);
   background: var(--accent-soft); border-radius: 6px; padding: 0.1rem 0.4rem;
 }
-.search-result-main { font-weight: 900; font-family: var(--font-heading); font-size: 1.05rem; flex-shrink: 0; }
+.search-result-main { font-weight: 400; font-family: var(--font-brush); font-size: 1.2rem; flex-shrink: 0; }
 .search-result-reading { color: var(--ink-soft); font-size: 0.85rem; flex-shrink: 0; }
 .search-result-sub { color: var(--ink-soft); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -844,7 +931,9 @@ button { cursor: pointer; font-family: inherit; }
 }
 .grammar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
-.grammar-pattern { font-size: 1.35rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
+.grammar-pattern { font-size: 1.6rem; font-weight: 400; color: var(--ink); font-family: var(--font-brush); }
+.grammar-card { border-radius: var(--wobble); border-color: var(--line-strong); }
+.grammar-card:nth-child(even) { border-radius: var(--wobble-2); }
 .grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
 .grammar-formation {
   display: inline-block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-2);
@@ -858,27 +947,44 @@ button { cursor: pointer; font-family: inherit; }
 
 /* ---------- Quiz ---------- */
 .quiz-runner { display: flex; flex-direction: column; gap: 1.2rem; }
-.quiz-question { background: var(--paper-raised); border-radius: var(--radius); padding: 1.3rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.quiz-question { background: var(--paper-raised); border-radius: var(--wobble); padding: 1.3rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line-strong); }
+.quiz-question:nth-child(even) { border-radius: var(--wobble-2); }
 .quiz-question-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
-.q-index { font-weight: 900; color: var(--accent); font-family: var(--font-heading); }
+.q-index { font-weight: 400; color: var(--accent); font-family: var(--font-brush); font-size: 1.25rem; }
 .q-prompt { font-weight: 700; color: var(--ink); }
 .quiz-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; }
 .quiz-option {
-  border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.65rem 0.9rem; border-radius: 10px; text-align: left;
-  font-weight: 500; transition: all 0.15s ease;
+  border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink); padding: 0.65rem 0.9rem; border-radius: var(--wobble); text-align: left;
+  font-weight: 500; font-family: var(--font-ui); transition: all 0.15s ease;
 }
-.quiz-option:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-1px); }
-.quiz-option.selected { border-color: var(--accent); background: var(--accent-soft); }
+.quiz-option:nth-child(even) { border-radius: var(--wobble-2); }
+.quiz-option:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-1px) rotate(-0.6deg); }
+.quiz-option.selected { border-color: var(--ink); border-width: 2px; background: var(--cream-4); }
+/* Graded: 正 in green ink, a vermilion cross for wrong — each stamped on. */
+.quiz-option.correct, .quiz-option.wrong { position: relative; }
 .quiz-option.correct { border-color: var(--accent-2); background: var(--accent-2-soft); color: var(--accent-2); font-weight: 700; }
 .quiz-option.wrong { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+.quiz-option.correct::after, .quiz-option.wrong::after {
+  position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%) rotate(-10deg);
+  font-family: var(--font-brush); font-size: 1.3rem; line-height: 1;
+  animation: stamp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.quiz-option.correct::after { content: "正"; color: var(--accent-2); }
+.quiz-option.wrong::after { content: "誤"; color: var(--accent); }
+@keyframes stamp { from { transform: translateY(-50%) rotate(-10deg) scale(2.2); opacity: 0; } to { transform: translateY(-50%) rotate(-10deg) scale(1); opacity: 1; } }
 .quiz-explanation { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); background: var(--cream-4); padding: 0.6rem 0.8rem; border-radius: 8px; }
 .quiz-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+/* Primary action: a vermilion seal — bordered inside like a real hanko. */
 .submit-btn {
-  align-self: flex-start; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; border: none;
-  padding: 0.75rem 1.6rem; border-radius: 10px; font-weight: 700; box-shadow: var(--shadow-md); transition: transform 0.15s ease;
+  align-self: flex-start; background: var(--accent); color: var(--paper); border: none;
+  padding: 0.75rem 1.6rem; border-radius: 4px; font-weight: 700; font-family: var(--font-ui); letter-spacing: 0.06em;
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3.5px var(--accent), 2px 3px 0 rgba(23, 21, 18, 0.18);
+  transform: rotate(-1.5deg);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;
 }
-.submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
-.submit-btn:disabled { background: var(--disabled-bg); cursor: not-allowed; box-shadow: none; }
+.submit-btn:hover:not(:disabled) { transform: rotate(0) scale(1.04); background: var(--accent-dark); }
+.submit-btn:active:not(:disabled) { transform: scale(0.97); }
+.submit-btn:disabled { background: var(--disabled-bg); color: var(--muted-2); cursor: not-allowed; box-shadow: none; transform: none; }
 .login-submit-btn { align-self: stretch; width: 100%; background: var(--accent); }
 .quiz-result { font-size: 1.3rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
 
@@ -887,7 +993,8 @@ button { cursor: pointer; font-family: inherit; }
 
 /* ---------- Speaking ---------- */
 .speaking-card { background: var(--paper-raised); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
-.speaking-target { font-size: 1.5rem; font-weight: 900; font-family: var(--font-heading); color: var(--ink); }
+.speaking-target { font-size: 1.9rem; font-weight: 400; font-family: var(--font-brush); color: var(--ink); }
+.speaking-card { border-radius: var(--wobble); border-color: var(--line-strong); }
 .speaking-reading, .speaking-zh { color: var(--ink-soft); margin-top: 0.25rem; }
 .speaking-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
 .speaking-controls button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 600; transition: all 0.15s ease; }
@@ -941,7 +1048,6 @@ button { cursor: pointer; font-family: inherit; }
 }
 .icon-btn svg, .icon-row svg { flex-shrink: 0; }
 .game-best-score { display: flex; margin: 0 0 1rem; color: var(--ink-soft); font-weight: 600; }
-.quick-link.icon-btn { justify-content: flex-start; }
 .tiny-btn.icon-btn { gap: 0.3rem; }
 svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent); }
 @keyframes pulse-ring {
@@ -963,10 +1069,15 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .game-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+.game-card { border-radius: var(--wobble); border-color: var(--line-strong); }
+.game-card:nth-child(even) { border-radius: var(--wobble-2); }
+.game-card:hover { border-color: var(--ink); }
 .game-card-icon {
-  width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--accent-soft), var(--paper-raised)); color: var(--accent-dark); margin-bottom: 0.9rem;
+  width: 52px; height: 52px; border-radius: var(--wobble-2); display: flex; align-items: center; justify-content: center;
+  background: var(--paper); border: 1.5px solid var(--ink); color: var(--ink); margin-bottom: 0.9rem;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.game-card:hover .game-card-icon { background: var(--accent); border-color: var(--accent); color: var(--paper); transform: rotate(-8deg) scale(1.06); }
 .game-card-title { font-size: 1.15rem; font-weight: 800; font-family: var(--font-heading); margin-bottom: 0.4rem; }
 .game-card-desc { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin: 0; }
 
@@ -994,8 +1105,8 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center;
   padding: 0.4rem; font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
 }
-.memory-card-back { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; font-size: 1.4rem; }
-.memory-card-front { background: var(--paper-raised); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-heading); }
+.memory-card-back { background: var(--ink); color: var(--paper); font-size: 1.5rem; font-family: var(--font-brush); border-radius: var(--wobble); }
+.memory-card-front { background: var(--paper-raised); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-brush); border: 1.5px solid var(--ink); border-radius: var(--wobble-2); }
 .memory-card.is-matched .memory-card-front { background: var(--accent-2-soft); border-color: var(--accent-2); color: var(--accent-2); }
 
 /* ---------- Blitz challenge ---------- */
@@ -1010,15 +1121,15 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 /* ---------- Falling words ---------- */
 .falling-game { display: flex; flex-direction: column; gap: 1rem; }
 .falling-track {
-  position: relative; height: 220px; border-radius: 14px; background: linear-gradient(180deg, var(--cream-3) 0%, var(--cream-4) 100%);
-  border: 1px solid var(--line); overflow: hidden; transition: background 0.15s ease;
+  position: relative; height: 220px; border-radius: var(--wobble); background: var(--cream-3);
+  border: 1.5px solid var(--ink); overflow: hidden; transition: background 0.15s ease;
 }
 .falling-track.flash-good { background: var(--accent-2-soft); }
 .falling-track.flash-bad { background: var(--accent-soft); }
 .falling-item {
   position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-  font-size: 1.6rem; font-weight: 800; color: var(--accent-dark);
-  font-family: var(--font-heading);
+  font-size: 1.9rem; font-weight: 400; color: var(--ink);
+  font-family: var(--font-brush);
   animation-name: fall-down; animation-timing-function: linear; animation-fill-mode: forwards;
 }
 @keyframes fall-down {
@@ -1161,9 +1272,9 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .readquiz-char-display {
   display: flex; align-items: center; justify-content: center;
   width: 100%; max-width: 380px; aspect-ratio: 1 / 1;
-  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
-  box-shadow: var(--shadow-lg); font-size: 7rem; font-weight: 900;
-  font-family: var(--font-heading); color: var(--ink);
+  background: var(--paper-raised); border: 2px solid var(--ink); border-radius: var(--wobble);
+  box-shadow: var(--shadow-lg); font-size: 8.5rem; font-weight: 400;
+  font-family: var(--font-brush); color: var(--ink);
 }
 .readquiz-review-char { font-size: 1.8rem; }
 
@@ -1191,12 +1302,14 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 }
 .notfound-home-btn:hover { transform: translateY(-2px); background: var(--accent-dark); }
 
-/* ---------- Fade-in for page content ---------- */
-.page { animation: fade-up 0.35s ease; }
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ---------- Ink soaking in for page content ---------- */
+.page { animation: ink-soak 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes ink-soak {
+  from { opacity: 0; transform: translateY(8px); filter: blur(5px); }
+  60% { filter: blur(0); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
+@media (prefers-reduced-motion: reduce) { .page { animation: none; } }
 
 /* ---------- Skeleton loading (per-page shapes instead of a text spinner) ---------- */
 .skeleton-block {
@@ -1312,6 +1425,219 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .option-tag {
   display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
 }
+
+/* ============================================================
+   墨 — brush strokes, ink effects, the handscroll, the scene
+   ============================================================ */
+
+/* A brush swash used as an alpha mask under page titles. */
+:root {
+  --swash: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'><path d='M2 9c22-6 44 1 66-2s44-7 66-2 42 6 64-1' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/><path d='M40 11c30-2 60 1 90-2' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' opacity='0.5'/></svg>");
+}
+
+/* ---------- Stroke-order brush writing (BrushKana) ---------- */
+.brush-kana { display: block; overflow: visible; }
+.brush-stroke {
+  fill: none; stroke: var(--ink); stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  animation: brush-write 0.42s cubic-bezier(0.3, 0.6, 0.4, 1) forwards;
+}
+.brush-stroke-soft { stroke-width: 10.5; opacity: 0.22; }
+@keyframes brush-write { to { stroke-dashoffset: 0; } }
+.brush-kana.is-static .brush-stroke { animation: none; stroke-dashoffset: 0; }
+.brush-fallback { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-brush); line-height: 1; }
+@media (prefers-reduced-motion: reduce) { .brush-stroke { animation: none; stroke-dashoffset: 0; } }
+
+/* ---------- Ink trail + route-change ink wipe ---------- */
+.ink-trail { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.ink-wipe {
+  position: fixed; left: var(--ox, 50%); top: var(--oy, 50%);
+  width: 40vmax; height: 40vmax; margin: -20vmax 0 0 -20vmax;
+  border-radius: 47% 53% 58% 42% / 42% 46% 54% 58%;
+  background: var(--ink);
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none; z-index: 100;
+  filter: url(#ink-edge);
+  will-change: transform, opacity;
+}
+.ink-wipe-spread { opacity: 1; animation: ink-spread 0.42s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+.ink-wipe-fade { opacity: 1; transform: scale(7); animation: ink-fade 0.48s ease forwards; }
+@keyframes ink-spread { to { transform: scale(7); } }
+@keyframes ink-fade { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ink-wipe { display: none; } }
+@media print { .ink-trail, .ink-wipe, .rail, .rail-tools, .ink-fab { display: none !important; } }
+
+/* ---------- Hanko / ink buttons ---------- */
+.hanko-btn {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  background: var(--accent); color: var(--paper); text-decoration: none;
+  font-family: var(--font-ui); font-weight: 700; font-size: 0.98rem; letter-spacing: 0.08em;
+  padding: 0.7rem 1.3rem; border-radius: 4px;
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3.5px var(--accent), 3px 4px 0 rgba(23, 21, 18, 0.18);
+  transform: rotate(-2deg);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;
+}
+.hanko-btn:hover { transform: rotate(0) scale(1.05); background: var(--accent-dark); }
+.hanko-btn:active { transform: scale(0.97); }
+.hanko-btn svg { transition: transform 0.2s ease; }
+.hanko-btn:hover svg { transform: translateX(3px); }
+
+/* ---------- The 絵巻 handscroll (home) ---------- */
+/* Full-bleed: break out of .app-main's centered, max-width column entirely
+   (width: 100vw + a negative margin of half the difference), and undo its
+   top padding so the sheet starts at the very top of the window. */
+.emaki-page { width: 100vw; margin: -4.2rem 0 0 calc(50% - 50vw); }
+.emaki-banner { margin: 4.4rem 1.75rem 0 calc(1.75rem + var(--rail-w)); }
+.emaki-stats { width: auto; margin: 0 auto; max-width: 980px; padding-left: calc(var(--rail-w) + 1.75rem); padding-right: 1.75rem; }
+.emaki { position: relative; height: calc(var(--panels, 8) * 100vh); }
+.emaki-viewport { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.emaki-track {
+  position: absolute; inset: 0;
+  display: flex; height: 100%;
+  width: calc(var(--panels, 8) * 100vw);
+  will-change: transform;
+}
+.emaki-panel {
+  position: relative; flex: 0 0 100vw; width: 100vw; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 clamp(2rem, 8vw, 8rem) 0 calc(var(--rail-w) + clamp(2rem, 6vw, 6rem));
+}
+
+/* The painting: mountains at three depths, parallax by scroll progress. */
+.ink-scene { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.ink-layer { position: absolute; left: 0; bottom: 0; width: 180vw; height: 60vh; fill: var(--ink); }
+.ink-layer-far { opacity: var(--wash-1); transform: translate3d(calc(var(--p, 0) * -30vw), 0, 0); height: 68vh; }
+.ink-layer-mid { opacity: var(--wash-2); transform: translate3d(calc(var(--p, 0) * -55vw), 0, 0); }
+.ink-layer-near { opacity: var(--wash-3); transform: translate3d(calc(var(--p, 0) * -80vw), 0, 0); height: 48vh; }
+.ink-mist {
+  position: absolute; left: 0; right: 0; height: 18vh;
+  background: linear-gradient(to bottom, transparent, var(--paper) 55%, transparent);
+  opacity: 0.85;
+}
+.ink-mist-1 { bottom: 30vh; }
+.ink-mist-2 { bottom: 12vh; }
+.ink-sun {
+  position: absolute; top: 12vh; right: 14vw; width: 12vh; height: 12vh; border-radius: 50%;
+  background: var(--accent); opacity: 0.85;
+  transform: translate3d(calc(var(--p, 0) * -20vw), 0, 0);
+}
+.ink-cranes { position: absolute; top: 8vh; left: 0; width: 100vw; height: 120px; fill: var(--ink); opacity: 0.55; overflow: visible; }
+.crane { animation: crane-drift 34s linear infinite; }
+.crane-1 { animation-delay: -4s; transform: translate(0, 10px) scale(0.9); }
+.crane-2 { animation-delay: -16s; transform: translate(0, 40px) scale(0.6); }
+.crane-3 { animation-delay: -26s; transform: translate(0, 70px) scale(0.75); }
+@keyframes crane-drift { from { translate: -60px 0; } to { translate: 460px 0; } }
+
+/* Title sheet */
+.panel-title { flex-direction: column; text-align: center; gap: 0.6rem; }
+.title-brush { display: flex; gap: 0.4rem; align-items: center; justify-content: center; }
+.title-brush .brush-kana { width: clamp(72px, 9vw, 128px); height: auto; }
+.emaki-title {
+  font-family: var(--font-brush); font-weight: 400;
+  font-size: clamp(2.2rem, 5.2vw, 4rem); letter-spacing: 0.18em; line-height: 1.2;
+  margin: 0.6rem 0 0.2rem; color: var(--ink);
+  animation: ink-soak 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.emaki-tagline { max-width: 34em; color: var(--ink-soft); font-size: 1.05rem; line-height: 1.8; margin: 0; animation: ink-soak 0.9s ease both; }
+.emaki-hint {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.6rem;
+  font-family: var(--font-heading); font-size: 0.9rem; letter-spacing: 0.22em; color: var(--ink-soft);
+  animation: ink-soak 0.9s ease both;
+}
+.emaki-hint svg { animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+
+/* Scene sheets: one huge brush character, a numbered line beside it. */
+.panel-scene { gap: clamp(1.5rem, 5vw, 5rem); }
+.scene-char { position: relative; display: flex; align-items: center; justify-content: center; }
+.scene-char .brush-kana { width: clamp(220px, 32vw, 380px); height: auto; }
+.scene-glyph {
+  font-family: var(--font-brush); font-size: clamp(11rem, 30vw, 22rem); line-height: 1; color: var(--ink);
+  /* Ink reveal: a rough diagonal wipe when the scene comes into view. */
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  transition: clip-path 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.panel-scene.is-active .scene-glyph { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+.scene-side { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; max-width: 22em; }
+.scene-num {
+  font-family: var(--font-brush); font-size: 1.4rem; color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border: 1.5px solid var(--accent); border-radius: 4px; transform: rotate(-6deg);
+}
+.scene-name { font-size: clamp(1.7rem, 3vw, 2.6rem); margin: 0.2rem 0 0; }
+.scene-line { font-family: var(--font-brush); font-size: 1.4rem; color: var(--ink-soft); margin: 0 0 0.8rem; letter-spacing: 0.12em; }
+.scene-side > * { opacity: 0; transform: translateY(12px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.panel-scene.is-active .scene-side > * { opacity: 1; transform: none; }
+.panel-scene.is-active .scene-side > :nth-child(2) { transition-delay: 0.12s; }
+.panel-scene.is-active .scene-side > :nth-child(3) { transition-delay: 0.24s; }
+.panel-scene.is-active .scene-side > :nth-child(4) { transition-delay: 0.36s; }
+
+/* Closing sheet */
+.panel-closing { flex-direction: column; gap: 1.6rem; }
+.closing-grid { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.closing-slip {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  width: 120px; padding: 1rem 0.6rem 0.8rem;
+  background: var(--paper-raised); border: 1.5px solid var(--ink); border-radius: var(--wobble);
+  text-decoration: none; color: var(--ink); box-shadow: var(--shadow-sm);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+}
+.closing-slip:nth-child(even) { border-radius: var(--wobble-2); }
+.closing-slip:hover { transform: translateY(-6px) rotate(-2deg); box-shadow: var(--shadow-lg); }
+.closing-char { font-family: var(--font-brush); font-size: 3rem; line-height: 1; }
+.closing-slip:hover .closing-char { color: var(--accent); }
+.closing-label { font-family: var(--font-heading); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; text-align: center; }
+.closing-scroll { width: min(560px, 90%); }
+.closing-scroll .jlpt-card { margin: 0.4rem 0 0; }
+.closing-end {
+  position: absolute; right: clamp(1.5rem, 6vw, 5rem); top: 50%; transform: translateY(-50%);
+  font-family: var(--font-brush); font-size: clamp(3rem, 7vw, 6rem); color: var(--ink); opacity: 0.12;
+}
+
+/* Progress: the unrolled length of the scroll. */
+.emaki-progress {
+  position: absolute; left: calc(var(--rail-w) + 2rem); right: 2rem; bottom: 1.4rem;
+  display: flex; align-items: center; gap: 0.4rem; pointer-events: none;
+}
+.emaki-line { flex: 1; height: 2px; background: var(--line-strong); position: relative; overflow: hidden; }
+.emaki-line::after {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 100%;
+  background: var(--ink); transform-origin: left; transform: scaleX(var(--p, 0));
+}
+.emaki-roll { width: 10px; height: 18px; border-radius: 5px; background: var(--ink); }
+
+.emaki-stats { padding-top: 2rem; }
+
+/* Phones: no sticky/horizontal; sheets stack vertically. */
+@media (max-width: 760px) {
+  .emaki { height: auto; }
+  .emaki-viewport { position: static; height: auto; overflow: visible; }
+  .emaki-track { position: static; flex-direction: column; width: 100%; height: auto; transform: none !important; }
+  .emaki-panel { flex: none; width: 100%; height: auto; min-height: 78vh; padding: 3.5rem 1.4rem 2.5rem; flex-direction: column; text-align: center; }
+  .panel-scene .scene-side { align-items: center; text-align: center; }
+  .scene-side > * { opacity: 1; transform: none; }
+  .scene-glyph { clip-path: none; font-size: 9rem; }
+  .ink-scene { position: fixed; z-index: -1; }
+  .emaki-progress, .closing-end { display: none; }
+  .title-brush .brush-kana { width: 64px; }
+}
+
+/* ---------- Scroll-stagger reveal (useStaggerReveal) ---------- */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease var(--reveal-delay, 0ms), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms); }
+.reveal.is-revealed { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: auto; border-top: 1px solid var(--line);
+  padding: 1.4rem 1.75rem 1.6rem; padding-left: calc(var(--rail-w) + 1.75rem);
+  color: var(--ink-soft); font-size: 0.82rem;
+}
+.site-footer-inner { max-width: 980px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.site-footer-brand { font-family: var(--font-brush); font-size: 1.1rem; color: var(--ink); letter-spacing: 0.12em; }
+.site-footer-motto { font-family: var(--font-brush); letter-spacing: 0.5em; color: var(--muted-2); }
+.site-footer-meta { letter-spacing: 0.08em; font-family: var(--font-ui); }
 
 /* ---------- Print ---------- */
 @media print {

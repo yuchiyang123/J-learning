@@ -10,6 +10,7 @@ import KanaReadQuiz from './KanaReadQuiz.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { QuizSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
+import BrushKana from '../components/BrushKana.jsx';
 
 export default function Kana() {
   const [script, setScript] = useState('hira'); // 'hira' | 'kata'
@@ -71,15 +72,7 @@ function KanaTable({ title, rows, script }) {
             <div className="kana-row-label">{row.label}</div>
             {row.cells.map((cell, i) =>
               cell ? (
-                <button
-                  key={i}
-                  className="kana-cell"
-                  onClick={() => speak(cell[0])}
-                  title={cell[2]}
-                >
-                  <span className="kana-char">{script === 'hira' ? cell[0] : cell[1]}</span>
-                  <span className="kana-romaji">{cell[2]}</span>
-                </button>
+                <KanaCell key={i} cell={cell} script={script} />
               ) : (
                 <div key={i} className="kana-cell empty" />
               )
@@ -88,6 +81,31 @@ function KanaTable({ title, rows, script }) {
         ))}
       </div>
     </div>
+  );
+}
+
+// Hovering (or focusing) a cell rewrites its kana stroke by stroke, in
+// real stroke order, right there in the cell.
+function KanaCell({ cell, script }) {
+  const [writing, setWriting] = useState(false);
+  const ch = script === 'hira' ? cell[0] : cell[1];
+  return (
+    <button
+      className={`kana-cell${writing ? ' is-writing' : ''}`}
+      onClick={() => speak(cell[0])}
+      title={cell[2]}
+      onPointerEnter={() => setWriting(true)}
+      onPointerLeave={() => setWriting(false)}
+      onMouseEnter={() => setWriting(true)}
+      onMouseLeave={() => setWriting(false)}
+      onFocus={() => setWriting(true)}
+      onBlur={() => setWriting(false)}
+    >
+      <span className="kana-char" lang="ja">
+        {writing ? <BrushKana char={ch} size={46} stepMs={240} /> : ch}
+      </span>
+      <span className="kana-romaji">{cell[2]}</span>
+    </button>
   );
 }
 

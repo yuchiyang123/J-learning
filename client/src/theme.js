@@ -51,14 +51,14 @@ export function onThemeChange(callback) {
 // --line tokens (see styles.css) — kept in sync with those by hand since a
 // canvas 2D context can't read CSS variables.
 export function getInkColor() {
-  return getEffectiveTheme() === 'dark' ? '#ece5db' : '#262421';
+  return getEffectiveTheme() === 'dark' ? '#ece7db' : '#171512';
 }
 export function getAccentColor() {
-  return getEffectiveTheme() === 'dark' ? '#e2564a' : '#c23a2e';
+  return getEffectiveTheme() === 'dark' ? '#d8443a' : '#b3261e';
 }
 export function getAccent2Color() {
-  return getEffectiveTheme() === 'dark' ? '#3ecfa8' : '#1f6f5c';
+  return getEffectiveTheme() === 'dark' ? '#6fbf95' : '#3a6b52';
 }
 export function getGridLineColor() {
-  return getEffectiveTheme() === 'dark' ? '#4a4038' : '#d9d3ca';
+  return getEffectiveTheme() === 'dark' ? '#46413a' : '#b9b0a0';
 }
