@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { RefreshCw, Inbox } from 'lucide-react';
 import { seion, dakuon, handakuon } from '../data/kana.js';
 import { speak } from '../speech.js';
@@ -12,9 +13,21 @@ import { QuizSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 
 export default function Kana() {
+  // The brush gate (BrushGate.jsx) can send us here with a kana it
+  // recognized: land on the chart with that cell lit up, or straight in
+  // the writing mode.
+  const location = useLocation();
+  const arrivedWith = location.state || {};
   const [script, setScript] = useState('hira'); // 'hira' | 'kata'
-  const [mode, setMode] = useState('chart'); // 'chart' | 'quiz' | 'write' | 'writequiz' | 'readquiz'
+  const [mode, setMode] = useState(arrivedWith.mode === 'write' ? 'write' : 'chart'); // 'chart' | 'quiz' | 'write' | 'writequiz' | 'readquiz'
+  const [highlight, setHighlight] = useState(arrivedWith.highlight || null);
   const { t } = useLocale();
+
+  useEffect(() => {
+    if (!highlight) return undefined;
+    const timer = setTimeout(() => setHighlight(null), 4500);
+    return () => clearTimeout(timer);
+  }, [highlight]);
 
   // Scoping user-select:none to just the canvas/its wrapper wasn't enough —
   // an Apple Pencil stroke that still started a native selection drag just
@@ -47,9 +60,9 @@ export default function Kana() {
 
       {mode === 'chart' && (
         <>
-          <KanaTable title={t('seion_title')} rows={seion} script={script} />
-          <KanaTable title={t('dakuon_title')} rows={dakuon} script={script} />
-          <KanaTable title={t('handakuon_title')} rows={handakuon} script={script} />
+          <KanaTable title={t('seion_title')} rows={seion} script={script} highlight={highlight} />
+          <KanaTable title={t('dakuon_title')} rows={dakuon} script={script} highlight={highlight} />
+          <KanaTable title={t('handakuon_title')} rows={handakuon} script={script} highlight={highlight} />
         </>
       )}
 
@@ -61,7 +74,7 @@ export default function Kana() {
   );
 }
 
-function KanaTable({ title, rows, script }) {
+function KanaTable({ title, rows, script, highlight }) {
   return (
     <div className="kana-section">
       <h2>{title}</h2>
@@ -71,15 +84,7 @@ function KanaTable({ title, rows, script }) {
             <div className="kana-row-label">{row.label}</div>
             {row.cells.map((cell, i) =>
               cell ? (
-                <button
-                  key={i}
-                  className="kana-cell"
-                  onClick={() => speak(cell[0])}
-                  title={cell[2]}
-                >
-                  <span className="kana-char">{script === 'hira' ? cell[0] : cell[1]}</span>
-                  <span className="kana-romaji">{cell[2]}</span>
-                </button>
+                <KanaCell key={i} cell={cell} script={script} lit={highlight != null && (cell[0] === highlight || cell[1] === highlight)} />
               ) : (
                 <div key={i} className="kana-cell empty" />
               )
@@ -88,6 +93,26 @@ function KanaTable({ title, rows, script }) {
         ))}
       </div>
     </div>
+  );
+}
+
+// Each cell is a small 絵馬 plaque; the one the brush gate sent you to is
+// lit like a lantern and scrolled into view.
+function KanaCell({ cell, script, lit }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (lit) ref.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [lit]);
+  return (
+    <button
+      ref={ref}
+      className={`kana-cell${lit ? ' is-lit' : ''}`}
+      onClick={() => speak(cell[0])}
+      title={cell[2]}
+    >
+      <span className="kana-char" lang="ja">{script === 'hira' ? cell[0] : cell[1]}</span>
+      <span className="kana-romaji">{cell[2]}</span>
+    </button>
   );
 }
 

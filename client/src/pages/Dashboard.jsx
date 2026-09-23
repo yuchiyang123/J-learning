@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2, MailCheck, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { MailCheck, X } from 'lucide-react';
 import { api } from '../api.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
+import ToriiWorld from '../components/ToriiWorld.jsx';
 import JlptCountdown from '../components/JlptCountdown.jsx';
 import { StatGridSkeleton } from '../components/Skeleton.jsx';
+import { useStaggerReveal } from '../hooks/useStaggerReveal.js';
 
+// Home is the torii path (ToriiWorld). Once you've walked to the end, the
+// shrine grounds: your standing as a row of 絵馬 plaques, and the JLPT
+// notice board.
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
@@ -13,6 +18,7 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showResetBanner, setShowResetBanner] = useState(!!location.state?.passwordResetRequested);
+  const statsRef = useRef(null);
 
   useEffect(() => {
     api.getStats().then(setStats).catch(() => setStats(null)).finally(() => setLoadingStats(false));
@@ -26,10 +32,12 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useStaggerReveal(statsRef, { step: 90, deps: [stats] });
+
   return (
-    <div className="page">
+    <div className="home">
       {showResetBanner && (
-        <div className="info-banner">
+        <div className="info-banner home-banner">
           <MailCheck size={18} />
           <span>{t('reset_password_sent_banner')}</span>
           <button type="button" className="info-banner-close" onClick={() => setShowResetBanner(false)} aria-label={t('close')}>
@@ -38,44 +46,34 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h1>{t('dashboard_welcome')}</h1>
-      <p className="subtitle">{t('dashboard_subtitle')}</p>
+      <ToriiWorld />
 
-      <JlptCountdown />
-
-      {loadingStats && <StatGridSkeleton />}
-      {stats && (
-        <div className="card-grid">
-          {stats.streak > 0 && (
-            <StatCard label={t('dashboard_stat_streak')} value={`${stats.streak} ${t('streak_days_unit')}`} />
+      <section className="grounds">
+        <div className="page grounds-panel">
+          <h2>{t('progress_title')}</h2>
+          {loadingStats && <StatGridSkeleton />}
+          {stats && (
+            <div className="card-grid ema-row" ref={statsRef}>
+              {stats.streak > 0 && (
+                <StatCard label={t('dashboard_stat_streak')} value={`${stats.streak} ${t('streak_days_unit')}`} />
+              )}
+              <StatCard label={t('dashboard_stat_reviewed')} value={stats.totalReviewed} />
+              <StatCard label={t('dashboard_stat_mastered')} value={stats.mastered} />
+              <StatCard label={t('dashboard_stat_accuracy')} value={stats.quizAccuracy != null ? `${stats.quizAccuracy}%` : '—'} />
+              <StatCard label={t('dashboard_stat_speaking')} value={stats.avgSpeakingScore != null ? stats.avgSpeakingScore : '—'} />
+            </div>
           )}
-          <StatCard label={t('dashboard_stat_reviewed')} value={stats.totalReviewed} />
-          <StatCard label={t('dashboard_stat_mastered')} value={stats.mastered} />
-          <StatCard label={t('dashboard_stat_accuracy')} value={stats.quizAccuracy != null ? `${stats.quizAccuracy}%` : '—'} />
-          <StatCard label={t('dashboard_stat_speaking')} value={stats.avgSpeakingScore != null ? stats.avgSpeakingScore : '—'} />
+          {!loadingStats && !stats && <p className="grounds-note">{t('login_required_hint')}</p>}
+          <JlptCountdown />
         </div>
-      )}
-
-      <h2>{t('dashboard_quick_start')}</h2>
-      <div className="quick-links">
-        <Link className="quick-link icon-btn" to="/kana"><Type size={18} /> {t('quick_kana')}</Link>
-        <Link className="quick-link icon-btn" to="/vocabulary"><BookOpen size={18} /> {t('quick_vocab')}</Link>
-        <Link className="quick-link icon-btn" to="/kanji"><PenTool size={18} /> {t('quick_kanji')}</Link>
-        <Link className="quick-link icon-btn" to="/grammar"><BookText size={18} /> {t('quick_grammar')}</Link>
-        <Link className="quick-link icon-btn" to="/listening"><Headphones size={18} /> {t('quick_listening')}</Link>
-        <Link className="quick-link icon-btn" to="/speaking"><Mic size={18} /> {t('quick_speaking')}</Link>
-        <Link className="quick-link icon-btn" to="/quiz"><ListChecks size={18} /> {t('quick_quiz')}</Link>
-        <Link className="quick-link icon-btn" to="/jlpt"><Target size={18} /> {t('quick_jlpt')}</Link>
-        <Link className="quick-link icon-btn" to="/games"><Gamepad2 size={18} /> {t('quick_games')}</Link>
-        <Link className="quick-link icon-btn" to="/progress"><BarChart3 size={18} /> {t('quick_progress')}</Link>
-      </div>
+      </section>
     </div>
   );
 }
 
 function StatCard({ label, value }) {
   return (
-    <div className="stat-card">
+    <div className="stat-card reveal">
       <div className="stat-value">{value ?? '—'}</div>
       <div className="stat-label">{label}</div>
     </div>

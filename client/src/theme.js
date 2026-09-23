@@ -50,15 +50,17 @@ export function onThemeChange(callback) {
 // Canvas-safe equivalents of this theme's --ink / --accent / --accent-2 /
 // --line tokens (see styles.css) — kept in sync with those by hand since a
 // canvas 2D context can't read CSS variables.
+// Canvases live inside the lit paper panels (.page), whose ink is dark in
+// both themes — so these track the panel, not the night sky around it.
 export function getInkColor() {
-  return getEffectiveTheme() === 'dark' ? '#ece5db' : '#262421';
+  return getEffectiveTheme() === 'dark' ? '#2a2117' : '#221c14';
 }
 export function getAccentColor() {
-  return getEffectiveTheme() === 'dark' ? '#e2564a' : '#c23a2e';
+  return getEffectiveTheme() === 'dark' ? '#d6402b' : '#c23320';
 }
 export function getAccent2Color() {
-  return getEffectiveTheme() === 'dark' ? '#3ecfa8' : '#1f6f5c';
+  return getEffectiveTheme() === 'dark' ? '#2f8a5c' : '#2b7a52';
 }
 export function getGridLineColor() {
-  return getEffectiveTheme() === 'dark' ? '#4a4038' : '#d9d3ca';
+  return getEffectiveTheme() === 'dark' ? '#d9c9a8' : '#d9cdb4';
 }

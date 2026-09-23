@@ -1,6 +1,9 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar.jsx';
+import LanternNav from './components/LanternNav.jsx';
+import ShojiTransition from './components/ShojiTransition.jsx';
+import BrushGate from './components/BrushGate.jsx';
+import SiteFooter from './components/SiteFooter.jsx';
 
 // Every page is loaded lazily so the initial bundle only ships the shell +
 // whichever page the visitor actually landed on — before this, App.jsx
@@ -32,7 +35,9 @@ const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 export default function App() {
   return (
     <div className="app-shell">
-      <Navbar />
+      <LanternNav />
+      <ShojiTransition />
+      <BrushGate />
       <main className="app-main">
         <Suspense fallback={null}>
           <Routes>
@@ -59,6 +64,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
+      <SiteFooter />
     </div>
   );
 }

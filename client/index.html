@@ -14,7 +14,7 @@
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <meta name="theme-color" content="#c23a2e" />
+    <meta name="theme-color" content="#0b0d1a" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="J-learning 日文學習網" />
@@ -48,7 +48,10 @@
       (function () {
         try {
           var t = localStorage.getItem('jp_theme');
-          if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+          // The path is walked at night by default — lanterns need the
+          // dark. Persisted so the toggle agrees with what's on screen.
+          if (t !== 'dark' && t !== 'light') { t = 'dark'; localStorage.setItem('jp_theme', t); }
+          document.documentElement.setAttribute('data-theme', t);
           var loc = localStorage.getItem('jp_locale');
           if (loc) document.documentElement.setAttribute('data-locale', loc);
         } catch (e) {
@@ -59,7 +62,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&family=Reggae+One&family=Shippori+Mincho:wght@500;700;800&display=swap"
       rel="stylesheet"
     />
   </head>
