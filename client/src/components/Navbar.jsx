@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { GraduationCap, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import NeonLogo from './NeonLogo.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 import AccountMenu from './AccountMenu.jsx';
@@ -108,8 +109,7 @@ export default function Navbar() {
     <>
       <nav className={`navbar${cramped ? ' is-cramped' : ''}`} ref={navRef}>
         <Link to="/" className="navbar-brand">
-          <GraduationCap size={20} />
-          {t('brand')}
+          <NeonLogo name={t('brand')} />
         </Link>
 
         <div className="navbar-links">
@@ -155,8 +155,7 @@ export default function Navbar() {
       <aside className={`nav-drawer${drawerOpen ? ' is-open' : ''}`} aria-hidden={!drawerOpen} {...(!drawerOpen ? { inert: '' } : {})}>
         <div className="nav-drawer-header">
           <Link to="/" className="navbar-brand" onClick={() => setDrawerOpen(false)}>
-            <GraduationCap size={20} />
-            {t('brand')}
+            <NeonLogo name={t('brand')} />
           </Link>
           <button type="button" className="nav-drawer-close" onClick={() => setDrawerOpen(false)} aria-label={t('nav_toggle_label')}>
             <X size={20} />

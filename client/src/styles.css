@@ -1,106 +1,92 @@
+/* ============================================================
+   TOKYO NIGHT — design tokens
+   Night is the default: a near-black street with six neon tubes (pink,
+   cyan, yellow, orange, green, purple) doing all the color work. "Day"
+   (data-theme="light") keeps the same structure as a daylight poster —
+   white ground, the same hues pushed down to print-safe inks.
+   ============================================================ */
 :root {
-  --ink: #2a2420;
-  --ink-soft: #6b5f56;
-  --muted-2: #b0aaa1;
-  --paper: #faf6ef;
-  --paper-raised: #ffffff;
-  --line: #e8ddcd;
-  --accent: #c23a2e;
-  --accent-dark: #9c2c22;
-  --accent-soft: #fbe9e4;
-  --accent-2: #1f6f5c;
-  --accent-2-soft: #e4f3ee;
-  --gold: #c99a3a;
-  --cream: #fff7ee;
-  --cream-pink: #fff5f3;
-  --cream-3: #fbf6ec;
-  --cream-4: #f4ecdf;
-  --warn-bg: #fff6dd;
-  --warn-text: #a37a00;
-  --disabled-bg: #d9d3ca;
-  --glow-1: #fdf1e2;
-  --glow-2: #fbeae6;
-  --shadow-sm: 0 1px 2px rgba(40, 25, 15, 0.06), 0 1px 3px rgba(40, 25, 15, 0.08);
-  --shadow-md: 0 4px 10px rgba(40, 25, 15, 0.08), 0 2px 4px rgba(40, 25, 15, 0.06);
-  --shadow-lg: 0 12px 32px rgba(40, 25, 15, 0.14), 0 4px 12px rgba(40, 25, 15, 0.08);
+  --ink: #f3f2fa;
+  --ink-soft: #b3b1c9;
+  --muted-2: #6f6d86;
+  --paper: #07070f;
+  --paper-raised: #12111f;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --accent: #ff2d95;
+  --accent-dark: #ff6ab8;
+  --accent-soft: rgba(255, 45, 149, 0.14);
+  --accent-2: #39ff88;
+  --accent-2-soft: rgba(57, 255, 136, 0.12);
+  --cyan: #22e6ff;
+  --cyan-soft: rgba(34, 230, 255, 0.12);
+  --yellow: #ffe45c;
+  --orange: #ff7a1a;
+  --purple: #9d5cff;
+  --green: #39ff88;
+  --pink: #ff2d95;
+  --gold: #ffe45c;
+  --cream: #15142a;
+  --cream-pink: #1a1224;
+  --cream-3: #101020;
+  --cream-4: #1b1b2e;
+  --warn-bg: #2a2410;
+  --warn-text: #ffe45c;
+  --disabled-bg: #2a2a3a;
+  --glass: rgba(18, 17, 31, 0.72);
+  --glow-strength: 1;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.65), 0 6px 16px rgba(0, 0, 0, 0.45);
   /* Every script we display (zh-TW/zh-CN/ja/ko/en) needs its own Noto face listed
      so glyphs never fall through to a mismatched system font — that mismatch is
      what reads as "inconsistent weight" when switching locale. Keep this list in
      sync with the families loaded in index.html. */
   --font-body: "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, sans-serif;
-  --font-heading: "Zen Maru Gothic", "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", sans-serif;
-  --radius: 14px;
-}
-
-/* Zen Maru Gothic is a small, hand-picked Japanese decorative font — it only
-   covers Joyo-kanji + kana, not the full CJK Unified Ideograph set. When a
-   heading string mixes a covered character (e.g. 学) with an uncovered one
-   (e.g. simplified-only 习), the browser silently falls through to a *different*
-   font per-character, so the word renders in two visibly different typefaces.
-   Zen Maru Gothic's coverage is good enough for zh-TW (its target look), but not
-   for zh-CN/ko/en — those locales skip it entirely and use the same broad-coverage
-   Noto stack as body text, so every character in a heading matches. */
-:root[data-locale="zh-CN"],
-:root[data-locale="ko"],
-:root[data-locale="en"] {
+  /* Translated page headings: the same broad-coverage Noto stack at black
+     weight, so a heading that mixes scripts never falls back mid-word. */
   --font-heading: var(--font-body);
+  /* Japanese display text (the neon signs, brand, kana/kanji glyphs): Dela
+     Gothic One — a single ultra-black weight that reads like a shop sign. */
+  --font-display: "Dela Gothic One", "Noto Sans JP", "Noto Sans TC", "Noto Sans", sans-serif;
+  --radius: 12px;
+  --radius-lg: 18px;
 }
 
-/* Dark palette: applied when the OS prefers dark and the user hasn't explicitly
-   chosen light, or when the user explicitly toggles dark via [data-theme]. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ink: #ece5db;
-    --ink-soft: #b3a89b;
-    --muted-2: #8f8375;
-    --paper: #1b1714;
-    --paper-raised: #262019;
-    --line: #3d352c;
-    --accent: #e2564a;
-    --accent-dark: #ff8177;
-    --accent-soft: #3a2420;
-    --accent-2: #3ecfa8;
-    --accent-2-soft: #163229;
-    --gold: #e6c07a;
-    --cream: #2c2419;
-    --cream-pink: #2c211f;
-    --cream-3: #241f19;
-    --cream-4: #2a2318;
-    --warn-bg: #3a2f14;
-    --warn-text: #e6c07a;
-    --disabled-bg: #46403a;
-    --glow-1: rgba(226, 86, 74, 0.1);
-    --glow-2: rgba(230, 192, 122, 0.07);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
-  }
-}
-:root[data-theme="dark"] {
-  --ink: #ece5db;
-  --ink-soft: #b3a89b;
-  --muted-2: #8f8375;
-  --paper: #1b1714;
-  --paper-raised: #262019;
-  --line: #3d352c;
-  --accent: #e2564a;
-  --accent-dark: #ff8177;
-  --accent-soft: #3a2420;
-  --accent-2: #3ecfa8;
-  --accent-2-soft: #163229;
-  --gold: #e6c07a;
-  --cream: #2c2419;
-  --cream-pink: #2c211f;
-  --cream-3: #241f19;
-  --cream-4: #2a2318;
-  --warn-bg: #3a2f14;
-  --warn-text: #e6c07a;
-  --disabled-bg: #46403a;
-  --glow-1: rgba(226, 86, 74, 0.1);
-  --glow-2: rgba(230, 192, 122, 0.07);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
+/* Day (昼) variant — only when explicitly chosen. */
+:root[data-theme="light"] {
+  --ink: #0e0e18;
+  --ink-soft: #4c4a62;
+  --muted-2: #8d8ba3;
+  --paper: #f5f4fb;
+  --paper-raised: #ffffff;
+  --line: #dcdaf0;
+  --line-strong: #b9b6dc;
+  --accent: #e0187a;
+  --accent-dark: #b0105e;
+  --accent-soft: #fde4f0;
+  --accent-2: #14a55c;
+  --accent-2-soft: #dff7ea;
+  --cyan: #0aa5c2;
+  --cyan-soft: #dff5fa;
+  --yellow: #e0b400;
+  --orange: #e86a10;
+  --purple: #7a3ff2;
+  --green: #14a55c;
+  --pink: #e0187a;
+  --gold: #d39b00;
+  --cream: #f1f0fa;
+  --cream-pink: #fbeaf3;
+  --cream-3: #f6f5fc;
+  --cream-4: #ebe9f6;
+  --warn-bg: #fff3cf;
+  --warn-text: #8a6a12;
+  --disabled-bg: #d9d8e6;
+  --glass: rgba(255, 255, 255, 0.82);
+  --glow-strength: 0.35;
+  --shadow-sm: 0 1px 2px rgba(14, 14, 24, 0.06), 0 1px 3px rgba(14, 14, 24, 0.08);
+  --shadow-md: 0 4px 12px rgba(14, 14, 24, 0.1), 0 2px 4px rgba(14, 14, 24, 0.06);
+  --shadow-lg: 0 14px 36px rgba(14, 14, 24, 0.16), 0 4px 12px rgba(14, 14, 24, 0.08);
 }
 
 * { box-sizing: border-box; }
@@ -108,70 +94,94 @@
 body {
   margin: 0;
   font-family: var(--font-body);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, var(--glow-1) 0%, transparent 55%),
-    radial-gradient(900px 500px at 110% 0%, var(--glow-2) 0%, transparent 50%),
-    var(--paper);
+  background: var(--paper);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+/* The street: rain + bokeh canvas (NeonRain) and the cursor light sit at
+   z-index 0; everything else lives in the shell one layer up. */
+.app-shell { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ---------- Navbar ---------- */
+/* ---------- Navbar: dark glass over the street ---------- */
 .navbar {
   display: flex;
   align-items: center;
-  gap: 1.6rem;
-  padding: 0.85rem 1.75rem;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-  color: #fff;
+  gap: 1.4rem;
+  padding: 0.7rem 1.75rem;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  color: var(--ink);
   flex-wrap: wrap;
   position: sticky;
   top: 0;
   z-index: 20;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid var(--line);
 }
+/* A hairline of neon along the bottom edge that "breathes". */
+.navbar::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 18px var(--accent);
+  opacity: 0.7;
+  animation: neon-breathe 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes neon-breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.95; } }
 .navbar-brand {
-  font-weight: 900;
-  font-size: 1.25rem;
-  letter-spacing: 0.06em;
-  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.55rem;
   /* Now a <Link> (so clicking the logo goes home) — reset the browser's
      default anchor color/underline instead of inheriting them. */
-  color: inherit;
+  color: var(--ink);
   text-decoration: none;
   transition: opacity 0.15s ease;
 }
-.navbar-brand:hover { opacity: 0.85; }
-.navbar-links { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
+.navbar-brand:hover .neon-logo { animation: neon-buzz 0.5s steps(2, end) 2; }
+.navbar-links { display: flex; gap: 0.1rem; flex-wrap: wrap; align-items: center; }
 .navbar-links a {
-  color: rgba(255,255,255,0.88);
+  position: relative;
+  color: var(--ink-soft);
   text-decoration: none;
   font-size: 0.92rem;
-  font-weight: 500;
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  font-weight: 700;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  transition: color 0.15s ease, text-shadow 0.2s ease;
 }
-.navbar-links a:hover { background: rgba(255,255,255,0.16); color: #fff; transform: translateY(-1px); }
-.navbar-links a.active { background: var(--paper-raised); color: var(--accent-dark); font-weight: 700; box-shadow: var(--shadow-sm); }
+.navbar-links a::after {
+  content: "";
+  position: absolute; left: 0.7rem; right: 0.7rem; bottom: 0.15rem; height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan), 0 0 14px var(--cyan);
+  transform: scaleX(0); transform-origin: center;
+  opacity: 0;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+.navbar-links a:hover { color: var(--ink); }
+.navbar-links a:hover::after { transform: scaleX(0.5); opacity: 0.6; }
+.navbar-links a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(34, 230, 255, calc(0.55 * var(--glow-strength))); }
+.navbar-links a.active::after { transform: scaleX(1); opacity: 1; }
 
 .navbar-auth-link {
   display: inline-flex; align-items: center; gap: 0.35rem;
-  color: rgba(255,255,255,0.88); background: transparent; border: none; cursor: pointer;
-  text-decoration: none; font-size: 0.92rem; font-weight: 500; font-family: inherit;
-  padding: 0.4rem 0.75rem; border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  color: var(--ink-soft); background: transparent; border: none; cursor: pointer;
+  text-decoration: none; font-size: 0.92rem; font-weight: 700; font-family: inherit;
+  padding: 0.4rem 0.75rem; border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.navbar-auth-link:hover { background: rgba(255,255,255,0.16); color: #fff; transform: translateY(-1px); }
-.navbar-auth-link.active { background: rgba(255,255,255,0.16); color: #fff; font-weight: 700; }
+.navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); }
+.navbar-auth-link.active { background: var(--accent-soft); color: var(--accent-dark); }
 
-.navbar-actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+.navbar-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
 
 /* ---------- Login / Register ---------- */
 .auth-page { display: flex; justify-content: center; padding-top: 2rem; }
@@ -225,10 +235,10 @@ body {
 .navbar-toggle {
   display: none;
   align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12); color: #fff; transition: background 0.15s ease;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: transparent; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.navbar-toggle:hover { background: rgba(255,255,255,0.22); }
+.navbar-toggle:hover { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-soft); }
 
 /* Whether the full bar (links + search + account + language + theme) fits
    on one line depends on things a fixed breakpoint can't see — the active
@@ -331,20 +341,20 @@ body {
 
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12); color: #fff; transition: background 0.15s ease, transform 0.15s ease;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: transparent; color: var(--ink-soft); transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.theme-toggle:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.theme-toggle:hover { color: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 10px rgba(255, 228, 92, 0.35); }
 
 /* ---------- Dropdown (generic, replaces native <select> for custom theming) ---------- */
 .dropdown { position: relative; }
 .dropdown-trigger {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: #fff;
-  border-radius: 999px; padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 600;
-  transition: background 0.15s ease, transform 0.15s ease;
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink-soft);
+  border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 700;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.dropdown-trigger:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+.dropdown-trigger:hover { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-soft); }
 .dropdown-trigger-light {
   border-color: var(--line); background: var(--paper-raised); color: var(--ink);
 }
@@ -407,10 +417,28 @@ body {
 h1 {
   margin-top: 0;
   font-family: var(--font-heading);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
 }
-h2 { font-family: var(--font-heading); font-weight: 700; }
+h2 { font-family: var(--font-heading); font-weight: 900; letter-spacing: 0.01em; }
+/* Page titles get a short neon tube underneath; section titles a glowing
+   cyan tick on the left — the two recurring marks that tie every page back
+   to the signs on the street. */
+.page > h1:first-child, .page-head-row h1 { position: relative; padding-bottom: 0.45rem; }
+.page > h1:first-child::after, .page-head-row h1::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0; width: 56px; height: 3px; border-radius: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 20px rgba(255, 45, 149, calc(0.6 * var(--glow-strength)));
+}
+.page h2 { position: relative; padding-left: 0.9rem; }
+.page h2::before {
+  content: "";
+  position: absolute; left: 0; top: 0.3em; bottom: 0.25em; width: 3px; border-radius: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan), 0 0 16px rgba(34, 230, 255, calc(0.5 * var(--glow-strength)));
+}
 /* Applied to the whole page (not just the canvas) while a handwriting
    mode is active — see Kana.jsx/Kanji.jsx. A short, fast stroke (the two
    dakuten strokes on 濁音, especially) could still start a native
@@ -426,13 +454,24 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 
 /* ---------- JLPT countdown card ---------- */
 .jlpt-card {
-  background: linear-gradient(155deg, var(--paper-raised) 0%, var(--cream) 100%);
-  border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem 1.5rem;
-  margin: 1.3rem 0; box-shadow: var(--shadow-sm);
+  position: relative; overflow: hidden;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid var(--line); border-left: 3px solid var(--yellow);
+  border-radius: var(--radius); padding: 1.3rem 1.5rem;
+  margin: 1.3rem 0; box-shadow: var(--shadow-sm), inset 0 0 0 1px rgba(255, 228, 92, 0.06);
+}
+/* Faint 験 (exam) sign in the corner. */
+.jlpt-card::after {
+  content: "験";
+  position: absolute; right: 0.5rem; bottom: -0.6rem;
+  font-family: var(--font-display); font-size: 5.6rem; line-height: 1;
+  color: var(--yellow); opacity: 0.08; pointer-events: none;
 }
 .jlpt-card-head {
-  display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.05rem;
-  color: var(--accent-dark); font-family: var(--font-heading); margin-bottom: 0.9rem;
+  display: flex; align-items: center; gap: 0.5rem; font-weight: 900; font-size: 1.05rem;
+  color: var(--yellow); font-family: var(--font-heading); margin-bottom: 0.9rem;
+  text-shadow: 0 0 12px rgba(255, 228, 92, calc(0.5 * var(--glow-strength)));
 }
 .jlpt-rows { display: flex; flex-direction: column; gap: 0.6rem; }
 .jlpt-row { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
@@ -452,13 +491,23 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
 /* ---------- Stat cards ---------- */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 .stat-card {
-  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem;
+  --c: var(--cyan);
+  position: relative;
+  background: var(--glass); border-radius: var(--radius); padding: 1.1rem 1rem 1rem;
   text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
 }
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.stat-value { font-size: 1.7rem; font-weight: 900; color: var(--accent); font-family: var(--font-heading); }
-.stat-label { font-size: 0.82rem; color: var(--ink-soft); margin-top: 0.3rem; }
+.stat-card:nth-child(5n+2) { --c: var(--pink); }
+.stat-card:nth-child(5n+3) { --c: var(--yellow); }
+.stat-card:nth-child(5n+4) { --c: var(--green); }
+.stat-card:nth-child(5n+5) { --c: var(--purple); }
+.stat-card-gold { --c: var(--yellow); }
+.stat-card:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 22px color-mix(in srgb, var(--c) 45%, transparent), var(--shadow-md); }
+.stat-value {
+  font-size: 2rem; font-weight: 400; color: var(--c); font-family: var(--font-display); font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--c) 70%, transparent), 0 0 24px color-mix(in srgb, var(--c) calc(45% * var(--glow-strength)), transparent);
+}
+.stat-label { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.3rem; letter-spacing: 0.06em; text-transform: uppercase; }
 
 /* ---------- Progress overview: radar + category bars ---------- */
 .overview-panel {
@@ -499,22 +548,13 @@ h2 { font-family: var(--font-heading); font-weight: 700; }
   white-space: nowrap; min-width: 2.4em;
 }
 
-/* ---------- Quick links ---------- */
-.quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.9rem; }
-.quick-link {
-  display: block; padding: 1.1rem 1.2rem; background: var(--paper-raised); border-radius: var(--radius);
-  text-decoration: none; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 700;
-  border: 1px solid var(--line); transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-.quick-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
-
 /* ---------- Coming soon (features gated until login exists) ---------- */
 .badge-coming-soon {
   display: inline-block; margin-left: 0.5em; padding: 0.15em 0.55em; border-radius: 999px;
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
   background: var(--accent-soft); color: var(--accent-dark); vertical-align: middle;
 }
-.navbar-links a .badge-coming-soon { background: rgba(255,255,255,0.25); color: #fff; }
+.navbar-links a .badge-coming-soon { background: var(--cream-4); color: var(--ink-soft); }
 .navbar-links a.active .badge-coming-soon,
 .navbar-links a:hover .badge-coming-soon { background: var(--accent-soft); color: var(--accent-dark); }
 .coming-soon { display: flex; justify-content: center; padding-top: 3rem; }
@@ -600,15 +640,19 @@ button { cursor: pointer; font-family: inherit; }
 }
 .flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
 
+/* A flashcard is a lit sign: dark glass with a neon tube border — cyan on
+   the front, pink on the back — and the word itself glowing. */
 .flip-card-face {
+  --c: var(--cyan);
   position: absolute;
   inset: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  background: var(--paper-raised);
-  border-radius: 20px;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-lg);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--c);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--c) 50%, transparent), 0 0 40px color-mix(in srgb, var(--c) calc(30% * var(--glow-strength)), transparent), inset 0 0 24px color-mix(in srgb, var(--c) 10%, transparent), var(--shadow-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -616,21 +660,18 @@ button { cursor: pointer; font-family: inherit; }
   padding: 1.8rem;
   overflow: auto;
 }
-.flip-card-front {
-  background: linear-gradient(160deg, var(--paper-raised) 0%, var(--cream) 100%);
-}
-.flip-card-back {
-  transform: rotateY(180deg);
-  background: linear-gradient(160deg, var(--cream-pink) 0%, var(--paper-raised) 100%);
-}
+.flip-card-front { --c: var(--cyan); }
+.flip-card-back { --c: var(--pink); transform: rotateY(180deg); }
 .flip-card:hover .flip-card-inner { transform: translateY(-3px) rotateX(1deg); }
 .flip-card.is-flipped:hover .flip-card-inner { transform: rotateY(180deg) translateY(-3px); }
 
 .flashcard-main {
-  font-size: 2.5rem;
-  font-weight: 900;
-  font-family: var(--font-heading);
+  font-size: 2.9rem;
+  font-weight: 400;
+  font-family: var(--font-display);
   color: var(--ink);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--c) 60%, transparent), 0 0 30px color-mix(in srgb, var(--c) calc(40% * var(--glow-strength)), transparent);
 }
 .flashcard-sub { color: var(--ink-soft); margin-top: 0.5rem; font-size: 1.1rem; }
 .flashcard-hint {
@@ -646,16 +687,17 @@ button { cursor: pointer; font-family: inherit; }
 
 .flashcard-controls, .mark-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
 .flashcard-controls button, .mark-controls button, .secondary-btn {
-  border: 1px solid var(--line); background: var(--paper-raised); padding: 0.55rem 1.1rem; border-radius: 10px;
-  font-weight: 600; transition: all 0.15s ease; box-shadow: var(--shadow-sm); color: var(--ink);
+  border: 1px solid var(--line-strong); background: transparent; padding: 0.55rem 1.1rem; border-radius: 8px;
+  font-weight: 700; transition: all 0.15s ease; color: var(--ink);
 }
-.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--accent); color: var(--accent-dark); transform: translateY(-1px); }
+.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); transform: translateY(-1px); }
+.flashcard-controls button:active, .secondary-btn:active { transform: translateY(0) scale(0.98); }
 .btn-good { border-color: var(--accent-2) !important; color: var(--accent-2); }
-.btn-good:hover { background: var(--accent-2-soft); }
-.btn-good.active { background: var(--accent-2); color: #fff; }
+.btn-good:hover { background: var(--accent-2-soft); box-shadow: 0 0 14px var(--accent-2-soft) !important; color: var(--accent-2) !important; }
+.btn-good.active { background: var(--accent-2); color: #06140c; box-shadow: 0 0 16px var(--accent-2); }
 .btn-bad { border-color: var(--accent) !important; color: var(--accent); }
-.btn-bad:hover { background: var(--accent-soft); }
-.btn-bad.active { background: var(--accent); color: #fff; }
+.btn-bad:hover { background: var(--accent-soft); box-shadow: 0 0 14px var(--accent-soft) !important; color: var(--accent) !important; }
+.btn-bad.active { background: var(--accent); color: #fff; box-shadow: 0 0 16px var(--accent); }
 .progress-indicator { color: var(--ink-soft); font-size: 0.9rem; font-weight: 600; }
 
 .custom-word-badge {
@@ -692,15 +734,35 @@ button { cursor: pointer; font-family: inherit; }
 .kana-table { display: flex; flex-direction: column; gap: 0.45rem; }
 .kana-row { display: grid; grid-template-columns: 3.2rem repeat(5, 1fr); gap: 0.45rem; align-items: stretch; }
 .kana-row-label { display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--ink-soft); font-weight: 700; }
+/* The kana chart is a wall of small shop signs: each column its own neon
+   color, each cell lit dimly until hovered, then it flares and buzzes. */
 .kana-cell {
-  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px; padding: 0.55rem 0.3rem;
+  --c: var(--cyan);
+  position: relative;
+  background: var(--glass); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.3rem;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
-  box-shadow: var(--shadow-sm); transition: all 0.15s ease; color: var(--ink);
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.25s ease; color: var(--ink);
 }
-.kana-cell:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.kana-row .kana-cell:nth-child(2) { --c: var(--pink); }
+.kana-row .kana-cell:nth-child(3) { --c: var(--cyan); }
+.kana-row .kana-cell:nth-child(4) { --c: var(--yellow); }
+.kana-row .kana-cell:nth-child(5) { --c: var(--purple); }
+.kana-row .kana-cell:nth-child(6) { --c: var(--green); }
+.kana-cell:hover {
+  border-color: var(--c); transform: translateY(-3px);
+  box-shadow: 0 0 0 1px var(--c), 0 0 18px color-mix(in srgb, var(--c) 55%, transparent), 0 0 42px color-mix(in srgb, var(--c) calc(30% * var(--glow-strength)), transparent);
+}
+.kana-cell:hover .kana-char { animation: neon-buzz 0.4s steps(2, end) 1; text-shadow: 0 0 6px #fff, 0 0 14px var(--c), 0 0 30px var(--c); color: #fff; }
+.kana-cell:active { transform: translateY(0) scale(0.96); }
 .kana-cell.empty { background: transparent; border: none; box-shadow: none; }
-.kana-char { font-size: 1.45rem; font-weight: 700; font-family: var(--font-heading); }
-.kana-romaji { font-size: 0.75rem; color: var(--ink-soft); }
+.kana-char {
+  font-size: 1.6rem; font-weight: 400; font-family: var(--font-display); line-height: 1.2;
+  color: var(--c);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--c) calc(60% * var(--glow-strength)), transparent);
+  transition: color 0.15s ease, text-shadow 0.2s ease;
+}
+.kana-romaji { font-size: 0.7rem; color: var(--ink-soft); letter-spacing: 0.08em; text-transform: uppercase; }
+:root[data-theme="light"] .kana-cell:hover .kana-char { color: var(--c); text-shadow: 0 0 10px color-mix(in srgb, var(--c) 40%, transparent); }
 
 /* On narrow screens the fixed 3.2rem label column eats into the 5 kana
    cells' share of a much narrower row, squeezing them lopsided. Give the
@@ -721,9 +783,11 @@ button { cursor: pointer; font-family: inherit; }
 }
 .kanji-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .kanji-char {
-  font-size: 2.6rem; font-weight: 700; cursor: pointer; font-family: var(--font-heading);
-  color: var(--accent-dark); transition: transform 0.15s ease;
+  font-size: 3rem; font-weight: 400; cursor: pointer; font-family: var(--font-display); line-height: 1.15;
+  color: var(--ink); transition: transform 0.15s ease, color 0.2s ease, text-shadow 0.25s ease;
 }
+.kanji-card:hover .kanji-char { color: var(--yellow); text-shadow: 0 0 10px var(--yellow), 0 0 28px rgba(255, 228, 92, calc(0.5 * var(--glow-strength))); }
+.kanji-card:hover { border-color: rgba(255, 228, 92, 0.5); }
 .kanji-char:hover { transform: scale(1.08); }
 .kanji-readings { font-size: 0.85rem; text-align: left; margin-top: 0.7rem; line-height: 1.6; color: var(--ink); }
 /* A handful of kanji have long onyomi/kunyomi/meaning lists (many
@@ -800,7 +864,7 @@ button { cursor: pointer; font-family: inherit; }
   flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: var(--accent-dark);
   background: var(--accent-soft); border-radius: 6px; padding: 0.1rem 0.4rem;
 }
-.search-result-main { font-weight: 900; font-family: var(--font-heading); font-size: 1.05rem; flex-shrink: 0; }
+.search-result-main { font-weight: 400; font-family: var(--font-display); font-size: 1.1rem; flex-shrink: 0; }
 .search-result-reading { color: var(--ink-soft); font-size: 0.85rem; flex-shrink: 0; }
 .search-result-sub { color: var(--ink-soft); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -844,7 +908,9 @@ button { cursor: pointer; font-family: inherit; }
 }
 .grammar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
-.grammar-pattern { font-size: 1.35rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
+.grammar-pattern { font-size: 1.4rem; font-weight: 400; color: var(--purple); font-family: var(--font-display); text-shadow: 0 0 12px color-mix(in srgb, var(--purple) calc(55% * var(--glow-strength)), transparent); }
+.grammar-card { background: var(--glass); }
+.grammar-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple), 0 0 24px color-mix(in srgb, var(--purple) 30%, transparent); }
 .grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
 .grammar-formation {
   display: inline-block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-2);
@@ -864,21 +930,26 @@ button { cursor: pointer; font-family: inherit; }
 .q-prompt { font-weight: 700; color: var(--ink); }
 .quiz-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; }
 .quiz-option {
-  border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.65rem 0.9rem; border-radius: 10px; text-align: left;
-  font-weight: 500; transition: all 0.15s ease;
+  border: 1px solid var(--line-strong); background: var(--cream-3); color: var(--ink); padding: 0.65rem 0.9rem; border-radius: 8px; text-align: left;
+  font-weight: 600; transition: all 0.18s ease;
 }
-.quiz-option:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-1px); }
-.quiz-option.selected { border-color: var(--accent); background: var(--accent-soft); }
-.quiz-option.correct { border-color: var(--accent-2); background: var(--accent-2-soft); color: var(--accent-2); font-weight: 700; }
-.quiz-option.wrong { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+.quiz-option:hover:not(:disabled) { border-color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); transform: translateY(-1px); }
+.quiz-option.selected { border-color: var(--cyan); background: var(--cyan-soft); color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 0 14px var(--cyan-soft); }
+/* Right/wrong light up like the sign flipping to 正解 / 不正解. */
+.quiz-option.correct { border-color: var(--accent-2); background: var(--accent-2-soft); color: var(--accent-2); font-weight: 800; box-shadow: 0 0 0 1px var(--accent-2), 0 0 18px var(--accent-2-soft), 0 0 34px color-mix(in srgb, var(--accent-2) calc(30% * var(--glow-strength)), transparent); animation: neon-buzz 0.45s steps(2, end) 1; }
+.quiz-option.wrong { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); box-shadow: 0 0 0 1px var(--accent), 0 0 18px var(--accent-soft); }
 .quiz-explanation { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); background: var(--cream-4); padding: 0.6rem 0.8rem; border-radius: 8px; }
 .quiz-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+/* Primary action: a pink neon tube — solid fill with its own glow. */
 .submit-btn {
-  align-self: flex-start; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; border: none;
-  padding: 0.75rem 1.6rem; border-radius: 10px; font-weight: 700; box-shadow: var(--shadow-md); transition: transform 0.15s ease;
+  align-self: flex-start; background: var(--accent); color: #fff; border: none;
+  padding: 0.75rem 1.6rem; border-radius: 8px; font-weight: 800; letter-spacing: 0.04em;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent), 0 0 34px color-mix(in srgb, var(--accent) calc(35% * var(--glow-strength)), transparent);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.15s ease;
 }
-.submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
-.submit-btn:disabled { background: var(--disabled-bg); cursor: not-allowed; box-shadow: none; }
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 75%, transparent), 0 0 48px color-mix(in srgb, var(--accent) calc(50% * var(--glow-strength)), transparent); }
+.submit-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.submit-btn:disabled { background: var(--disabled-bg); color: var(--muted-2); cursor: not-allowed; box-shadow: none; }
 .login-submit-btn { align-self: stretch; width: 100%; background: var(--accent); }
 .quiz-result { font-size: 1.3rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
 
@@ -887,7 +958,8 @@ button { cursor: pointer; font-family: inherit; }
 
 /* ---------- Speaking ---------- */
 .speaking-card { background: var(--paper-raised); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
-.speaking-target { font-size: 1.5rem; font-weight: 900; font-family: var(--font-heading); color: var(--ink); }
+.speaking-target { font-size: 1.6rem; font-weight: 400; font-family: var(--font-display); color: var(--ink); text-shadow: 0 0 14px color-mix(in srgb, var(--orange) calc(50% * var(--glow-strength)), transparent); }
+.speaking-card { background: var(--glass); border-left: 3px solid var(--orange); }
 .speaking-reading, .speaking-zh { color: var(--ink-soft); margin-top: 0.25rem; }
 .speaking-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
 .speaking-controls button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 600; transition: all 0.15s ease; }
@@ -941,7 +1013,6 @@ button { cursor: pointer; font-family: inherit; }
 }
 .icon-btn svg, .icon-row svg { flex-shrink: 0; }
 .game-best-score { display: flex; margin: 0 0 1rem; color: var(--ink-soft); font-weight: 600; }
-.quick-link.icon-btn { justify-content: flex-start; }
 .tiny-btn.icon-btn { gap: 0.3rem; }
 svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent); }
 @keyframes pulse-ring {
@@ -964,9 +1035,14 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 }
 .game-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
 .game-card-icon {
-  width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--accent-soft), var(--paper-raised)); color: var(--accent-dark); margin-bottom: 0.9rem;
+  width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--accent); color: var(--accent); margin-bottom: 0.9rem;
+  box-shadow: 0 0 12px var(--accent-soft);
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.game-card:hover .game-card-icon { background: var(--accent); color: #fff; box-shadow: 0 0 16px var(--accent), 0 0 36px var(--accent-soft); transform: rotate(-6deg) scale(1.06); }
+.game-card { background: var(--glass); }
+.game-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 30px var(--accent-soft), var(--shadow-lg); }
 .game-card-title { font-size: 1.15rem; font-weight: 800; font-family: var(--font-heading); margin-bottom: 0.4rem; }
 .game-card-desc { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin: 0; }
 
@@ -994,8 +1070,12 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
   border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center;
   padding: 0.4rem; font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
 }
-.memory-card-back { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; font-size: 1.4rem; }
-.memory-card-front { background: var(--paper-raised); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-heading); }
+.memory-card-back {
+  background: var(--cream-4); color: var(--accent); font-size: 1.5rem; font-family: var(--font-display);
+  border-color: var(--accent); box-shadow: 0 0 10px var(--accent-soft), inset 0 0 18px var(--accent-soft);
+  text-shadow: 0 0 10px var(--accent);
+}
+.memory-card-front { background: var(--glass); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-display); border-color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); }
 .memory-card.is-matched .memory-card-front { background: var(--accent-2-soft); border-color: var(--accent-2); color: var(--accent-2); }
 
 /* ---------- Blitz challenge ---------- */
@@ -1010,15 +1090,17 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 /* ---------- Falling words ---------- */
 .falling-game { display: flex; flex-direction: column; gap: 1rem; }
 .falling-track {
-  position: relative; height: 220px; border-radius: 14px; background: linear-gradient(180deg, var(--cream-3) 0%, var(--cream-4) 100%);
-  border: 1px solid var(--line); overflow: hidden; transition: background 0.15s ease;
+  position: relative; height: 220px; border-radius: var(--radius); background: var(--cream-3);
+  border: 1px solid var(--line-strong); overflow: hidden; transition: background 0.15s ease;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
 }
 .falling-track.flash-good { background: var(--accent-2-soft); }
 .falling-track.flash-bad { background: var(--accent-soft); }
 .falling-item {
   position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-  font-size: 1.6rem; font-weight: 800; color: var(--accent-dark);
-  font-family: var(--font-heading);
+  font-size: 1.7rem; font-weight: 400; color: var(--yellow);
+  text-shadow: 0 0 8px var(--yellow), 0 0 22px rgba(255, 228, 92, 0.5);
+  font-family: var(--font-display);
   animation-name: fall-down; animation-timing-function: linear; animation-fill-mode: forwards;
 }
 @keyframes fall-down {
@@ -1161,9 +1243,10 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .readquiz-char-display {
   display: flex; align-items: center; justify-content: center;
   width: 100%; max-width: 380px; aspect-ratio: 1 / 1;
-  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
-  box-shadow: var(--shadow-lg); font-size: 7rem; font-weight: 900;
-  font-family: var(--font-heading); color: var(--ink);
+  background: var(--glass); border: 2px solid var(--cyan); border-radius: var(--radius-lg);
+  box-shadow: 0 0 14px var(--cyan-soft), 0 0 40px var(--cyan-soft), var(--shadow-lg); font-size: 7.5rem; font-weight: 400;
+  font-family: var(--font-display); color: var(--ink);
+  text-shadow: 0 0 12px var(--cyan), 0 0 36px rgba(34, 230, 255, 0.4);
 }
 .readquiz-review-char { font-size: 1.8rem; }
 
@@ -1191,11 +1274,19 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 }
 .notfound-home-btn:hover { transform: translateY(-2px); background: var(--accent-dark); }
 
-/* ---------- Fade-in for page content ---------- */
-.page { animation: fade-up 0.35s ease; }
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ---------- Power-on for page content ---------- */
+/* A page switches on like a neon sign: two quick flickers, then steady. */
+.page { animation: power-on 0.55s ease-out; }
+@keyframes power-on {
+  0% { opacity: 0; transform: translateY(8px); }
+  35% { opacity: 0.9; transform: translateY(0); }
+  45% { opacity: 0.35; }
+  55% { opacity: 1; }
+  65% { opacity: 0.7; }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
 }
 
 /* ---------- Skeleton loading (per-page shapes instead of a text spinner) ---------- */
@@ -1312,6 +1403,294 @@ svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent);
 .option-tag {
   display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
 }
+
+/* ============================================================
+   TOKYO NIGHT — the street: neon signs, rain, hero, marquee, tiles
+   ============================================================ */
+
+/* Shared neon flicker/buzz. `neon-buzz` is a fast stutter for hover/hits;
+   `neon-flicker` is the long idle cycle a real tube does — mostly steady,
+   with two brief dips — desynced per sign via animation-delay. */
+@keyframes neon-buzz {
+  0% { opacity: 1; } 25% { opacity: 0.55; } 50% { opacity: 1; } 75% { opacity: 0.7; } 100% { opacity: 1; }
+}
+@keyframes neon-flicker {
+  0%, 41%, 44%, 71.5%, 73%, 100% { opacity: 1; }
+  42% { opacity: 0.45; } 43% { opacity: 0.85; }
+  72% { opacity: 0.3; } 72.6% { opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neon-flicker, .navbar::after { animation: none !important; }
+}
+
+/* ---------- Rain / bokeh canvas + cursor light ---------- */
+.neon-rain { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.cursor-light {
+  position: fixed; left: 0; top: 0; width: 520px; height: 520px; margin: -260px 0 0 -260px;
+  border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, rgba(255, 45, 149, 0.16) 0%, rgba(34, 230, 255, 0.08) 35%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0; transition: opacity 0.4s ease;
+  will-change: transform;
+}
+.cursor-light.is-on { opacity: 1; }
+:root[data-theme="light"] .cursor-light { mix-blend-mode: multiply; background: radial-gradient(circle, rgba(224, 24, 122, 0.08) 0%, rgba(10, 165, 194, 0.05) 35%, transparent 65%); }
+@media (hover: none), (prefers-reduced-motion: reduce) { .cursor-light { display: none; } }
+@media print { .neon-rain, .cursor-light { display: none; } }
+
+/* ---------- Neon logo (navbar brand + footer) ---------- */
+.neon-logo {
+  font-family: var(--font-display); font-weight: 400; letter-spacing: 0.1em;
+  color: #fff;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 10px var(--accent),
+    0 0 22px var(--accent),
+    0 0 40px color-mix(in srgb, var(--accent) calc(70% * var(--glow-strength)), transparent);
+}
+:root[data-theme="light"] .neon-logo { color: var(--accent); text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent); }
+.neon-logo-tag {
+  font-family: var(--font-body); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--cyan); text-shadow: 0 0 8px color-mix(in srgb, var(--cyan) calc(70% * var(--glow-strength)), transparent);
+  padding-left: 0.2rem; margin-top: 0.15rem;
+}
+.neon-logo-wrap { display: flex; flex-direction: column; line-height: 1.05; }
+
+/* ---------- Hero: the street at night ---------- */
+.night-hero {
+  position: relative;
+  min-height: min(78vh, 720px);
+  display: flex; align-items: center; justify-content: center;
+  margin: -2.2rem -1.75rem 1.5rem;
+  padding: 3.5rem 1.75rem 3rem;
+  overflow: hidden;
+  /* Vignette so the signs at the edges fade into the dark. */
+  box-shadow: inset 0 -80px 120px -60px var(--paper);
+}
+/* Wet asphalt: a horizon line of light with a soft reflection under it. */
+.night-hero::after {
+  content: "";
+  position: absolute; left: 8%; right: 8%; bottom: 2.2rem; height: 1px;
+  background: var(--cyan);
+  opacity: 0.55;
+  box-shadow: 0 0 10px var(--cyan), 0 0 30px var(--cyan), 0 14px 60px 20px color-mix(in srgb, var(--cyan) 18%, transparent);
+  pointer-events: none;
+}
+:root[data-theme="light"] .night-hero::after { opacity: 0.35; }
+
+.hero-signs { position: absolute; inset: 0; pointer-events: none; }
+
+/* A hanging vertical sign. Each is a real link to its section. --depth
+   scales how far it drifts with the pointer (parallax), --c is its tube
+   color. The frame, the text and the glow all come from the one color. */
+.neon-sign {
+  --c: var(--pink);
+  --depth: 1;
+  position: absolute;
+  pointer-events: auto;
+  writing-mode: vertical-rl; text-orientation: upright;
+  font-family: var(--font-display); font-size: clamp(1.15rem, 2.2vw, 1.7rem); letter-spacing: 0.16em;
+  color: #fff; text-decoration: none;
+  padding: 0.85rem 0.55rem;
+  border: 2px solid var(--c); border-radius: 8px;
+  background: rgba(7, 7, 15, 0.55);
+  text-shadow: 0 0 4px #fff, 0 0 12px var(--c), 0 0 26px var(--c);
+  box-shadow: 0 0 6px var(--c), 0 0 18px color-mix(in srgb, var(--c) 60%, transparent), 0 0 44px color-mix(in srgb, var(--c) calc(35% * var(--glow-strength)), transparent), inset 0 0 14px color-mix(in srgb, var(--c) 18%, transparent);
+  transform: translate(calc(var(--mx, 0) * var(--depth) * 26px), calc(var(--my, 0) * var(--depth) * 18px));
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, scale 0.25s ease;
+  animation: neon-flicker 9s linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+/* The little chain/bracket it hangs from. */
+.neon-sign::before {
+  content: "";
+  position: absolute; left: 50%; top: -22px; width: 2px; height: 22px;
+  background: var(--line-strong);
+  transform: translateX(-50%);
+}
+.neon-sign:hover {
+  scale: 1.06;
+  animation: neon-buzz 0.35s steps(2, end) 1;
+  box-shadow: 0 0 10px var(--c), 0 0 26px var(--c), 0 0 70px color-mix(in srgb, var(--c) 60%, transparent), inset 0 0 20px color-mix(in srgb, var(--c) 30%, transparent);
+}
+.neon-sign .sign-sub {
+  writing-mode: horizontal-tb; text-orientation: mixed;
+  display: block; margin-top: 0.5rem;
+  font-family: var(--font-body); font-size: 0.55rem; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--c); text-shadow: 0 0 8px var(--c);
+  opacity: 0.9;
+}
+:root[data-theme="light"] .neon-sign { color: var(--c); background: #fff; text-shadow: none; box-shadow: 0 0 0 1px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 25%, transparent); }
+:root[data-theme="light"] .neon-sign .sign-sub { text-shadow: none; }
+
+.neon-pink { --c: var(--pink); }
+.neon-cyan { --c: var(--cyan); }
+.neon-yellow { --c: var(--yellow); }
+.neon-orange { --c: var(--orange); }
+.neon-green { --c: var(--green); }
+.neon-purple { --c: var(--purple); }
+
+.hero-center { position: relative; z-index: 2; text-align: center; max-width: 720px; }
+/* Between phone and wide desktop the side columns of signs and the centered
+   title compete for the same width — narrow the title block so the signs
+   keep their own lane. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .hero-center { max-width: 520px; }
+  .neon-title { font-size: clamp(2.6rem, 7.5vw, 5rem); }
+  .neon-sign { font-size: clamp(1rem, 1.7vw, 1.3rem); }
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-size: 0.72rem; font-weight: 900; letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 1.2rem;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--cyan) calc(70% * var(--glow-strength)), transparent);
+}
+.hero-eyebrow::before, .hero-eyebrow::after { content: ""; width: 34px; height: 1px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+/* The headline: brand name as two neon tubes, lit in sequence on load. */
+.neon-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(3rem, 10vw, 7.2rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  margin: 0 0 1rem;
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 0 0.1em;
+}
+.neon-title .tube {
+  --c: var(--pink);
+  color: #fff;
+  text-shadow: 0 0 4px #fff, 0 0 12px var(--c), 0 0 30px var(--c), 0 0 70px color-mix(in srgb, var(--c) calc(80% * var(--glow-strength)), transparent);
+  animation: tube-on 1.4s steps(1, end) both, neon-flicker 11s linear 4s infinite;
+}
+.neon-title .tube-2 { --c: var(--cyan); animation-delay: 0.55s, 4.55s; }
+@keyframes tube-on {
+  0% { opacity: 0; } 18% { opacity: 0.4; } 26% { opacity: 0; } 40% { opacity: 0.85; } 48% { opacity: 0.2; } 58% { opacity: 1; } 66% { opacity: 0.6; } 74%, 100% { opacity: 1; }
+}
+:root[data-theme="light"] .neon-title .tube { color: var(--c); text-shadow: 0 0 14px color-mix(in srgb, var(--c) 30%, transparent); }
+.hero-welcome { font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 900; color: var(--ink); margin: 0 0 0.5rem; }
+.hero-subtitle { color: var(--ink-soft); font-size: 1.02rem; line-height: 1.7; margin: 0 auto 1.6rem; max-width: 36em; }
+.hero-actions { display: flex; align-items: center; justify-content: center; gap: 0.8rem; flex-wrap: wrap; }
+
+/* Neon-outline buttons that fill and blaze on hover. */
+.btn-neon {
+  --c: var(--pink);
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.8rem 1.6rem; border-radius: 8px; font-weight: 900; letter-spacing: 0.06em;
+  text-decoration: none; font-size: 0.98rem;
+  color: var(--c); border: 2px solid var(--c); background: transparent;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--c) calc(70% * var(--glow-strength)), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--c) 45%, transparent), inset 0 0 12px color-mix(in srgb, var(--c) 12%, transparent);
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-neon:hover { background: var(--c); color: #07070f; text-shadow: none; transform: translateY(-2px); box-shadow: 0 0 16px var(--c), 0 0 46px color-mix(in srgb, var(--c) 60%, transparent); }
+.btn-neon:active { transform: translateY(0) scale(0.98); }
+.btn-neon svg { transition: transform 0.2s ease; }
+.btn-neon:hover svg { transform: translateX(3px); }
+:root[data-theme="light"] .btn-neon:hover { color: #fff; }
+
+@media (max-width: 760px) {
+  .night-hero { min-height: 0; margin: -2.2rem -1.75rem 1rem; padding: 2.4rem 1rem 2.6rem; }
+  /* No room to hang signs around the title on a phone — they line up as a
+     row of small signs under it instead (still real links). */
+  .hero-signs { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.6rem; order: 2; }
+  .night-hero { flex-direction: column; }
+  .neon-sign { position: static; writing-mode: horizontal-tb; font-size: 0.95rem; padding: 0.5rem 0.8rem; transform: none !important; }
+  .neon-sign::before { display: none; }
+  .neon-sign .sign-sub { display: none; }
+  .neon-title { font-size: clamp(2.6rem, 14vw, 4rem); }
+}
+
+/* ---------- Marquee: station display strip ---------- */
+.marquee {
+  position: relative; overflow: hidden;
+  margin: 0 -1.75rem 2rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  background: var(--cream-3);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex; gap: 2.4rem; width: max-content;
+  animation: marquee-scroll 42s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-item {
+  display: inline-flex; align-items: center; gap: 2.4rem;
+  font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.14em; white-space: nowrap;
+  color: var(--ink-soft);
+}
+.marquee-item .lit { color: var(--c, var(--cyan)); text-shadow: 0 0 10px color-mix(in srgb, var(--c, var(--cyan)) calc(70% * var(--glow-strength)), transparent); }
+.marquee-item .dot { color: var(--muted-2); font-size: 0.6rem; }
+@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+/* ---------- District tiles (quick start) ---------- */
+.section-title { margin: 2rem 0 1rem; font-size: 1.3rem; }
+.district-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.9rem;
+}
+.district {
+  --c: var(--cyan);
+  position: relative;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 0.3rem;
+  min-height: 132px;
+  padding: 1rem 1.1rem 0.95rem;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid var(--line); border-left: 3px solid var(--c);
+  border-radius: var(--radius);
+  text-decoration: none; color: var(--ink);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+/* The kanji sign inside each tile: dim until the tile is hovered, then it
+   switches on in its color. */
+.district::before {
+  content: attr(data-kanji);
+  position: absolute; right: -0.05em; top: -0.28em;
+  font-family: var(--font-display); font-size: 5.8rem; line-height: 1;
+  color: var(--c); opacity: 0.12;
+  transition: opacity 0.25s ease, text-shadow 0.3s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.district:hover { transform: translateY(-4px); border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 24px color-mix(in srgb, var(--c) 45%, transparent), 0 0 60px color-mix(in srgb, var(--c) calc(25% * var(--glow-strength)), transparent), var(--shadow-lg); }
+.district:hover::before { opacity: 0.95; text-shadow: 0 0 10px var(--c), 0 0 30px var(--c); transform: translate(-4px, 4px) scale(1.05); animation: neon-buzz 0.4s steps(2, end) 1; }
+:root[data-theme="light"] .district:hover::before { opacity: 0.35; text-shadow: none; }
+.district-label { position: relative; font-weight: 900; font-size: 1.02rem; letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 0.45rem; }
+.district-label svg { color: var(--c); flex-shrink: 0; }
+.district-sub { position: relative; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase; color: var(--c); opacity: 0.85; }
+.district-arrow { position: absolute; right: 0.9rem; bottom: 0.95rem; color: var(--c); opacity: 0; transform: translateX(-6px); transition: opacity 0.2s ease, transform 0.25s ease; }
+.district:hover .district-arrow { opacity: 1; transform: translateX(0); }
+
+/* ---------- Scroll-stagger reveal (useStaggerReveal) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease var(--reveal-delay, 0ms), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+}
+.reveal.is-revealed { opacity: 1; transform: none; }
+/* .district's own hover transform must win once revealed. */
+.district.reveal.is-revealed:hover { transform: translateY(-4px); }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding: 1.4rem 1.75rem 1.6rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  background: var(--glass);
+}
+.site-footer-inner {
+  max-width: 980px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.site-footer .neon-logo { font-size: 0.95rem; }
+.site-footer-meta { font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase; font-size: 0.66rem; }
 
 /* ---------- Print ---------- */
 @media print {
