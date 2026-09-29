@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, UserCircle, Type } from 'lucide-react';
+import { LogIn, UserCircle, Type, Palette } from 'lucide-react';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
+import SkinPicker from '../components/SkinPicker.jsx';
 import { getKanaWriteAutoplay, setKanaWriteAutoplay, getStrokeAnimation, setStrokeAnimation } from '../lib/kanaWritePrefs.js';
 
 export default function Settings() {
@@ -21,27 +22,31 @@ export default function Settings() {
     setStrokeAnimation(value);
   }
 
-  if (loading) return <div className="page" />;
-
-  if (!isLoggedIn) {
-    return (
-      <div className="page coming-soon">
-        <div className="coming-soon-card">
-          <LogIn size={32} />
-          <h1>{t('settings_title')}</h1>
-          <p>{t('settings_login_required_hint')}</p>
-          <Link className="submit-btn" to="/login" style={{ display: 'inline-flex', marginTop: '1rem' }}>
-            {t('login_title')}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
+  // The visual style is a per-device preference, so it's available without
+  // an account; everything below it needs one.
   return (
     <div className="page">
       <h1>{t('settings_title')}</h1>
 
+      <div className="auth-card settings-card skin-settings-card">
+        <h2 className="settings-section-heading">
+          <Palette size={18} /> {t('settings_skin_heading')}
+        </h2>
+        <p className="muted">{t('settings_skin_hint')}</p>
+        <SkinPicker />
+      </div>
+
+      {!loading && !isLoggedIn && (
+        <div className="auth-card settings-card">
+          <p className="muted">{t('settings_account_login_hint')}</p>
+          <Link className="submit-btn icon-btn" to="/login" style={{ display: 'inline-flex', gap: '0.4rem' }}>
+            <LogIn size={16} /> {t('login_title')}
+          </Link>
+        </div>
+      )}
+
+      {isLoggedIn && (
+        <>
       <div className="auth-card settings-card">
         <h2 className="settings-section-heading">
           <UserCircle size={18} /> {t('settings_account_heading')}
@@ -80,7 +85,8 @@ export default function Settings() {
         </div>
       </div>
 
-      <p className="muted">{t('settings_more_soon')}</p>
+        </>
+      )}
     </div>
   );
 }

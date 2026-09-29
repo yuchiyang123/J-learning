@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, Search } from 'lucide-react';
-import ThemeToggle from './ThemeToggle.jsx';
-import LanguageSwitcher from './LanguageSwitcher.jsx';
-import AccountMenu from './AccountMenu.jsx';
-import NavSearch from './NavSearch.jsx';
+import ThemeToggle from '../../components/ThemeToggle.jsx';
+import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
+import AccountMenu from '../../components/AccountMenu.jsx';
+import NavSearch from '../../components/NavSearch.jsx';
 import SoundToggle from './SoundToggle.jsx';
-import { useLocale } from '../i18n/LocaleContext.jsx';
-import { lanterns } from '../data/stops.js';
-import { chime, pluck } from '../lib/sound.js';
+import { useLocale } from '../../i18n/LocaleContext.jsx';
+import { lanterns } from '../../data/stops.js';
+import { chime, pluck } from '../../lib/sound.js';
 
 // Navigation is a rope of paper lanterns (提灯) strung across the top of
 // the world. One kanji per lantern; the one for the page you're on is lit.

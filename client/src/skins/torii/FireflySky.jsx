@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { getEffectiveTheme, onThemeChange } from '../theme.js';
+import { getEffectiveTheme, onThemeChange } from '../../theme.js';
 
 // The night sky over the path: a field of stars and a swarm of fireflies
 // (蛍). Whenever `kanji` changes the swarm drifts over and settles into the

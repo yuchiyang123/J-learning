@@ -47,20 +47,29 @@ export function onThemeChange(callback) {
   };
 }
 
-// Canvas-safe equivalents of this theme's --ink / --accent / --accent-2 /
-// --line tokens (see styles.css) — kept in sync with those by hand since a
-// canvas 2D context can't read CSS variables.
-// Canvases live inside the lit paper panels (.page), whose ink is dark in
-// both themes — so these track the panel, not the night sky around it.
-export function getInkColor() {
-  return getEffectiveTheme() === 'dark' ? '#2a2117' : '#221c14';
+// Canvas-safe equivalents of the active skin's --ink / --accent /
+// --accent-2 / --line tokens (see skins/<id>/styles.css) — kept in sync
+// with those by hand since a canvas 2D context can't read CSS variables.
+// The torii skin's canvases sit inside lit paper panels whose ink is dark
+// in both modes, hence its dark-on-light "dark" row.
+const CANVAS = {
+  classic: { dark: ['#ece5db', '#e2564a', '#3ecfa8', '#4a4038'], light: ['#262421', '#c23a2e', '#1f6f5c', '#d9d3ca'] },
+  washi: { dark: ['#ebe4d6', '#e05a4f', '#4fbf94', '#4a4036'], light: ['#1f1b17', '#b7282e', '#2e6a4e', '#c9bda6'] },
+  neon: { dark: ['#f3f2fa', '#ff2d95', '#39ff88', '#2a2a3f'], light: ['#0e0e18', '#e0187a', '#14a55c', '#d6d4ea'] },
+  sumi: { dark: ['#ece7db', '#d8443a', '#6fbf95', '#46413a'], light: ['#171512', '#b3261e', '#3a6b52', '#b9b0a0'] },
+  torii: { dark: ['#2a2117', '#d6402b', '#2f8a5c', '#d9c9a8'], light: ['#221c14', '#c23320', '#2b7a52', '#d9cdb4'] },
+};
+function canvasColor(i) {
+  const set = CANVAS[document.documentElement.getAttribute('data-skin')] ?? CANVAS.classic;
+  return set[getEffectiveTheme()][i];
 }
-export function getAccentColor() {
-  return getEffectiveTheme() === 'dark' ? '#d6402b' : '#c23320';
-}
-export function getAccent2Color() {
-  return getEffectiveTheme() === 'dark' ? '#2f8a5c' : '#2b7a52';
-}
-export function getGridLineColor() {
-  return getEffectiveTheme() === 'dark' ? '#d9c9a8' : '#d9cdb4';
+export function getInkColor() { return canvasColor(0); }
+export function getAccentColor() { return canvasColor(1); }
+export function getAccent2Color() { return canvasColor(2); }
+export function getGridLineColor() { return canvasColor(3); }
+
+// For things other than the theme toggle that change what canvases should
+// paint with (switching skins) — fires the same event onThemeChange hears.
+export function notifyThemeChange() {
+  window.dispatchEvent(new Event(THEME_EVENT));
 }

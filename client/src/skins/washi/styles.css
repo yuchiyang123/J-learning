@@ -1,0 +1,1737 @@
+/* ---------- 和紙と墨 (washi & sumi) design tokens ----------
+   The palette is built from traditional Japanese colors (和色): 生成り washi
+   paper as the ground, 墨 ink for text, 朱 vermilion (the color of a hanko
+   seal) as the single loud accent, 藍 indigo as the calm secondary, 松葉 pine
+   for "correct", and a restrained 金 gold for streaks/highlights. Flat color
+   only — depth comes from paper texture, rules, and shadow, never gradients. */
+:root {
+  --ink: #1f1b17;
+  --ink-soft: #5f564d;
+  --muted-2: #a49b8f;
+  --paper: #f4efe4;
+  --paper-raised: #fbf8f1;
+  --line: #dfd5c3;
+  --line-strong: #c9bda6;
+  --accent: #b7282e;
+  --accent-dark: #8e1f24;
+  --accent-soft: #f6e4e2;
+  --accent-2: #2e6a4e;
+  --accent-2-soft: #e3efe8;
+  --indigo: #2c4f73;
+  --indigo-soft: #e4ebf2;
+  --gold: #b8933f;
+  --cream: #f8f2e6;
+  --cream-pink: #f7ece6;
+  --cream-3: #f6f1e7;
+  --cream-4: #eee6d6;
+  --warn-bg: #f7efd6;
+  --warn-text: #8a6a12;
+  --disabled-bg: #d6cfc2;
+  --glow-1: #fdf1e2;
+  --glow-2: #fbeae6;
+  --seal-shadow: rgba(183, 40, 46, 0.22);
+  --sheen-color: rgba(255, 255, 255, 0.6);
+  --shadow-sm: 0 1px 2px rgba(31, 27, 23, 0.05), 0 1px 3px rgba(31, 27, 23, 0.07);
+  --shadow-md: 0 4px 12px rgba(31, 27, 23, 0.08), 0 2px 4px rgba(31, 27, 23, 0.05);
+  --shadow-lg: 0 14px 36px rgba(31, 27, 23, 0.14), 0 4px 12px rgba(31, 27, 23, 0.07);
+  --washi-opacity: 0.5;
+  /* Every script we display (zh-TW/zh-CN/ja/ko/en) needs its own Noto face listed
+     so glyphs never fall through to a mismatched system font — that mismatch is
+     what reads as "inconsistent weight" when switching locale. Keep this list in
+     sync with the families loaded in index.html. */
+  --font-body: "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, sans-serif;
+  /* Headings are set in Mincho (明朝) — the Noto Serif CJK family shares one
+     design across JP/TC/SC/KR, so a heading that mixes scripts (or a
+     Traditional-only glyph next to a kanji) still renders in one typeface;
+     that per-glyph fallback mismatch is why Zen Maru Gothic was previously
+     restricted to zh-TW only. */
+  --font-heading: "Noto Serif TC", "Noto Serif JP", "Noto Serif SC", "Noto Serif KR", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  /* Japanese *content* (kana chart, kanji cards, flashcard faces, the hero's
+     vertical text) gets Shippori Mincho — a classic book-Mincho with far more
+     character than Noto — falling back to the Noto Serif stack for anything
+     outside its Japanese coverage. */
+  --font-jp: "Shippori Mincho", "Noto Serif JP", "Noto Serif TC", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+/* Dark palette: applied when the OS prefers dark and the user hasn't explicitly
+   chosen light, or when the user explicitly toggles dark via [data-theme]. */
+/* Night palette (夜の提灯): sumi-black paper with a breath of indigo, and the
+   accents warmed up like lantern light so vermilion still reads as a seal
+   rather than an error state. Keep in sync with the [data-theme="dark"] copy
+   below — CSS can't share one block between a media query and an attribute
+   selector. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #ebe4d6;
+    --ink-soft: #b6ab9b;
+    --muted-2: #857b6e;
+    --paper: #141210;
+    --paper-raised: #1f1b17;
+    --line: #372f27;
+    --line-strong: #4a4036;
+    --accent: #e05a4f;
+    --accent-dark: #f08a80;
+    --accent-soft: #3b2220;
+    --accent-2: #4fbf94;
+    --accent-2-soft: #17302a;
+    --indigo: #7fa7c9;
+    --indigo-soft: #1c2733;
+    --gold: #e2c07a;
+    --cream: #221d18;
+    --cream-pink: #241c1a;
+    --cream-3: #1d1915;
+    --cream-4: #26201a;
+    --warn-bg: #382e14;
+    --warn-text: #e2c07a;
+    --disabled-bg: #3d3730;
+    --glow-1: rgba(224, 90, 79, 0.1);
+    --glow-2: rgba(226, 192, 122, 0.07);
+    --seal-shadow: rgba(224, 90, 79, 0.3);
+    --sheen-color: rgba(255, 235, 205, 0.08);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.32);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.38);
+    --washi-opacity: 0.22;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #ebe4d6;
+  --ink-soft: #b6ab9b;
+  --muted-2: #857b6e;
+  --paper: #141210;
+  --paper-raised: #1f1b17;
+  --line: #372f27;
+  --line-strong: #4a4036;
+  --accent: #e05a4f;
+  --accent-dark: #f08a80;
+  --accent-soft: #3b2220;
+  --accent-2: #4fbf94;
+  --accent-2-soft: #17302a;
+  --indigo: #7fa7c9;
+  --indigo-soft: #1c2733;
+  --gold: #e2c07a;
+  --cream: #221d18;
+  --cream-pink: #241c1a;
+  --cream-3: #1d1915;
+  --cream-4: #26201a;
+  --warn-bg: #382e14;
+  --warn-text: #e2c07a;
+  --disabled-bg: #3d3730;
+  --glow-1: rgba(224, 90, 79, 0.1);
+  --glow-2: rgba(226, 192, 122, 0.07);
+  --seal-shadow: rgba(224, 90, 79, 0.3);
+  --sheen-color: rgba(255, 235, 205, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.38);
+  --washi-opacity: 0.22;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Washi paper grain: a fixed, full-viewport fractal-noise layer (feTurbulence,
+   inline SVG so it costs no request) multiplied over the flat paper color.
+   This is the whole "texture" of the site — where the old design faked depth
+   with radial gradients, this reads as actual fibrous paper and stays put
+   while the page scrolls under it. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--washi-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.3 0 0 0 0.35 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");
+  background-size: 300px 300px;
+}
+:root[data-theme="dark"] body::before { mix-blend-mode: screen; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before { mix-blend-mode: screen; }
+}
+
+.app-shell { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- Navbar: an editorial washi bar ----------
+   Ink on paper instead of white-on-red-gradient. The only color in the bar
+   is the vermilion seal in the brand, the brush-stroke underline on the
+   active link, and the 青海波 (seigaiha) wave band along its bottom edge. */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 0.7rem 1.75rem;
+  background: color-mix(in srgb, var(--paper-raised) 90%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
+  color: var(--ink);
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--line);
+}
+/* Seigaiha band: a vermilion background revealed only through the wave
+   strokes of an alpha mask, so it recolors with the theme for free. */
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -10px;
+  height: 10px;
+  pointer-events: none;
+  background-color: var(--accent);
+  opacity: 0.28;
+  -webkit-mask-image: var(--seigaiha);
+  mask-image: var(--seigaiha);
+  -webkit-mask-size: 40px 20px;
+  mask-size: 40px 20px;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+}
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.14em;
+  font-family: var(--font-jp);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  /* Now a <Link> (so clicking the logo goes home) — reset the browser's
+     default anchor color/underline instead of inheriting them. */
+  color: var(--ink);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+.navbar-brand .hanko { color: var(--accent); filter: drop-shadow(0 1px 2px var(--seal-shadow)); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.navbar-brand:hover .hanko { transform: rotate(4deg) scale(1.08); }
+.navbar-links { display: flex; gap: 0.15rem; flex-wrap: wrap; align-items: center; }
+.navbar-links a {
+  position: relative;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+}
+/* Brush-stroke underline: grows from the left on hover, sits fully drawn
+   under the active link. Slightly tapered ends via border-radius so it
+   reads as a stroke, not a border. */
+.navbar-links a::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem; right: 0.7rem; bottom: 0.2rem;
+  height: 3px;
+  border-radius: 3px 2px 3px 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0.55;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+.navbar-links a:hover { color: var(--ink); }
+.navbar-links a:hover::after { transform: scaleX(0.55); }
+.navbar-links a.active { color: var(--accent-dark); font-weight: 700; }
+.navbar-links a.active::after { transform: scaleX(1); opacity: 1; }
+
+.navbar-auth-link {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  color: var(--ink-soft); background: transparent; border: none; cursor: pointer;
+  text-decoration: none; font-size: 0.92rem; font-weight: 600; font-family: inherit;
+  padding: 0.4rem 0.75rem; border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); }
+.navbar-auth-link.active { background: var(--accent-soft); color: var(--accent-dark); font-weight: 700; }
+
+.navbar-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+
+/* ---------- Login / Register ---------- */
+.auth-page { display: flex; justify-content: center; padding-top: 2rem; }
+.auth-card {
+  width: 100%; max-width: 380px; background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 2rem 1.8rem;
+}
+.auth-card h1 { display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; margin-bottom: 1.4rem; }
+.auth-form { display: flex; flex-direction: column; gap: 1rem; }
+.auth-form label { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.88rem; font-weight: 600; color: var(--ink-soft); }
+.auth-form input {
+  border: 1px solid var(--line); border-radius: 10px; padding: 0.6rem 0.8rem; font-size: 1rem;
+  font-family: inherit; background: var(--paper); color: var(--ink);
+}
+.auth-form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.auth-switch { margin-top: 1.2rem; font-size: 0.88rem; color: var(--ink-soft); text-align: center; }
+.auth-switch a { color: var(--accent-dark); font-weight: 600; text-decoration: none; }
+.link-btn {
+  background: none; border: none; padding: 0; font: inherit; cursor: pointer;
+  color: var(--accent-dark); font-weight: 600; text-decoration: underline;
+}
+.field-hint { font-size: 0.78rem; font-weight: 500; color: var(--muted-2); }
+.reset-countdown {
+  text-align: center; font-weight: 700; color: var(--accent-dark); font-variant-numeric: tabular-nums;
+  margin-bottom: 0.8rem;
+}
+
+/* ---------- Settings ---------- */
+.settings-card { max-width: 480px; padding: 1.6rem; margin: 1rem 0; }
+.settings-section-heading {
+  display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; margin: 0 0 1rem; color: var(--ink);
+}
+.settings-section-heading svg { color: var(--accent); }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; flex-wrap: wrap;
+  padding: 0.6rem 0; border-top: 1px solid var(--line);
+}
+.settings-row:first-of-type { border-top: none; }
+
+.info-banner {
+  display: flex; align-items: center; gap: 0.6rem; background: var(--accent-2-soft); color: var(--accent-2);
+  border: 1px solid var(--accent-2); border-radius: var(--radius); padding: 0.8rem 1rem; margin-bottom: 1.3rem;
+  font-weight: 600; font-size: 0.92rem;
+}
+.info-banner-close {
+  margin-left: auto; background: none; border: none; cursor: pointer; color: inherit;
+  display: inline-flex; align-items: center; opacity: 0.7;
+}
+.info-banner-close:hover { opacity: 1; }
+
+.navbar-toggle {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: var(--paper-raised); color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.navbar-toggle:hover { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent); }
+
+/* Whether the full bar (links + search + account + language + theme) fits
+   on one line depends on things a fixed breakpoint can't see — the active
+   locale's label lengths, whether a username is showing and how long it
+   is — so a hard-coded px cutoff kept needing to be re-tuned every time one
+   of those changed (860px, then 1320px, still wrapped once a logged-in
+   account button entered the mix). Navbar.jsx now measures the bar's own
+   content against its available width at runtime and toggles this class
+   instead, so it collapses exactly when it stops fitting, for whichever
+   locale/login state is actually on screen. */
+.navbar.is-cramped { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
+.navbar.is-cramped .navbar-toggle { display: inline-flex; }
+.navbar.is-cramped .navbar-links { display: none; }
+/* The account popover is redundant with the drawer's own inline account
+   section (AccountMenu variant="inline") — one entry point per screen
+   size, not two, so it isn't there to be mistaken for something else. */
+.navbar.is-cramped .navbar-account-slot { display: none; }
+.navbar.is-cramped .nav-search-desktop { display: none; }
+
+/* Safety net for genuinely narrow phones in case the JS measurement above
+   never runs (e.g. disabled JS) — real phone widths always need the
+   hamburger regardless of locale or login state. */
+@media (max-width: 480px) {
+  .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
+  .navbar-toggle { display: inline-flex; }
+  .navbar-links { display: none; }
+  .navbar-account-slot { display: none; }
+  .nav-search-desktop { display: none; }
+}
+
+/* On genuinely narrow phones (not just tablet-portrait-and-below), the
+   tightening above still isn't quite enough headroom for
+   brand + language + theme + hamburger to all fit on one row. */
+@media (max-width: 400px) {
+  .navbar { padding: 0.55rem 0.6rem; gap: 0.5rem 0.3rem; }
+  .navbar-brand { font-size: 0.95rem; gap: 0.25rem; }
+}
+
+/* An arbitrarily long display name would otherwise be the one thing nothing
+   above can bound — truncate it, in both the popover trigger and the
+   drawer's inline heading. */
+.navbar-username { display: inline-block; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+@media (max-width: 400px) {
+  .navbar-username { max-width: 70px; }
+}
+
+/* ---------- Mobile nav drawer ---------- */
+.nav-drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(20, 14, 10, 0.45);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 39;
+}
+.nav-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+.nav-drawer {
+  position: fixed; top: 0; bottom: 0; left: 0; width: 280px; max-width: 82vw;
+  background: var(--paper); border-right: 1px solid var(--line); box-shadow: var(--shadow-lg);
+  transform: translateX(-100%); transition: transform 0.22s ease;
+  z-index: 40; display: flex; flex-direction: column; overflow-y: auto;
+}
+.nav-drawer.is-open { transform: translateX(0); }
+
+.nav-drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.1rem; border-bottom: 1px solid var(--line); flex-shrink: 0;
+}
+.nav-drawer-header .navbar-brand { color: var(--ink); }
+.nav-drawer-close {
+  border: none; background: none; color: var(--ink-soft); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 999px; transition: background 0.15s ease;
+}
+.nav-drawer-close:hover { background: var(--cream-4); }
+
+.nav-drawer-links { display: flex; flex-direction: column; padding: 0.6rem; gap: 0.1rem; }
+.nav-drawer-links a {
+  color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.96rem;
+  padding: 0.75rem 0.9rem; border-radius: 10px; transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-drawer-links a:hover { background: var(--cream-4); }
+.nav-drawer-links a.active { background: var(--accent-soft); color: var(--accent-dark); }
+
+.nav-drawer-account { margin-top: auto; border-top: 1px solid var(--line); padding: 0.6rem; flex-shrink: 0; }
+/* AccountMenu's logged-out state renders the same .navbar-auth-link used in
+   the (dark, gradient) header — it needs its own colors here since the
+   drawer's background is the light paper surface, not the header. */
+.nav-drawer-account .navbar-auth-link {
+  color: var(--ink); padding: 0.75rem 0.9rem; font-size: 0.96rem; font-weight: 600;
+}
+.nav-drawer-account .navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); transform: none; }
+
+/* No "hide above Npx" media query here on purpose: the drawer only ever
+   opens via .navbar-toggle, which is itself only visible when the navbar
+   is in its JS-measured cramped/hamburger state (see Navbar.jsx) — a state
+   that can now kick in at any width depending on content, not a fixed
+   breakpoint. A stale `@media (min-width: 861px) { display: none }` here
+   used to force the drawer invisible (even with .is-open set) whenever
+   cramped triggered above 861px, which is routine now. The closed state
+   is already fully handled above via transform/opacity + pointer-events,
+   so no width-based override is needed at all. */
+
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: var(--paper-raised); color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.theme-toggle:hover { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent); }
+.theme-toggle:hover svg { animation: toggle-spin 0.5s ease; }
+@keyframes toggle-spin { from { transform: rotate(-30deg) scale(0.8); } to { transform: rotate(0) scale(1); } }
+
+/* ---------- Dropdown (generic, replaces native <select> for custom theming) ---------- */
+.dropdown { position: relative; }
+.dropdown-trigger {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  border: 1px solid var(--line-strong); background: var(--paper-raised); color: var(--ink-soft);
+  border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.dropdown-trigger:hover { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent); }
+.dropdown-trigger-light {
+  border-color: var(--line); background: var(--paper-raised); color: var(--ink);
+}
+.dropdown-trigger-light:hover { background: var(--cream-4); border-color: var(--accent); }
+.dropdown-trigger-label { white-space: nowrap; }
+.dropdown-label-short { display: none; }
+.dropdown-chevron { transition: transform 0.15s ease; opacity: 0.85; }
+.dropdown-chevron.is-open { transform: rotate(180deg); }
+
+/* Placed after the base .dropdown-trigger/.dropdown-label-short rules above
+   (not the earlier navbar breakpoint) so it actually wins the cascade —
+   two same-specificity rules for the same class fall back to source order,
+   and an earlier media-query block loses to a later plain rule. */
+@media (max-width: 860px) {
+  .dropdown-trigger { padding: 0.35rem 0.5rem; font-size: 0.8rem; gap: 0.25rem; }
+  .dropdown-label-full { display: none; }
+  .dropdown-label-short { display: inline; }
+}
+
+.dropdown-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;
+  min-width: 160px; margin: 0; padding: 0.4rem; list-style: none;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  animation: dropdown-in 0.14s ease;
+}
+.dropdown-menu.align-left { right: auto; left: 0; }
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropdown-option {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0.5rem 0.7rem; border-radius: 8px; border: none; background: none;
+  color: var(--ink); font-size: 0.9rem; font-weight: 500; text-align: left; text-decoration: none;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.dropdown-option:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.dropdown-option.is-selected { color: var(--accent); font-weight: 700; }
+.dropdown-option svg { color: var(--accent); flex-shrink: 0; }
+
+/* ---------- Account menu (popover on desktop, inline in the mobile drawer) ---------- */
+.account-menu-popover { min-width: 200px; }
+.account-menu-divider { height: 1px; background: var(--line); margin: 0.35rem 0.2rem; }
+/* Left at its own resting color (not the shared --ink) so it reads as a
+   distinct, slightly-more-deliberate action than "登入後才能..." nav-style
+   options above it — the whole point of separating it out was to stop it
+   from being mistaken for a profile/menu link. */
+.account-menu-logout { color: var(--accent-dark); }
+
+.account-menu-heading {
+  display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.7rem 0.5rem;
+  font-weight: 700; color: var(--ink-soft); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.account-menu-inline { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.app-main { flex: 1; padding: 2.2rem 1.75rem 4rem; max-width: 980px; margin: 0 auto; width: 100%; }
+
+h1 {
+  margin-top: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+}
+h2 { font-family: var(--font-heading); font-weight: 700; letter-spacing: 0.03em; }
+/* Section headings carry a short vermilion 朱線 (red rule) on the left — the
+   one recurring mark that ties every page back to the seal in the header. */
+.page h2 {
+  position: relative;
+  padding-left: 0.85rem;
+}
+.page h2::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.28em; bottom: 0.22em;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+/* Applied to the whole page (not just the canvas) while a handwriting
+   mode is active — see Kana.jsx/Kanji.jsx. A short, fast stroke (the two
+   dakuten strokes on 濁音, especially) could still start a native
+   selection drag with an Apple Pencil even with the canvas itself locked
+   down, and it just grabbed the nearest selectable text elsewhere on the
+   page instead (the mode picker buttons above the canvas, not necessarily
+   anything under it). */
+.no-select-page { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
+.page-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.page-head-row h1 { margin-bottom: 0; }
+.subtitle { color: var(--ink-soft); margin-top: -0.6rem; }
+
+/* ---------- JLPT countdown card ---------- */
+.jlpt-card {
+  position: relative;
+  background: var(--paper-raised);
+  border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: 1.3rem 1.5rem;
+  margin: 1.3rem 0; box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+/* Faint 験 (exam) watermark in the corner, set in Mincho. */
+.jlpt-card::after {
+  content: "験";
+  position: absolute; right: 0.6rem; bottom: -0.55rem;
+  font-family: var(--font-jp); font-size: 5.5rem; font-weight: 700; line-height: 1;
+  color: var(--ink); opacity: 0.045; pointer-events: none;
+}
+.jlpt-card-head {
+  display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.05rem;
+  color: var(--accent-dark); font-family: var(--font-heading); margin-bottom: 0.9rem;
+}
+.jlpt-rows { display: flex; flex-direction: column; gap: 0.6rem; }
+.jlpt-row { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.jlpt-row-label { width: 70px; flex-shrink: 0; font-weight: 700; color: var(--ink-soft); font-size: 0.88rem; }
+.jlpt-row-value { font-weight: 700; }
+.jlpt-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.7rem; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 700;
+}
+.jlpt-badge.tone-open { background: var(--accent-2-soft); color: var(--accent-2); }
+.jlpt-badge.tone-upcoming { background: var(--warn-bg); color: var(--warn-text); }
+.jlpt-badge.tone-closed { background: var(--accent-soft); color: var(--accent-dark); }
+.jlpt-badge.tone-muted { background: var(--cream-4); color: var(--ink-soft); }
+.jlpt-note { margin: 0.9rem 0 0; font-size: 0.82rem; color: var(--ink-soft); }
+.jlpt-source { margin: 0.4rem 0 0; font-size: 0.72rem; color: var(--muted-2); }
+
+/* ---------- Stat cards ---------- */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.stat-card {
+  position: relative;
+  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem 1rem 1rem;
+  text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.stat-card::before {
+  content: "";
+  position: absolute; left: 50%; top: 0; width: 28px; height: 3px;
+  transform: translateX(-50%); border-radius: 0 0 3px 3px; background: var(--accent);
+  transition: width 0.25s ease;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+.stat-card:hover::before { width: 48px; }
+.stat-card-gold::before { background: var(--gold); }
+.stat-card-gold .stat-value { color: var(--gold); }
+.stat-value { font-size: 1.85rem; font-weight: 700; color: var(--accent); font-family: var(--font-heading); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.stat-label { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.25rem; letter-spacing: 0.04em; }
+
+/* ---------- Progress overview: radar + category bars ---------- */
+.overview-panel {
+  display: grid; grid-template-columns: minmax(260px, 320px) 1fr; gap: 1.5rem; align-items: center;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.4rem; box-shadow: var(--shadow-sm); margin: 1rem 0 1.8rem;
+}
+@media (max-width: 700px) {
+  .overview-panel { grid-template-columns: 1fr; justify-items: center; }
+}
+
+.radar-chart-wrap { position: relative; width: 100%; max-width: 280px; margin: 0 auto; }
+.radar-chart { width: 100%; height: auto; overflow: visible; }
+.radar-grid-ring { fill: none; stroke: var(--line); stroke-width: 1; }
+.radar-grid-spoke { stroke: var(--line); stroke-width: 1; }
+.radar-data-fill { fill: var(--accent); fill-opacity: 0.14; stroke: none; }
+.radar-data-stroke { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.radar-data-dot { fill: var(--accent); stroke: var(--paper-raised); stroke-width: 2; }
+.radar-hit-area { fill: transparent; pointer-events: all; cursor: pointer; }
+.radar-axis-label { font-size: 0.7rem; font-weight: 700; fill: var(--ink-soft); }
+
+.radar-tooltip {
+  position: absolute; transform: translate(-50%, -125%); pointer-events: none;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px;
+  padding: 0.35rem 0.6rem; box-shadow: var(--shadow-md); text-align: center; white-space: nowrap;
+  display: flex; flex-direction: column; line-height: 1.3; z-index: 5;
+}
+.radar-tooltip strong { color: var(--accent-dark); font-size: 0.95rem; }
+.radar-tooltip span { color: var(--ink-soft); font-size: 0.72rem; }
+
+.category-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; width: 100%; }
+.category-bar-row { display: grid; grid-template-columns: 3.4em 1fr auto; align-items: center; gap: 0.7rem; }
+.category-bar-label { font-weight: 700; color: var(--ink-soft); font-size: 0.85rem; }
+.category-bar-track { height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.category-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); transition: width 0.4s ease; }
+.category-bar-value {
+  font-weight: 700; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; font-size: 0.85rem;
+  white-space: nowrap; min-width: 2.4em;
+}
+
+/* ---------- Coming soon (features gated until login exists) ---------- */
+.badge-coming-soon {
+  display: inline-block; margin-left: 0.5em; padding: 0.15em 0.55em; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
+  background: var(--accent-soft); color: var(--accent-dark); vertical-align: middle;
+}
+.navbar-links a .badge-coming-soon { background: var(--cream-4); color: var(--ink-soft); }
+.navbar-links a.active .badge-coming-soon,
+.navbar-links a:hover .badge-coming-soon { background: var(--accent-soft); color: var(--accent-dark); }
+.coming-soon { display: flex; justify-content: center; padding-top: 3rem; }
+.coming-soon-card {
+  max-width: 420px; text-align: center; padding: 2.2rem 1.8rem; background: var(--paper-raised);
+  border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); color: var(--ink-soft);
+}
+.coming-soon-card svg { color: var(--accent); margin-bottom: 0.8rem; }
+.coming-soon-card h1 { color: var(--ink); font-size: 1.3rem; margin-bottom: 0.6rem; }
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.7rem;
+  padding: 3rem 1.5rem; margin: 0.5rem 0; color: var(--ink-soft);
+  background: var(--paper-raised); border: 1px dashed var(--line); border-radius: var(--radius);
+}
+.empty-state svg { color: var(--muted-2); opacity: 0.8; }
+.empty-state p { max-width: 30em; }
+
+/* ---------- Pickers / filters ---------- */
+.level-picker, .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.3rem; align-items: center; }
+.filter-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-right: 1rem; }
+.filter-label { font-weight: 700; margin-right: 0.3rem; color: var(--ink-soft); font-size: 0.9rem; }
+/* .level-picker's own margin-bottom (for its standalone usage — directly
+   under a page's <h1>) throws off vertical centering when it's nested as
+   a flex item inside .filter-row next to a .filter-group (e.g. Kanji's
+   level picker + mode picker row): flex align-items: center centers each
+   item's margin box, so the extra bottom margin on just one of the two
+   items shifted its pills ~10px above the other group's. */
+.filter-row > .level-picker { margin-bottom: 0; }
+
+/* A .filter-row with two+ groups (e.g. level picker + mode picker) was
+   letting them compete for the same line at phone widths — one group's
+   buttons would wrap away from its own label mid-row while the other
+   group started its line, reading as disjointed. Forcing every direct
+   child onto its own full-width line (via flex-basis, not
+   flex-direction: column) fixes that while keeping the row's main axis
+   horizontal — switching to column previously made .search-box's
+   `flex: 1 1 240px` (sized for horizontal growth) instead grow tall along
+   the now-vertical main axis, which with its pill border-radius rendered
+   as a giant circle. */
+@media (max-width: 560px) {
+  .filter-row { align-items: stretch; gap: 0.8rem; }
+  .filter-row > * { flex-basis: 100%; margin-right: 0; }
+}
+
+button { cursor: pointer; font-family: inherit; }
+.level-picker button, .filter-group button {
+  border: 1px solid var(--line); background: var(--paper-raised); padding: 0.4rem 1rem; border-radius: 999px;
+  font-size: 0.9rem; font-weight: 600; color: var(--ink); transition: all 0.15s ease;
+}
+.level-picker button:hover, .filter-group button:hover { border-color: var(--accent); color: var(--accent-dark); }
+.level-picker button.active, .filter-group button.active {
+  background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Flashcard flip ---------- */
+.flashcard-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
+
+.flip-card {
+  width: 100%;
+  max-width: 440px;
+  height: 260px;
+  perspective: 1400px;
+  cursor: pointer;
+}
+.flip-card.slide-next { animation: card-slide-next 0.28s ease; }
+.flip-card.slide-prev { animation: card-slide-prev 0.28s ease; }
+@keyframes card-slide-next {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes card-slide-prev {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
+
+/* Each face is a sheet of washi with a traditional double rule (二重線)
+   frame: the outer border plus an inset hairline drawn by the pseudo
+   element, and a small vermilion seal mark in one corner. */
+.flip-card-face {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: var(--paper-raised);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.8rem;
+  overflow: auto;
+}
+.flip-card-face::before {
+  content: "";
+  position: absolute; inset: 7px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius-lg) - 6px);
+  pointer-events: none;
+}
+.flip-card-face::after {
+  content: "";
+  position: absolute; left: 16px; bottom: 16px; width: 10px; height: 10px;
+  background: var(--accent); border-radius: 2px; transform: rotate(-6deg); opacity: 0.9;
+}
+.flip-card-front { background: var(--paper-raised); }
+.flip-card-back {
+  transform: rotateY(180deg);
+  background: var(--cream);
+}
+.flip-card:hover .flip-card-inner { transform: translateY(-3px) rotateX(1deg); }
+.flip-card.is-flipped:hover .flip-card-inner { transform: rotateY(180deg) translateY(-3px); }
+
+.flashcard-main {
+  font-size: 2.8rem;
+  font-weight: 700;
+  font-family: var(--font-jp);
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+.flashcard-sub { color: var(--ink-soft); margin-top: 0.5rem; font-size: 1.1rem; }
+.flashcard-hint {
+  position: absolute;
+  bottom: 0.9rem;
+  left: 0; right: 0;
+  font-size: 0.75rem;
+  color: var(--muted-2);
+}
+.example { margin-top: 1rem; font-size: 0.95rem; }
+.example .reading { color: var(--ink-soft); }
+.example .zh { color: var(--accent-dark); margin-top: 0.2rem; font-weight: 600; }
+
+.flashcard-controls, .mark-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+.flashcard-controls button, .mark-controls button, .secondary-btn {
+  border: 1px solid var(--line-strong); background: var(--paper-raised); padding: 0.55rem 1.1rem; border-radius: 8px;
+  font-weight: 600; transition: all 0.15s ease; box-shadow: var(--shadow-sm); color: var(--ink);
+}
+.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); transform: translateY(-1px); }
+.flashcard-controls button:active, .secondary-btn:active { transform: translateY(0) scale(0.98); }
+.btn-good { border-color: var(--accent-2) !important; color: var(--accent-2); }
+.btn-good:hover { background: var(--accent-2-soft); }
+.btn-good.active { background: var(--accent-2); color: #fff; }
+.btn-bad { border-color: var(--accent) !important; color: var(--accent); }
+.btn-bad:hover { background: var(--accent-soft); }
+.btn-bad.active { background: var(--accent); color: #fff; }
+.progress-indicator { color: var(--ink-soft); font-size: 0.9rem; font-weight: 600; }
+
+.custom-word-badge {
+  position: absolute; top: 0.8rem; right: 1rem; font-size: 0.7rem; font-weight: 700;
+  color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0.15rem 0.6rem;
+}
+.add-word-form h2 { font-size: 1rem; margin-bottom: 0.9rem; }
+
+/* ---------- Modal dialog ---------- */
+/* Generic centered dialog shell (see components/Modal.jsx) — a dimmed,
+   click-to-dismiss backdrop with the actual content centered on top,
+   instead of content that used to just get inserted inline and shove the
+   rest of the page down. */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(20, 14, 10, 0.45); z-index: 60;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-panel {
+  background: var(--paper-raised); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+  padding: 1.4rem 1.5rem;
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; }
+.modal-header h2 { margin: 0; }
+.modal-close-btn {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--paper); color: var(--ink-soft); transition: all 0.15s ease;
+}
+.modal-close-btn:hover { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); }
+
+/* ---------- Kana chart ---------- */
+.kana-section { margin-bottom: 1.8rem; }
+.kana-table { display: flex; flex-direction: column; gap: 0.45rem; }
+.kana-row { display: grid; grid-template-columns: 3.2rem repeat(5, 1fr); gap: 0.45rem; align-items: stretch; }
+.kana-row-label { display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--ink-soft); font-weight: 700; }
+/* Kana cells: the glyph is the whole point, so it's set large in Shippori
+   Mincho. Hover "bleeds" vermilion ink up from the bottom edge (a clipped
+   pseudo-element growing in height) instead of just swapping a background. */
+.kana-cell {
+  position: relative; overflow: hidden;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.3rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
+  box-shadow: var(--shadow-sm); transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; color: var(--ink);
+}
+.kana-cell::before {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 0;
+  background: var(--accent);
+  transition: height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+}
+.kana-cell > * { position: relative; z-index: 1; }
+.kana-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-md); color: #fff; }
+.kana-cell:hover::before { height: 100%; }
+.kana-cell:hover .kana-romaji { color: rgba(255,255,255,0.8); }
+.kana-cell:active { transform: translateY(0) scale(0.97); }
+.kana-cell.empty { background: transparent; border: none; box-shadow: none; }
+.kana-char { font-size: 1.55rem; font-weight: 700; font-family: var(--font-jp); line-height: 1.2; }
+.kana-romaji { font-size: 0.72rem; color: var(--ink-soft); letter-spacing: 0.05em; transition: color 0.2s ease; }
+
+/* On narrow screens the fixed 3.2rem label column eats into the 5 kana
+   cells' share of a much narrower row, squeezing them lopsided. Give the
+   label its own full-width row above instead — same grid, just re-flowed:
+   5 equal columns, and the label spans all of them so the cells wrap to
+   the row below on their own without any markup change. */
+@media (max-width: 600px) {
+  .kana-row { grid-template-columns: repeat(5, 1fr); row-gap: 0.3rem; }
+  .kana-row-label { grid-column: 1 / -1; justify-content: flex-start; padding-left: 0.15rem; }
+}
+
+/* ---------- Kanji grid ---------- */
+.kanji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+.kanji-card {
+  display: flex; flex-direction: column;
+  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem; box-shadow: var(--shadow-sm);
+  text-align: center; border: 1px solid var(--line); transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.kanji-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.kanji-char {
+  font-size: 2.9rem; font-weight: 700; cursor: pointer; font-family: var(--font-jp);
+  color: var(--ink); line-height: 1.15; transition: transform 0.2s ease, color 0.2s ease;
+}
+.kanji-card:hover .kanji-char { color: var(--accent-dark); }
+.kanji-char:hover { transform: scale(1.08); }
+.kanji-readings { font-size: 0.85rem; text-align: left; margin-top: 0.7rem; line-height: 1.6; color: var(--ink); }
+/* A handful of kanji have long onyomi/kunyomi/meaning lists (many
+   readings, or several distinct senses joined by '、'). Without a cap,
+   one such card silently drags every other card in its grid row up to
+   match its height (grid rows share height), leaving the shorter cards'
+   now-bottom-pinned mark buttons stranded under a large empty gap. */
+.kanji-readings-clamp {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.muted { color: var(--muted-2); }
+
+.kanji-mark {
+  display: inline-flex;
+  /* Cards in the same grid row are already stretched to equal height (CSS
+     Grid's default align-items: stretch), but readings text of varying
+     length still pushed this button row to a different height per card.
+     margin-top: auto (this is now a flex column) pins it to the bottom of
+     every card uniformly instead. */
+  margin-top: auto;
+  align-self: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.kanji-mark-btn {
+  width: 40px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--muted-2);
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.kanji-mark-btn:active { transform: scale(0.92); }
+.kanji-mark-btn.bad { border-right: 1px solid var(--line); }
+.kanji-mark-btn.bad:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.kanji-mark-btn.bad.is-active { background: var(--accent); color: #fff; }
+.kanji-mark-btn.good:hover { background: var(--accent-2-soft); color: var(--accent-2); }
+.kanji-mark-btn.good.is-active { background: var(--accent-2); color: #fff; }
+
+/* ---------- Search box (generic, used by Grammar/Kanji) ---------- */
+.search-box {
+  display: flex; align-items: center; gap: 0.5rem; flex: 1 1 240px; max-width: 360px;
+  border: 1px solid var(--line); background: var(--paper-raised); border-radius: 999px;
+  padding: 0.5rem 0.9rem; color: var(--muted-2);
+}
+.search-box:focus-within { border-color: var(--accent); color: var(--ink-soft); }
+.search-box input {
+  border: none; background: none; outline: none; flex: 1; font: inherit; color: var(--ink); min-width: 0;
+}
+.search-box input::placeholder { color: var(--muted-2); }
+.search-clear {
+  border: none; background: none; color: var(--muted-2); cursor: pointer; display: inline-flex;
+  padding: 2px; border-radius: 999px; transition: color 0.15s ease, background 0.15s ease;
+}
+.search-clear:hover { color: var(--accent-dark); background: var(--accent-soft); }
+.search-box-large { max-width: 480px; padding: 0.7rem 1.1rem; margin-bottom: 1.4rem; font-size: 1.05rem; }
+
+/* ---------- Search results ---------- */
+.search-results { display: flex; flex-direction: column; gap: 1.6rem; }
+.search-results h2 { margin-bottom: 0.6rem; }
+.search-result-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.search-result-item {
+  display: flex; align-items: baseline; gap: 0.7rem; padding: 0.65rem 0.9rem;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px;
+  text-decoration: none; color: var(--ink); transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.search-result-item:hover { border-color: var(--accent); transform: translateX(2px); }
+.search-result-level {
+  flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: var(--accent-dark);
+  background: var(--accent-soft); border-radius: 6px; padding: 0.1rem 0.4rem;
+}
+.search-result-main { font-weight: 700; font-family: var(--font-jp); font-size: 1.1rem; flex-shrink: 0; }
+.search-result-reading { color: var(--ink-soft); font-size: 0.85rem; flex-shrink: 0; }
+.search-result-sub { color: var(--ink-soft); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Nav search (live dropdown, replaces the old /search page) ---------- */
+.nav-search { position: relative; }
+/* Fixed width, not an expand-on-focus animation — the box already does
+   its one job (opening the results panel) once you start typing, so
+   widening it too had nothing to justify itself with. */
+.nav-search-desktop { width: 170px; }
+.nav-search-desktop .search-box { max-width: none; padding: 0.4rem 0.8rem; }
+.nav-search-panel {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+  width: 380px; max-width: min(90vw, 420px); max-height: 70vh; overflow-y: auto;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 0.9rem;
+}
+.nav-search-results { display: flex; flex-direction: column; gap: 1rem; }
+.nav-search-results h3 {
+  font-size: 0.72rem; font-weight: 800; color: var(--muted-2); text-transform: uppercase;
+  letter-spacing: 0.05em; margin-bottom: 0.4rem;
+}
+.nav-search-panel .search-result-list { gap: 0.35rem; }
+.nav-search-panel .empty-state { padding: 1rem 0; }
+.sk-search-result { align-items: center; }
+/* Drawer copy renders inline (no popover chrome, it's already inside a
+   scrollable panel) and takes the drawer's full width. */
+.nav-search-drawer { padding: 0.8rem 1.1rem; }
+.nav-search-drawer .nav-search-panel {
+  position: static; width: 100%; max-width: none; box-shadow: none; margin-top: 0.6rem;
+}
+/* .nav-search-desktop's own hide rule now lives with the rest of the
+   navbar->hamburger collapse (see the 1320px block near .navbar-toggle) —
+   they have to switch together or there's a width range where neither the
+   full bar nor the drawer has search in it. */
+
+/* ---------- Grammar ---------- */
+.grammar-list { display: flex; flex-direction: column; gap: 1.1rem; }
+.grammar-card {
+  background: var(--paper-raised); border-radius: var(--radius); padding: 1.3rem 1.4rem; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line); transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.grammar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.grammar-pattern { font-size: 1.4rem; font-weight: 700; color: var(--accent-dark); font-family: var(--font-jp); letter-spacing: 0.02em; }
+.grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
+.grammar-formation {
+  display: inline-block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-2);
+  background: var(--accent-2-soft); border-radius: 8px; padding: 0.3rem 0.6rem; font-weight: 600;
+}
+.grammar-formation-label { font-weight: 800; }
+.grammar-explanation { color: var(--ink-soft); line-height: 1.6; margin-top: 0.6rem; }
+
+.tiny-btn { border: none; background: none; font-size: 1rem; cursor: pointer; transition: transform 0.15s ease; color: var(--ink); }
+.tiny-btn:hover { transform: scale(1.2); }
+
+/* ---------- Quiz ---------- */
+.quiz-runner { display: flex; flex-direction: column; gap: 1.2rem; }
+.quiz-question { background: var(--paper-raised); border-radius: var(--radius); padding: 1.3rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.quiz-question-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+.q-index { font-weight: 900; color: var(--accent); font-family: var(--font-heading); }
+.q-prompt { font-weight: 700; color: var(--ink); }
+.quiz-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; }
+.quiz-option {
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.65rem 0.9rem; border-radius: 10px; text-align: left;
+  font-weight: 500; transition: all 0.15s ease;
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-1px); }
+.quiz-option.selected { border-color: var(--accent); background: var(--accent-soft); }
+.quiz-option.correct { border-color: var(--accent-2); background: var(--accent-2-soft); color: var(--accent-2); font-weight: 700; }
+.quiz-option.wrong { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+.quiz-explanation { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); background: var(--cream-4); padding: 0.6rem 0.8rem; border-radius: 8px; }
+.quiz-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+/* Primary action: flat vermilion, the color of the seal — no gradient. */
+.submit-btn {
+  align-self: flex-start; background: var(--accent); color: #fff; border: none;
+  padding: 0.75rem 1.6rem; border-radius: 8px; font-weight: 700; letter-spacing: 0.03em;
+  box-shadow: 0 6px 16px var(--seal-shadow), var(--shadow-sm);
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); background: var(--accent-dark); box-shadow: 0 10px 22px var(--seal-shadow), var(--shadow-md); }
+.submit-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.submit-btn:disabled { background: var(--disabled-bg); cursor: not-allowed; box-shadow: none; }
+.login-submit-btn { align-self: stretch; width: 100%; background: var(--accent); }
+.quiz-result { font-size: 1.3rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
+
+.timer-bar { font-weight: 700; margin-bottom: 1rem; }
+.time-up { color: var(--accent); }
+
+/* ---------- Speaking ---------- */
+.speaking-card { background: var(--paper-raised); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.speaking-target { font-size: 1.6rem; font-weight: 700; font-family: var(--font-jp); color: var(--ink); }
+.speaking-reading, .speaking-zh { color: var(--ink-soft); margin-top: 0.25rem; }
+.speaking-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+.speaking-controls button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 600; transition: all 0.15s ease; }
+.speaking-controls button:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-1px); }
+.voice-visualizer {
+  position: relative;
+  margin-top: 1.1rem;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--cream-3);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.voice-visualizer canvas { width: 100%; height: 100%; display: block; }
+.voice-visualizer-placeholder { position: absolute; font-size: 0.82rem; color: var(--muted-2); pointer-events: none; }
+.voice-visualizer.is-live { border-color: var(--accent); background: var(--accent-soft); }
+
+.accuracy-note {
+  align-items: flex-start;
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  background: var(--cream-4);
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  line-height: 1.55;
+}
+.accuracy-note svg { margin-top: 0.15rem; color: var(--gold); }
+
+.speaking-result { margin-top: 1.1rem; }
+.score-badge { display: inline-block; margin-top: 0.4rem; padding: 0.35rem 0.9rem; border-radius: 999px; font-weight: 700; }
+.score-badge.good { background: var(--accent-2-soft); color: var(--accent-2); }
+.score-badge.mid { background: var(--warn-bg); color: var(--warn-text); }
+.score-badge.bad { background: var(--accent-soft); color: var(--accent-dark); }
+.warning { color: var(--warn-text); background: var(--warn-bg); padding: 0.7rem 1rem; border-radius: 10px; }
+
+/* ---------- Tables ---------- */
+.speaking-history table, .page table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: var(--paper-raised); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--line); color: var(--ink); }
+.page table th, .page table td { text-align: left; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+.page table th { background: var(--cream-4); font-weight: 700; }
+.page table tr:last-child td { border-bottom: none; }
+
+/* ---------- Icons (lucide-react, open source MIT) ---------- */
+.icon-btn, .icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.icon-btn svg, .icon-row svg { flex-shrink: 0; }
+.game-best-score { display: flex; margin: 0 0 1rem; color: var(--ink-soft); font-weight: 600; }
+.tiny-btn.icon-btn { gap: 0.3rem; }
+svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent); }
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.75; }
+}
+
+/* ---------- Game hub ---------- */
+.back-link {
+  display: inline-flex; align-items: center; gap: 0.3rem; color: var(--ink-soft); text-decoration: none;
+  font-size: 0.88rem; font-weight: 600; margin-bottom: 0.6rem;
+}
+.back-link:hover { color: var(--accent-dark); }
+
+.game-hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-top: 1.5rem; }
+.game-card {
+  display: block; background: var(--paper-raised); border-radius: 18px; padding: 1.6rem;
+  text-decoration: none; color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.game-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+.game-card-icon {
+  width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-dark); margin-bottom: 0.9rem;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.game-card:hover .game-card-icon { background: var(--accent); color: #fff; transform: rotate(-6deg) scale(1.06); }
+.game-card-title { font-size: 1.15rem; font-weight: 800; font-family: var(--font-heading); margin-bottom: 0.4rem; }
+.game-card-desc { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin: 0; }
+
+.game-stat-row {
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem;
+  font-weight: 700; color: var(--ink);
+}
+.game-win-banner {
+  margin-top: 1.2rem; padding: 1rem 1.3rem; border-radius: 14px; background: var(--accent-2-soft);
+  color: var(--accent-2); font-weight: 700; font-size: 1.05rem;
+}
+
+/* ---------- Memory match ---------- */
+.memory-grid { display: grid; gap: 0.8rem; max-width: 640px; }
+.memory-card {
+  aspect-ratio: 1; border: none; background: none; padding: 0; cursor: pointer; perspective: 900px;
+}
+.memory-card-inner {
+  position: relative; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.memory-card.is-flipped .memory-card-inner { transform: rotateY(180deg); }
+.memory-card-face {
+  position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 0.4rem; font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
+}
+/* Face-down cards are vermilion with the seigaiha wave pattern — the back
+   of a traditional playing card — rather than a gradient. */
+.memory-card-back {
+  background-color: var(--accent); color: #fff; font-size: 1.4rem; font-family: var(--font-jp);
+  background-image: var(--seigaiha-white); background-size: 40px 20px;
+}
+.memory-card-front { background: var(--paper-raised); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-jp); }
+.memory-card.is-matched .memory-card-front { background: var(--accent-2-soft); border-color: var(--accent-2); color: var(--accent-2); }
+
+/* ---------- Blitz challenge ---------- */
+.blitz-arena { transition: background 0.15s ease; border-radius: 16px; }
+.blitz-arena.flash-good { background: var(--accent-2-soft); }
+.blitz-arena.flash-bad { background: var(--accent-soft); }
+.blitz-question { background: var(--paper-raised); border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.blitz-question .q-prompt { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+.life-full { color: var(--accent); fill: var(--accent); }
+.life-empty { color: var(--line); }
+
+/* ---------- Falling words ---------- */
+.falling-game { display: flex; flex-direction: column; gap: 1rem; }
+.falling-track {
+  position: relative; height: 220px; border-radius: var(--radius); background: var(--cream-3);
+  border: 1px solid var(--line); overflow: hidden; transition: background 0.15s ease;
+}
+.falling-track.flash-good { background: var(--accent-2-soft); }
+.falling-track.flash-bad { background: var(--accent-soft); }
+.falling-item {
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  font-size: 1.7rem; font-weight: 700; color: var(--accent-dark);
+  font-family: var(--font-jp);
+  animation-name: fall-down; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes fall-down {
+  from { top: 0%; }
+  to { top: 92%; }
+}
+.falling-options { max-width: 480px; }
+
+/* ---------- Writing practice ---------- */
+.writing-practice { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; align-items: start; }
+.writing-picker {
+  display: flex; flex-direction: column; gap: 0.55rem;
+  max-height: 560px; overflow-y: auto; padding-right: 0.3rem;
+}
+.writing-picker-row-label { font-size: 0.72rem; color: var(--ink-soft); font-weight: 700; padding-left: 0.15rem; margin-bottom: 0.25rem; }
+.writing-picker-cells { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.35rem; }
+.writing-picker-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 8px; padding: 0.4rem 0;
+  font-size: 1rem; font-weight: 700; font-family: var(--font-heading);
+  transition: all 0.15s ease;
+}
+.writing-picker-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+.writing-picker-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.writing-picker-btn.active .writing-picker-romaji { color: rgba(255,255,255,0.85); }
+/* や行/わ行/ん keep their empty slots instead of compacting — same
+   positions as the kana chart, just invisible rather than a hollow box. */
+.writing-picker-btn.empty { visibility: hidden; border: none; background: none; }
+.writing-picker-char { font-size: 1rem; }
+.writing-picker-romaji { font-size: 0.65rem; font-weight: 600; color: var(--ink-soft); }
+
+.writing-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 0; width: 100%; user-select: none; -webkit-user-select: none; }
+.writing-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.writing-romaji {
+  font-weight: 700; color: var(--accent-dark); letter-spacing: 0.05em; text-transform: uppercase;
+  background: var(--accent-soft); border-radius: 999px; padding: 0.3rem 0.9rem; font-size: 0.95rem;
+}
+
+.writing-canvas-wrap { display: flex; align-items: center; gap: 0.6rem; width: 100%; user-select: none; -webkit-user-select: none; }
+.writing-canvas {
+  flex: 1 1 auto; min-width: 0; max-width: 420px; aspect-ratio: 1 / 1; height: auto;
+  background: var(--paper-raised); border-radius: 16px;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--line); touch-action: none; cursor: crosshair;
+  /* touch-action:none stops scroll/zoom gestures but not text selection —
+     a quick short stroke (e.g. the two dakuten strokes on 濁音) landing
+     with an Apple Pencil could still start a native selection drag that
+     highlighted the page underneath the canvas instead of drawing.
+     -webkit-touch-callout also blocks the copy/paste bubble that a
+     stalled pen contact can trigger on iOS Safari. */
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.writing-canvas.locked { cursor: default; border-color: var(--accent-2); }
+.writing-nav {
+  flex: 0 0 auto;
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 999px; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: all 0.15s ease;
+}
+.writing-nav:hover { border-color: var(--accent); color: var(--accent-dark); transform: scale(1.05); }
+
+.writing-controls { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
+.pen-size-label { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+
+@media (max-width: 860px) {
+  .writing-practice { grid-template-columns: 1fr; gap: 1rem; }
+  .writing-stage { order: 1; }
+  .writing-picker { order: 2; max-height: none; overflow-y: visible; }
+}
+
+@media (max-width: 480px) {
+  .writing-nav { width: 34px; height: 34px; flex-basis: 34px; }
+  .writing-toolbar { gap: 0.6rem; }
+}
+
+/* ---------- Kana handwriting quiz ---------- */
+.kana-writequiz { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+
+.writequiz-setup { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1rem; }
+.writequiz-setup-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.writequiz-row-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.writequiz-row-chip {
+  display: flex; align-items: center; gap: 0.4rem; border: 1px solid var(--line); background: var(--paper-raised);
+  color: var(--ink); border-radius: 999px; padding: 0.4rem 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.15s ease;
+}
+.writequiz-row-chip:hover { border-color: var(--accent); color: var(--accent-dark); }
+.writequiz-row-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.writequiz-row-chip input { accent-color: var(--accent); }
+.writequiz-count-row { margin-top: -0.2rem; }
+.writequiz-pool-size { font-size: 0.85rem; }
+.writequiz-setup-footer { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.writequiz-wrongbook { border-top: 1px dashed var(--line); padding-top: 1rem; }
+
+.writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; user-select: none; -webkit-user-select: none; }
+/* .submit-btn defaults to align-self:flex-start (it usually sits inside its
+   own row of buttons) — the reading quiz's reveal button is a lone direct
+   child of this centered column instead, so it needs the override here. */
+.writequiz-stage > .submit-btn { align-self: center; }
+.writequiz-progress { font-weight: 700; color: var(--ink-soft); }
+.writequiz-romaji { font-size: 2rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); letter-spacing: 0.06em; }
+.writequiz-romaji.revealed-romaji { font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+.writequiz-row-hint { font-size: 0.8rem; color: var(--ink-soft); margin-top: -0.6rem; }
+.writequiz-play-btn { font-size: 1rem; padding: 0.6rem 1.2rem; }
+.writequiz-suggestion {
+  font-size: 0.85rem; font-weight: 600; padding: 0.5rem 0.9rem; border-radius: 8px; max-width: 420px; text-align: center;
+}
+.writequiz-suggestion.suggest-correct { background: var(--accent-2-soft); color: var(--accent-2); }
+.writequiz-suggestion.suggest-wrong { background: var(--accent-soft); color: var(--accent-dark); }
+.writequiz-grade-actions { display: flex; align-items: center; gap: 1rem; }
+.writequiz-correct { border-color: var(--accent-2); color: var(--accent-2); }
+.writequiz-correct:hover { border-color: var(--accent-2); color: var(--accent-2); }
+.writequiz-wrong { border-color: var(--accent); color: var(--accent-dark); }
+/* Spins the icon swapped into the grade button while the final answer's
+   submit is in flight — the buttons were already disabled during that
+   request, but with no visual change at all it read as the app having
+   hung rather than just being mid-save. */
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.writequiz-done { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.writequiz-review-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; max-width: 720px; }
+.writequiz-review-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.5rem;
+  border: 2px solid var(--line); border-radius: 10px; background: var(--paper-raised);
+}
+.writequiz-review-item.correct { border-color: var(--accent-2); }
+.writequiz-review-item.wrong { border-color: var(--accent); }
+.writequiz-review-meta { display: flex; align-items: baseline; gap: 0.4rem; }
+.writequiz-review-char { font-weight: 900; font-family: var(--font-heading); }
+.writequiz-review-romaji { font-size: 0.8rem; color: var(--ink-soft); }
+
+.stroke-thumbnail { display: block; border-radius: 6px; }
+.stroke-thumbnail-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+.stroke-thumbnail-ink { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Kana reading-recall quiz ---------- */
+/* Shown the kana, say its reading out loud, then reveal — the opposite
+   direction of the handwriting quiz above, so it reuses most of its
+   .writequiz-* classes (progress line, romaji display, grade buttons,
+   done screen) but swaps the drawing canvas for a plain big-character
+   display, since there's nothing to draw here. */
+.readquiz-char-display {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 380px; aspect-ratio: 1 / 1;
+  background: var(--paper-raised); border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); font-size: 7.5rem; font-weight: 700;
+  font-family: var(--font-jp); color: var(--ink);
+}
+.readquiz-review-char { font-size: 1.8rem; }
+
+/* The quiz canvas has no side elements (unlike writing-practice's prev/next
+   nav buttons) squeezing its width down, so on a narrow phone it renders
+   almost edge-to-edge — a `touch-action: none` block that big leaves barely
+   any margin to swipe-scroll past without accidentally starting a stroke. */
+@media (max-width: 480px) {
+  .writequiz-stage .writing-canvas { max-width: 260px; }
+}
+
+/* ---------- 404 ---------- */
+.notfound-page { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+.notfound-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; max-width: 420px; }
+.notfound-icon { color: var(--accent); opacity: 0.85; margin-bottom: 0.4rem; }
+.notfound-code {
+  font-size: 4.5rem; font-weight: 900; font-family: var(--font-heading); color: var(--accent); line-height: 1;
+}
+.notfound-card h1 { margin: 0.2rem 0 0; }
+.notfound-home-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.8rem;
+  background: var(--accent); color: #fff; border: none; padding: 0.75rem 1.6rem;
+  border-radius: 10px; font-weight: 700; text-decoration: none; box-shadow: var(--shadow-md);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.notfound-home-btn:hover { transform: translateY(-2px); background: var(--accent-dark); }
+
+/* ---------- Ink-wash reveal for page content ---------- */
+/* A page comes in the way ink soaks into paper: soft and slightly blurred,
+   then sharp, drifting up a few px as it resolves. */
+.page { animation: ink-wash 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes ink-wash {
+  from { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+  60% { filter: blur(0); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
+}
+
+/* ---------- Skeleton loading (per-page shapes instead of a text spinner) ---------- */
+.skeleton-block {
+  background: linear-gradient(100deg, var(--line) 30%, var(--paper) 45%, var(--line) 60%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+@keyframes skeleton-shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+.skeleton-wrap { pointer-events: none; }
+
+.sk-line { height: 0.95rem; width: 100%; margin: 0.35rem 0; }
+.sk-line.short { width: 45%; }
+.sk-line.wide { width: 85%; height: 1.2rem; }
+.sk-pill { height: 1.6rem; width: 3rem; border-radius: 999px; }
+.sk-pill.wide { height: 2.4rem; width: 110px; border-radius: 999px; }
+
+.quiz-question .sk-pill { flex-shrink: 0; }
+.sk-option { height: 2.6rem; border-radius: 10px; }
+
+.skeleton-flip-card {
+  width: 100%; max-width: 440px; height: 260px; border-radius: 16px; padding: 1.5rem;
+  background: var(--paper-raised); border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; cursor: default;
+}
+.sk-flashcard-main { height: 2.2rem; width: 55%; }
+.sk-flashcard-sub { height: 1rem; width: 35%; }
+
+.sk-kanji-char { height: 2.6rem; width: 2.6rem; margin: 0 auto 0.7rem; border-radius: 10px; }
+
+.sk-stat-value { height: 1.8rem; width: 60%; margin: 0 auto 0.5rem; }
+.stat-card .sk-line { margin: 0 auto; }
+
+.sk-speaking-target { height: 1.6rem; width: 70%; }
+.sk-speaking-sub { height: 0.85rem; width: 50%; margin-top: 0.45rem; }
+.sk-speaking-sub.short { width: 35%; }
+.sk-visualizer { height: 72px; width: 100%; border-radius: 12px; margin-top: 1.1rem; }
+
+.sk-memory-card { aspect-ratio: 1; border-radius: 10px; }
+
+/* ---------- Quiz history detail (Progress page) ---------- */
+/* Higher specificity than ".page table td" is required here, or that rule's
+   padding/border-bottom wins and leaves a padded, bordered "ghost" row
+   between every entry even while collapsed. */
+.page table tr.history-detail-row td { padding: 0; border: none; }
+/* The data row right before the table's final (always :last-child now)
+   detail row is effectively the last visible row — its border-bottom sits
+   right on top of the table's own outer border, reading as a doubled line. */
+.page table tr:has(+ tr.history-detail-row:last-child) td { border-bottom: none; }
+
+/* Below this width the 5-column layout (time/type/level/result/button) has
+   nowhere near enough room per column — cells wrap mid-word (the score
+   "12 / 20" breaking across lines) rather than the table just scrolling,
+   which is worse. Re-flow each data row into a small label/value card
+   stack instead of adding a horizontal scrollbar. */
+@media (max-width: 640px) {
+  .page .history-table thead { display: none; }
+  .page .history-table, .page .history-table tbody, .page .history-table tr, .page .history-table td {
+    display: block; width: 100%;
+  }
+  .page .history-table tbody tr:not(.history-detail-row) {
+    border-bottom: 1px solid var(--line);
+    padding: 0.4rem 0;
+  }
+  .page .history-table tr:not(.history-detail-row) td {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+    padding: 0.3rem 0.9rem; border-bottom: none; font-size: 0.88rem;
+  }
+  .page .history-table tr:not(.history-detail-row) td[data-label]::before {
+    content: attr(data-label); font-weight: 700; color: var(--ink-soft); flex-shrink: 0;
+  }
+  .page .history-table tr:not(.history-detail-row) td:last-child { justify-content: flex-end; }
+  .page .history-table tr:has(+ tr.history-detail-row:last-child) { border-bottom: none; }
+}
+/* Grid-template-rows 0fr/1fr trick: an animatable "auto height" collapse
+   without measuring pixel heights in JS. The row stays mounted so the
+   transition can play instead of the content just popping in/out. */
+.detail-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+.detail-collapse.open { grid-template-rows: 1fr; }
+.detail-collapse-inner { overflow: hidden; min-height: 0; }
+.history-detail {
+  padding: calc(0.2rem + 2px) 0.9rem 1.2rem;
+}
+.history-detail .quiz-question { margin-bottom: 1rem; }
+.history-detail .quiz-question:last-child { margin-bottom: 0; }
+.history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; display: flex; gap: 1.2rem; flex-wrap: wrap; }
+.history-answer-line strong { color: var(--ink); }
+.history-view-btn { font-size: 0.82rem; padding: 0.3rem 0.7rem; }
+.history-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.history-heading-row h2 { margin: 0; }
+.history-page-size { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+/* Dropdown's default trigger/menu sizing is tuned for the navbar (a much
+   bigger control next to a page heading looked out of proportion here). */
+.history-page-size .dropdown-trigger { padding: 0.3rem 0.6rem; font-size: 0.8rem; gap: 0.3rem; }
+.history-page-size .dropdown-menu { min-width: 90px; }
+.history-page-size .dropdown-option { padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+/* Page-size picker moved up next to the section heading (a row of buttons
+   sitting on its own beneath the table, apart from the prev/next controls,
+   read as orphaned) — this row is now just the prev/page/next group, so
+   centering it is a plain flex center instead of the previous 3-column
+   grid trick. */
+.history-pagination { display: flex; justify-content: center; margin-top: 1rem; }
+.pagination-controls { display: flex; align-items: center; gap: 0.8rem; }
+.pagination-controls button:disabled { opacity: 0.45; cursor: default; }
+.pagination-indicator { font-size: 0.88rem; color: var(--ink-soft); font-weight: 600; }
+.option-tag {
+  display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
+}
+
+/* ============================================================
+   和紙と墨 — visual layer: patterns, effects, hero, tiles, footer
+   ============================================================ */
+
+/* 青海波 (seigaiha) wave tile, 40×20, as alpha masks/images. The plain one is
+   used as a mask (so the color underneath shows through the strokes); the
+   white one is a direct background for the vermilion memory-card backs. */
+:root {
+  --seigaiha: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'><g fill='none' stroke='%23000' stroke-width='1.3'><path d='M0 20a20 20 0 0 1 40 0'/><path d='M5 20a15 15 0 0 1 30 0'/><path d='M10 20a10 10 0 0 1 20 0'/><path d='M15 20a5 5 0 0 1 10 0'/><path d='M-20 10a20 20 0 0 1 40 0'/><path d='M-15 10a15 15 0 0 1 30 0'/><path d='M-10 10a10 10 0 0 1 20 0'/><path d='M20 10a20 20 0 0 1 40 0'/><path d='M25 10a15 15 0 0 1 30 0'/><path d='M30 10a10 10 0 0 1 20 0'/></g></svg>");
+  --seigaiha-white: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'><g fill='none' stroke='%23fff' stroke-opacity='0.28' stroke-width='1.3'><path d='M0 20a20 20 0 0 1 40 0'/><path d='M5 20a15 15 0 0 1 30 0'/><path d='M10 20a10 10 0 0 1 20 0'/><path d='M15 20a5 5 0 0 1 10 0'/><path d='M-20 10a20 20 0 0 1 40 0'/><path d='M-15 10a15 15 0 0 1 30 0'/><path d='M-10 10a10 10 0 0 1 20 0'/><path d='M20 10a20 20 0 0 1 40 0'/><path d='M25 10a15 15 0 0 1 30 0'/><path d='M30 10a10 10 0 0 1 20 0'/></g></svg>");
+  --seal-paper: #f4efe4;
+}
+
+/* ---------- Sakura petals (canvas behind everything) ---------- */
+.sakura-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+/* The app shell already sits at z-index 1, so the canvas paints between the
+   paper grain (body::before) and the content. Under print, drop it. */
+@media print { .sakura-canvas { display: none; } }
+
+/* ---------- Ink drop on press ---------- */
+.ink-layer { position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden; }
+.ink-drop {
+  position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  transform: scale(0.2);
+  animation: ink-spread 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  /* Slightly irregular edge, like ink meeting paper fibres. */
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+@keyframes ink-spread {
+  from { transform: scale(0.2); opacity: 0.38; }
+  to { transform: scale(5.2); opacity: 0; }
+}
+
+/* ---------- 円相 enso ---------- */
+.enso-stroke { stroke: currentColor; stroke-dasharray: 520; stroke-dashoffset: 520; }
+.enso-stroke-heavy { stroke-width: 9; opacity: 0.9; animation: enso-draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.15s forwards; }
+.enso-stroke-light { stroke-width: 3.5; opacity: 0.5; animation: enso-draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.25s forwards; }
+@keyframes enso-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .enso-stroke { stroke-dashoffset: 0; animation: none; }
+}
+
+/* ---------- Hero (dashboard) ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.85fr);
+  align-items: center;
+  gap: 1.5rem 2rem;
+  padding: 1.2rem 0 1.6rem;
+  margin-bottom: 0.4rem;
+}
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: 1rem;
+}
+.hero-kicker .hanko { color: var(--accent); filter: drop-shadow(0 1px 2px var(--seal-shadow)); }
+.hero-title {
+  font-size: clamp(2rem, 4.2vw, 3.1rem);
+  line-height: 1.18;
+  margin: 0 0 0.8rem;
+  color: var(--ink);
+}
+.hero-subtitle { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.7; margin: 0 0 1.4rem; max-width: 34em; }
+.hero-actions { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+
+/* Two button voices used across the new pieces: the vermilion seal button
+   and a quiet ink-outlined one. */
+.btn-primary, .btn-ghost {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.75rem 1.4rem; border-radius: 8px; font-weight: 700; letter-spacing: 0.03em;
+  text-decoration: none; font-size: 0.95rem; border: 1px solid transparent;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 16px var(--seal-shadow); }
+.btn-primary:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 10px 22px var(--seal-shadow); }
+.btn-primary:hover svg { transform: translateX(3px); }
+.btn-primary svg { transition: transform 0.2s ease; }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn-ghost:hover { border-color: var(--ink); background: var(--paper-raised); transform: translateY(-2px); }
+.btn-primary:active, .btn-ghost:active { transform: translateY(0) scale(0.98); }
+
+/* The art column: an enso being painted, a large 学 breathing inside it, and
+   a vertical (縦書き) line of text standing beside like a hanging scroll. */
+.hero-art {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 300px;
+  color: var(--ink);
+}
+.hero-enso { position: absolute; }
+.hero-kanji {
+  position: relative;
+  font-family: var(--font-jp);
+  font-size: 7.4rem; font-weight: 700; line-height: 1;
+  color: var(--accent);
+  animation: hero-kanji-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both, hero-breathe 6s ease-in-out 2.2s infinite;
+  text-shadow: 0 8px 24px var(--seal-shadow);
+}
+@keyframes hero-kanji-in {
+  from { opacity: 0; transform: scale(0.82) translateY(8px); filter: blur(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes hero-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+.hero-tategaki {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  writing-mode: vertical-rl; text-orientation: upright;
+  /* One unbroken column — without nowrap the shrink-to-fit height of an
+     absolutely positioned vertical-rl box let it wrap into a second column. */
+  white-space: nowrap;
+  font-family: var(--font-jp); font-size: 0.95rem; letter-spacing: 0.45em; font-weight: 700;
+  color: var(--ink-soft);
+  padding: 0.6rem 0.35rem;
+  border-left: 1px solid var(--line-strong);
+  animation: fade-in 0.8s ease 1.3s both;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-kanji, .hero-tategaki { animation: none; }
+}
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; padding-top: 0.4rem; }
+  .hero-art { min-height: 220px; order: -1; }
+  .hero-enso { width: 200px; height: 200px; }
+  .hero-kanji { font-size: 5.2rem; }
+  .hero-tategaki { display: none; }
+}
+
+/* ---------- Section title (h2 with the 朱線 rule, see .page h2) ---------- */
+.section-title { margin: 2rem 0 1rem; font-size: 1.35rem; }
+
+/* ---------- Quick-start tiles with kanji watermarks ---------- */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem;
+}
+.tile {
+  position: relative;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 0.35rem;
+  min-height: 118px;
+  padding: 1rem 1.1rem 0.95rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-decoration: none; color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, color 0.2s ease;
+}
+/* The watermark: the tile's kanji, huge and nearly transparent, tucked into
+   the top-right. On hover it swells and turns vermilion, and a wash of
+   accent color rises from the bottom edge. */
+.tile::before {
+  content: attr(data-kanji);
+  position: absolute; right: -0.15em; top: -0.32em;
+  font-family: var(--font-jp); font-size: 5.6rem; font-weight: 700; line-height: 1;
+  color: var(--ink); opacity: 0.06;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, color 0.3s ease;
+  pointer-events: none;
+}
+.tile::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tile:hover { border-color: var(--line-strong); box-shadow: var(--shadow-lg); }
+.tile:hover::before { opacity: 0.16; color: var(--accent); transform: translate(-6px, 6px) scale(1.12) rotate(-4deg); }
+.tile:hover::after { transform: scaleX(1); }
+.tile-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--cream-4); color: var(--ink-soft);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.tile:hover .tile-icon { background: var(--accent-soft); color: var(--accent-dark); }
+.tile-label { font-weight: 700; font-size: 1rem; font-family: var(--font-heading); letter-spacing: 0.03em; position: relative; }
+.tile-arrow {
+  position: absolute; right: 0.9rem; bottom: 0.95rem;
+  color: var(--accent); opacity: 0; transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+.tile:hover .tile-arrow { opacity: 1; transform: translateX(0); }
+
+/* ---------- 3D tilt (useTilt sets the variables) ---------- */
+.tilt {
+  transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.25s ease;
+  will-change: transform;
+}
+.tilt.is-tilting { transition: transform 0.05s linear, border-color 0.2s ease, box-shadow 0.25s ease; }
+/* Sheen: a soft spot of light following the pointer across the tilted face
+   (a pointer-driven highlight, not a decorative gradient — it only exists
+   while the card is being tilted). --sheen-color is per theme. */
+.tile.is-tilting {
+  background-image: radial-gradient(240px circle at var(--sheen-x, 50%) var(--sheen-y, 50%), var(--sheen-color) 0%, transparent 62%);
+}
+
+/* ---------- Scroll-stagger reveal (useStaggerReveal) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease var(--reveal-delay, 0ms), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+}
+.reveal.is-revealed { opacity: 1; transform: none; }
+/* A tile is both .reveal and .tilt, and both want `transform`. The reveal
+   owns it until the tile has landed; after that the tilt rule (re-stated
+   here at higher specificity so it beats .reveal.is-revealed) takes over. */
+.tilt.reveal.is-revealed {
+  transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding: 1.4rem 1.75rem 1.6rem;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  position: relative;
+}
+.site-footer::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: -1px; height: 8px;
+  background-color: var(--accent); opacity: 0.22;
+  -webkit-mask-image: var(--seigaiha); mask-image: var(--seigaiha);
+  -webkit-mask-size: 40px 20px; mask-size: 40px 20px;
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+  -webkit-mask-position: 0 -12px; mask-position: 0 -12px;
+  pointer-events: none;
+}
+.site-footer-inner {
+  max-width: 980px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.site-footer-brand { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-jp); font-weight: 700; letter-spacing: 0.12em; color: var(--ink); }
+.site-footer-brand .hanko { color: var(--accent); }
+.site-footer-motto { font-family: var(--font-jp); letter-spacing: 0.5em; color: var(--muted-2); }
+.site-footer-meta { font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
+
+/* ---------- Print ---------- */
+@media print {
+  .navbar, .no-print { display: none !important; }
+  .page { max-width: 100%; padding: 0; }
+  .quiz-question { break-inside: avoid; }
+  body { background: #fff; color: #000; }
+}

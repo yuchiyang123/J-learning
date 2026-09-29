@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import { isSoundEnabled, onSoundChange, setSoundEnabled, chime } from '../lib/sound.js';
+import { isSoundEnabled, onSoundChange, setSoundEnabled, chime } from '../../lib/sound.js';
 
 export default function SoundToggle() {
   const [on, setOn] = useState(isSoundEnabled);

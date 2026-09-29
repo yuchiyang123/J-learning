@@ -11,6 +11,8 @@ import KanaReadQuiz from './KanaReadQuiz.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { QuizSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
+import BrushKana from '../components/BrushKana.jsx';
+import { useSkin } from '../skins/SkinContext.jsx';
 
 export default function Kana() {
   // The brush gate (BrushGate.jsx) can send us here with a kana it
@@ -96,21 +98,38 @@ function KanaTable({ title, rows, script, highlight }) {
   );
 }
 
-// Each cell is a small 絵馬 plaque; the one the brush gate sent you to is
-// lit like a lantern and scrolled into view.
+// A cell hears its kana when clicked. In the torii skin, the one the brush
+// gate sent you to is lit like a lantern and scrolled into view; in the
+// sumi skin, hovering (or focusing) a cell rewrites its kana stroke by
+// stroke, in real stroke order.
 function KanaCell({ cell, script, lit }) {
   const ref = useRef(null);
+  const { skin } = useSkin();
+  const [writing, setWriting] = useState(false);
+  const brush = skin === 'sumi';
+  const ch = script === 'hira' ? cell[0] : cell[1];
   useEffect(() => {
     if (lit) ref.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, [lit]);
+  const writeProps = brush
+    ? {
+        onPointerEnter: () => setWriting(true),
+        onPointerLeave: () => setWriting(false),
+        onFocus: () => setWriting(true),
+        onBlur: () => setWriting(false),
+      }
+    : {};
   return (
     <button
       ref={ref}
-      className={`kana-cell${lit ? ' is-lit' : ''}`}
+      className={`kana-cell${lit ? ' is-lit' : ''}${brush && writing ? ' is-writing' : ''}`}
       onClick={() => speak(cell[0])}
       title={cell[2]}
+      {...writeProps}
     >
-      <span className="kana-char" lang="ja">{script === 'hira' ? cell[0] : cell[1]}</span>
+      <span className="kana-char" lang="ja">
+        {brush && writing ? <BrushKana char={ch} size={46} stepMs={240} /> : ch}
+      </span>
       <span className="kana-romaji">{cell[2]}</span>
     </button>
   );

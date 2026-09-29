@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MailCheck, X } from 'lucide-react';
-import { api } from '../api.js';
-import { useLocale } from '../i18n/LocaleContext.jsx';
-import ToriiWorld from '../components/ToriiWorld.jsx';
-import JlptCountdown from '../components/JlptCountdown.jsx';
-import { StatGridSkeleton } from '../components/Skeleton.jsx';
-import { useStaggerReveal } from '../hooks/useStaggerReveal.js';
+import { api } from '../../api.js';
+import { useLocale } from '../../i18n/LocaleContext.jsx';
+import ToriiWorld from './ToriiWorld.jsx';
+import JlptCountdown from '../../components/JlptCountdown.jsx';
+import { StatGridSkeleton } from '../../components/Skeleton.jsx';
+import { useStaggerReveal } from '../../hooks/useStaggerReveal.js';
 
 // Home is the torii path (ToriiWorld). Once you've walked to the end, the
 // shrine grounds: your standing as a row of 絵馬 plaques, and the JLPT

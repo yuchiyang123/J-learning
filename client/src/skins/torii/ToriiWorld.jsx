@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import FireflySky from './FireflySky.jsx';
-import { stops } from '../data/stops.js';
-import { useLocale } from '../i18n/LocaleContext.jsx';
-import { thump, pluck } from '../lib/sound.js';
+import { stops } from '../../data/stops.js';
+import { useLocale } from '../../i18n/LocaleContext.jsx';
+import { thump, pluck } from '../../lib/sound.js';
 
 // 千本鳥居 — the home page is a walk up a torii-lined path. Pure CSS 3D:
 // every gate is a flat DOM face placed at its own depth inside a scene

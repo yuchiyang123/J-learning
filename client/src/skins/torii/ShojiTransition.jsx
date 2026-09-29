@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { slide } from '../lib/sound.js';
+import { slide } from '../../lib/sound.js';
 
 // Route changes are a pair of 障子 (shoji) doors: they slide shut from both
 // sides over the old page, then slide open on the new one. Skipped on the

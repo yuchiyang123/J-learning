@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Eraser, Volume2, Grid3x3, PenTool } from 'lucide-react';
-import { useKanaCanvas } from '../hooks/useKanaCanvas.js';
-import { scoreKanaDrawing } from '../lib/kanaStrokeRecognition.js';
-import { seion, dakuon, handakuon } from '../data/kana.js';
-import { speak } from '../speech.js';
-import { useLocale } from '../i18n/LocaleContext.jsx';
-import { pluck, chime } from '../lib/sound.js';
+import { useKanaCanvas } from '../../hooks/useKanaCanvas.js';
+import { scoreKanaDrawing } from '../../lib/kanaStrokeRecognition.js';
+import { seion, dakuon, handakuon } from '../../data/kana.js';
+import { speak } from '../../speech.js';
+import { useLocale } from '../../i18n/LocaleContext.jsx';
+import { pluck, chime } from '../../lib/sound.js';
 
 // 筆 — write your way through the site. A brush button opens a sheet of
 // paper; draw any kana with the mouse or a finger and it's recognized
