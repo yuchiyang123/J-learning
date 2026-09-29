@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { GraduationCap, Menu, X } from 'lucide-react';
-import ThemeToggle from './ThemeToggle.jsx';
-import LanguageSwitcher from './LanguageSwitcher.jsx';
-import AccountMenu from './AccountMenu.jsx';
-import NavSearch from './NavSearch.jsx';
-import { useLocale } from '../i18n/LocaleContext.jsx';
+import { Menu, X } from 'lucide-react';
+import HankoSeal from './HankoSeal.jsx';
+import ThemeToggle from '../../components/ThemeToggle.jsx';
+import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
+import AccountMenu from '../../components/AccountMenu.jsx';
+import NavSearch from '../../components/NavSearch.jsx';
+import { useLocale } from '../../i18n/LocaleContext.jsx';
 
 // "學習進度" intentionally isn't here — it lives in AccountMenu now, since
 // it's only ever relevant once you're logged in (see AccountMenu.jsx).
@@ -108,7 +109,7 @@ export default function Navbar() {
     <>
       <nav className={`navbar${cramped ? ' is-cramped' : ''}`} ref={navRef}>
         <Link to="/" className="navbar-brand">
-          <GraduationCap size={20} />
+          <HankoSeal char="学" size={26} />
           {t('brand')}
         </Link>
 
@@ -155,7 +156,7 @@ export default function Navbar() {
       <aside className={`nav-drawer${drawerOpen ? ' is-open' : ''}`} aria-hidden={!drawerOpen} {...(!drawerOpen ? { inert: '' } : {})}>
         <div className="nav-drawer-header">
           <Link to="/" className="navbar-brand" onClick={() => setDrawerOpen(false)}>
-            <GraduationCap size={20} />
+            <HankoSeal char="学" size={26} />
             {t('brand')}
           </Link>
           <button type="button" className="nav-drawer-close" onClick={() => setDrawerOpen(false)} aria-label={t('nav_toggle_label')}>

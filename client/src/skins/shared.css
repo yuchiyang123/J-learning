@@ -1,0 +1,58 @@
+/* Styles that must exist no matter which skin is active. Everything here
+   is built from tokens every skin stylesheet defines (--ink, --line,
+   --accent, --paper-raised, --radius) so it takes on the current skin. */
+
+/* ---------- Skin picker (settings) ---------- */
+.skin-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.9rem;
+  margin: 1rem 0 0.4rem;
+}
+.skin-card {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem;
+  padding: 0.55rem 0.55rem 0.75rem;
+  background: var(--paper-raised); color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: var(--radius, 12px);
+  font: inherit; text-align: left; cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.skin-card:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--accent); }
+.skin-card:disabled { cursor: progress; }
+.skin-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.skin-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* A miniature of the skin: its bar, its glyph in its own face, its accent. */
+.skin-preview {
+  position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden;
+  margin-bottom: 0.5rem; border-radius: calc(var(--radius, 12px) - 4px);
+  background: var(--pv-bg); color: var(--pv-fg);
+}
+.skin-preview-bar { position: absolute; left: 0; right: 0; top: 0; height: 16%; background: var(--pv-accent); opacity: 0.9; }
+.skin-preview-glyph {
+  position: absolute; inset: 16% 0 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--pv-font); font-size: 2.6rem; line-height: 1;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.skin-preview-line { position: absolute; left: 22%; right: 22%; bottom: 14%; height: 3px; border-radius: 2px; background: var(--pv-accent); }
+.skin-preview.is-glow .skin-preview-glyph { color: var(--pv-accent); text-shadow: 0 0 10px var(--pv-accent), 0 0 26px var(--pv-accent); }
+.skin-preview.is-glow .skin-preview-line { box-shadow: 0 0 10px var(--pv-accent); }
+.skin-card:hover .skin-preview-glyph { transform: scale(1.12) rotate(-4deg); }
+
+.skin-card-name { font-family: var(--pv-font); font-size: 1.02rem; font-weight: 700; letter-spacing: 0.04em; }
+.skin-card-tag { font-size: 0.72rem; color: var(--ink-soft); letter-spacing: 0.06em; text-transform: uppercase; }
+.skin-card-badge {
+  position: absolute; top: 0.9rem; right: 0.9rem;
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  padding: 0.15rem 0.5rem; border-radius: 999px;
+  background: var(--accent); color: #fff; font-size: 0.7rem; font-weight: 700;
+}
+/* Beats each skin's own .settings-card width (its stylesheet loads after this one). */
+.settings-card.skin-settings-card { max-width: 860px; }
+.spin { animation: skin-spin 0.9s linear infinite; }
+@keyframes skin-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .skin-card, .skin-preview-glyph { transition: none; }
+  .spin { animation: none; }
+}

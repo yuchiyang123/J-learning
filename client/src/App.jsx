@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar.jsx';
+import { useSkin } from './skins/SkinContext.jsx';
 
 // Every page is loaded lazily so the initial bundle only ships the shell +
 // whichever page the visitor actually landed on — before this, App.jsx
@@ -8,7 +8,6 @@ import Navbar from './components/Navbar.jsx';
 // 765KB chunk, so e.g. the 121KB kana stroke-order data pulled in by
 // Kana.jsx/Kanji.jsx (via WritingPractice/KanaWriteQuiz/KanjiWriteQuiz)
 // downloaded even for someone just viewing the dashboard.
-const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
 const Kana = lazy(() => import('./pages/Kana.jsx'));
 const Vocabulary = lazy(() => import('./pages/Vocabulary.jsx'));
 const Kanji = lazy(() => import('./pages/Kanji.jsx'));
@@ -29,14 +28,17 @@ const BlitzChallenge = lazy(() => import('./pages/games/BlitzChallenge.jsx'));
 const FallingWords = lazy(() => import('./pages/games/FallingWords.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
+// The chrome around the routes (navigation, footer, ambient effects) and
+// the home page belong to the active skin (see skins/registry.js); every
+// other page is shared and styled by whichever skin's stylesheet is on.
 export default function App() {
+  const { Shell, Home, skin } = useSkin();
   return (
-    <div className="app-shell">
-      <Navbar />
-      <main className="app-main">
+    <div className="app-shell" key={skin}>
+      <Shell>
         <Suspense fallback={null}>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Home />} />
             <Route path="/kana" element={<Kana />} />
             <Route path="/vocabulary" element={<Vocabulary />} />
             <Route path="/kanji" element={<Kanji />} />
@@ -58,7 +60,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </main>
+      </Shell>
     </div>
   );
 }

@@ -45,15 +45,28 @@ export default function AccountMenu({ variant = 'popover', onNavigate }) {
   const { isLoggedIn, user } = useAuth();
   const { open, setOpen, rootRef } = useDismissableMenu();
 
+  // Logged out, settings still hold the visual-style picker, so it gets its
+  // own small gear next to the login link.
   if (!isLoggedIn) {
     return (
-      <NavLink
-        to="/login"
-        onClick={onNavigate}
-        className={({ isActive }) => `navbar-auth-link${isActive ? ' active' : ''}`}
-      >
-        <LogIn size={15} /> {t('nav_login')}
-      </NavLink>
+      <>
+        <NavLink
+          to="/login"
+          onClick={onNavigate}
+          className={({ isActive }) => `navbar-auth-link${isActive ? ' active' : ''}`}
+        >
+          <LogIn size={15} /> {t('nav_login')}
+        </NavLink>
+        <NavLink
+          to="/settings"
+          onClick={onNavigate}
+          className={({ isActive }) => `navbar-auth-link${isActive ? ' active' : ''}`}
+          aria-label={t('nav_settings')}
+          title={t('nav_settings')}
+        >
+          <Settings size={15} />
+        </NavLink>
+      </>
     );
   }
 

@@ -1,0 +1,1701 @@
+/* ============================================================
+   TOKYO NIGHT — design tokens
+   Night is the default: a near-black street with six neon tubes (pink,
+   cyan, yellow, orange, green, purple) doing all the color work. "Day"
+   (data-theme="light") keeps the same structure as a daylight poster —
+   white ground, the same hues pushed down to print-safe inks.
+   ============================================================ */
+:root {
+  --ink: #f3f2fa;
+  --ink-soft: #b3b1c9;
+  --muted-2: #6f6d86;
+  --paper: #07070f;
+  --paper-raised: #12111f;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --accent: #ff2d95;
+  --accent-dark: #ff6ab8;
+  --accent-soft: rgba(255, 45, 149, 0.14);
+  --accent-2: #39ff88;
+  --accent-2-soft: rgba(57, 255, 136, 0.12);
+  --cyan: #22e6ff;
+  --cyan-soft: rgba(34, 230, 255, 0.12);
+  --yellow: #ffe45c;
+  --orange: #ff7a1a;
+  --purple: #9d5cff;
+  --green: #39ff88;
+  --pink: #ff2d95;
+  --gold: #ffe45c;
+  --cream: #15142a;
+  --cream-pink: #1a1224;
+  --cream-3: #101020;
+  --cream-4: #1b1b2e;
+  --warn-bg: #2a2410;
+  --warn-text: #ffe45c;
+  --disabled-bg: #2a2a3a;
+  --glass: rgba(18, 17, 31, 0.72);
+  --glow-strength: 1;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.65), 0 6px 16px rgba(0, 0, 0, 0.45);
+  /* Every script we display (zh-TW/zh-CN/ja/ko/en) needs its own Noto face listed
+     so glyphs never fall through to a mismatched system font — that mismatch is
+     what reads as "inconsistent weight" when switching locale. Keep this list in
+     sync with the families loaded in index.html. */
+  --font-body: "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", "Noto Sans", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, sans-serif;
+  /* Translated page headings: the same broad-coverage Noto stack at black
+     weight, so a heading that mixes scripts never falls back mid-word. */
+  --font-heading: var(--font-body);
+  /* Japanese display text (the neon signs, brand, kana/kanji glyphs): Dela
+     Gothic One — a single ultra-black weight that reads like a shop sign. */
+  --font-display: "Dela Gothic One", "Noto Sans JP", "Noto Sans TC", "Noto Sans", sans-serif;
+  --radius: 12px;
+  --radius-lg: 18px;
+}
+
+/* Day (昼) variant — only when explicitly chosen. */
+:root[data-theme="light"] {
+  --ink: #0e0e18;
+  --ink-soft: #4c4a62;
+  --muted-2: #8d8ba3;
+  --paper: #f5f4fb;
+  --paper-raised: #ffffff;
+  --line: #dcdaf0;
+  --line-strong: #b9b6dc;
+  --accent: #e0187a;
+  --accent-dark: #b0105e;
+  --accent-soft: #fde4f0;
+  --accent-2: #14a55c;
+  --accent-2-soft: #dff7ea;
+  --cyan: #0aa5c2;
+  --cyan-soft: #dff5fa;
+  --yellow: #e0b400;
+  --orange: #e86a10;
+  --purple: #7a3ff2;
+  --green: #14a55c;
+  --pink: #e0187a;
+  --gold: #d39b00;
+  --cream: #f1f0fa;
+  --cream-pink: #fbeaf3;
+  --cream-3: #f6f5fc;
+  --cream-4: #ebe9f6;
+  --warn-bg: #fff3cf;
+  --warn-text: #8a6a12;
+  --disabled-bg: #d9d8e6;
+  --glass: rgba(255, 255, 255, 0.82);
+  --glow-strength: 0.35;
+  --shadow-sm: 0 1px 2px rgba(14, 14, 24, 0.06), 0 1px 3px rgba(14, 14, 24, 0.08);
+  --shadow-md: 0 4px 12px rgba(14, 14, 24, 0.1), 0 2px 4px rgba(14, 14, 24, 0.06);
+  --shadow-lg: 0 14px 36px rgba(14, 14, 24, 0.16), 0 4px 12px rgba(14, 14, 24, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* The street: rain + bokeh canvas (NeonRain) and the cursor light sit at
+   z-index 0; everything else lives in the shell one layer up. */
+.app-shell { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- Navbar: dark glass over the street ---------- */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 0.7rem 1.75rem;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  color: var(--ink);
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--line);
+}
+/* A hairline of neon along the bottom edge that "breathes". */
+.navbar::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 18px var(--accent);
+  opacity: 0.7;
+  animation: neon-breathe 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes neon-breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.95; } }
+.navbar-brand {
+  font-weight: 400;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  /* Now a <Link> (so clicking the logo goes home) — reset the browser's
+     default anchor color/underline instead of inheriting them. */
+  color: var(--ink);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+.navbar-brand:hover .neon-logo { animation: neon-buzz 0.5s steps(2, end) 2; }
+.navbar-links { display: flex; gap: 0.1rem; flex-wrap: wrap; align-items: center; }
+.navbar-links a {
+  position: relative;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  transition: color 0.15s ease, text-shadow 0.2s ease;
+}
+.navbar-links a::after {
+  content: "";
+  position: absolute; left: 0.7rem; right: 0.7rem; bottom: 0.15rem; height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan), 0 0 14px var(--cyan);
+  transform: scaleX(0); transform-origin: center;
+  opacity: 0;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+.navbar-links a:hover { color: var(--ink); }
+.navbar-links a:hover::after { transform: scaleX(0.5); opacity: 0.6; }
+.navbar-links a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(34, 230, 255, calc(0.55 * var(--glow-strength))); }
+.navbar-links a.active::after { transform: scaleX(1); opacity: 1; }
+
+.navbar-auth-link {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  color: var(--ink-soft); background: transparent; border: none; cursor: pointer;
+  text-decoration: none; font-size: 0.92rem; font-weight: 700; font-family: inherit;
+  padding: 0.4rem 0.75rem; border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); }
+.navbar-auth-link.active { background: var(--accent-soft); color: var(--accent-dark); }
+
+.navbar-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+
+/* ---------- Login / Register ---------- */
+.auth-page { display: flex; justify-content: center; padding-top: 2rem; }
+.auth-card {
+  width: 100%; max-width: 380px; background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 2rem 1.8rem;
+}
+.auth-card h1 { display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; margin-bottom: 1.4rem; }
+.auth-form { display: flex; flex-direction: column; gap: 1rem; }
+.auth-form label { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.88rem; font-weight: 600; color: var(--ink-soft); }
+.auth-form input {
+  border: 1px solid var(--line); border-radius: 10px; padding: 0.6rem 0.8rem; font-size: 1rem;
+  font-family: inherit; background: var(--paper); color: var(--ink);
+}
+.auth-form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.auth-switch { margin-top: 1.2rem; font-size: 0.88rem; color: var(--ink-soft); text-align: center; }
+.auth-switch a { color: var(--accent-dark); font-weight: 600; text-decoration: none; }
+.link-btn {
+  background: none; border: none; padding: 0; font: inherit; cursor: pointer;
+  color: var(--accent-dark); font-weight: 600; text-decoration: underline;
+}
+.field-hint { font-size: 0.78rem; font-weight: 500; color: var(--muted-2); }
+.reset-countdown {
+  text-align: center; font-weight: 700; color: var(--accent-dark); font-variant-numeric: tabular-nums;
+  margin-bottom: 0.8rem;
+}
+
+/* ---------- Settings ---------- */
+.settings-card { max-width: 480px; padding: 1.6rem; margin: 1rem 0; }
+.settings-section-heading {
+  display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; margin: 0 0 1rem; color: var(--ink);
+}
+.settings-section-heading svg { color: var(--accent); }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; flex-wrap: wrap;
+  padding: 0.6rem 0; border-top: 1px solid var(--line);
+}
+.settings-row:first-of-type { border-top: none; }
+
+.info-banner {
+  display: flex; align-items: center; gap: 0.6rem; background: var(--accent-2-soft); color: var(--accent-2);
+  border: 1px solid var(--accent-2); border-radius: var(--radius); padding: 0.8rem 1rem; margin-bottom: 1.3rem;
+  font-weight: 600; font-size: 0.92rem;
+}
+.info-banner-close {
+  margin-left: auto; background: none; border: none; cursor: pointer; color: inherit;
+  display: inline-flex; align-items: center; opacity: 0.7;
+}
+.info-banner-close:hover { opacity: 1; }
+
+.navbar-toggle {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: transparent; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.navbar-toggle:hover { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-soft); }
+
+/* Whether the full bar (links + search + account + language + theme) fits
+   on one line depends on things a fixed breakpoint can't see — the active
+   locale's label lengths, whether a username is showing and how long it
+   is — so a hard-coded px cutoff kept needing to be re-tuned every time one
+   of those changed (860px, then 1320px, still wrapped once a logged-in
+   account button entered the mix). Navbar.jsx now measures the bar's own
+   content against its available width at runtime and toggles this class
+   instead, so it collapses exactly when it stops fitting, for whichever
+   locale/login state is actually on screen. */
+.navbar.is-cramped { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
+.navbar.is-cramped .navbar-toggle { display: inline-flex; }
+.navbar.is-cramped .navbar-links { display: none; }
+/* The account popover is redundant with the drawer's own inline account
+   section (AccountMenu variant="inline") — one entry point per screen
+   size, not two, so it isn't there to be mistaken for something else. */
+.navbar.is-cramped .navbar-account-slot { display: none; }
+.navbar.is-cramped .nav-search-desktop { display: none; }
+
+/* Safety net for genuinely narrow phones in case the JS measurement above
+   never runs (e.g. disabled JS) — real phone widths always need the
+   hamburger regardless of locale or login state. */
+@media (max-width: 480px) {
+  .navbar { gap: 0.6rem 0.4rem; padding: 0.6rem 0.8rem; }
+  .navbar-toggle { display: inline-flex; }
+  .navbar-links { display: none; }
+  .navbar-account-slot { display: none; }
+  .nav-search-desktop { display: none; }
+}
+
+/* On genuinely narrow phones (not just tablet-portrait-and-below), the
+   tightening above still isn't quite enough headroom for
+   brand + language + theme + hamburger to all fit on one row. */
+@media (max-width: 400px) {
+  .navbar { padding: 0.55rem 0.6rem; gap: 0.5rem 0.3rem; }
+  .navbar-brand { font-size: 0.95rem; gap: 0.25rem; }
+}
+
+/* An arbitrarily long display name would otherwise be the one thing nothing
+   above can bound — truncate it, in both the popover trigger and the
+   drawer's inline heading. */
+.navbar-username { display: inline-block; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+@media (max-width: 400px) {
+  .navbar-username { max-width: 70px; }
+}
+
+/* ---------- Mobile nav drawer ---------- */
+.nav-drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(20, 14, 10, 0.45);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 39;
+}
+.nav-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+.nav-drawer {
+  position: fixed; top: 0; bottom: 0; left: 0; width: 280px; max-width: 82vw;
+  background: var(--paper); border-right: 1px solid var(--line); box-shadow: var(--shadow-lg);
+  transform: translateX(-100%); transition: transform 0.22s ease;
+  z-index: 40; display: flex; flex-direction: column; overflow-y: auto;
+}
+.nav-drawer.is-open { transform: translateX(0); }
+
+.nav-drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.1rem; border-bottom: 1px solid var(--line); flex-shrink: 0;
+}
+.nav-drawer-header .navbar-brand { color: var(--ink); }
+.nav-drawer-close {
+  border: none; background: none; color: var(--ink-soft); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 999px; transition: background 0.15s ease;
+}
+.nav-drawer-close:hover { background: var(--cream-4); }
+
+.nav-drawer-links { display: flex; flex-direction: column; padding: 0.6rem; gap: 0.1rem; }
+.nav-drawer-links a {
+  color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.96rem;
+  padding: 0.75rem 0.9rem; border-radius: 10px; transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-drawer-links a:hover { background: var(--cream-4); }
+.nav-drawer-links a.active { background: var(--accent-soft); color: var(--accent-dark); }
+
+.nav-drawer-account { margin-top: auto; border-top: 1px solid var(--line); padding: 0.6rem; flex-shrink: 0; }
+/* AccountMenu's logged-out state renders the same .navbar-auth-link used in
+   the (dark, gradient) header — it needs its own colors here since the
+   drawer's background is the light paper surface, not the header. */
+.nav-drawer-account .navbar-auth-link {
+  color: var(--ink); padding: 0.75rem 0.9rem; font-size: 0.96rem; font-weight: 600;
+}
+.nav-drawer-account .navbar-auth-link:hover { background: var(--cream-4); color: var(--ink); transform: none; }
+
+/* No "hide above Npx" media query here on purpose: the drawer only ever
+   opens via .navbar-toggle, which is itself only visible when the navbar
+   is in its JS-measured cramped/hamburger state (see Navbar.jsx) — a state
+   that can now kick in at any width depending on content, not a fixed
+   breakpoint. A stale `@media (min-width: 861px) { display: none }` here
+   used to force the drawer invisible (even with .is-open set) whenever
+   cramped triggered above 861px, which is routine now. The closed state
+   is already fully handled above via transform/opacity + pointer-events,
+   so no width-based override is needed at all. */
+
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: transparent; color: var(--ink-soft); transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.theme-toggle:hover { color: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 10px rgba(255, 228, 92, 0.35); }
+
+/* ---------- Dropdown (generic, replaces native <select> for custom theming) ---------- */
+.dropdown { position: relative; }
+.dropdown-trigger {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink-soft);
+  border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 700;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.dropdown-trigger:hover { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-soft); }
+.dropdown-trigger-light {
+  border-color: var(--line); background: var(--paper-raised); color: var(--ink);
+}
+.dropdown-trigger-light:hover { background: var(--cream-4); border-color: var(--accent); }
+.dropdown-trigger-label { white-space: nowrap; }
+.dropdown-label-short { display: none; }
+.dropdown-chevron { transition: transform 0.15s ease; opacity: 0.85; }
+.dropdown-chevron.is-open { transform: rotate(180deg); }
+
+/* Placed after the base .dropdown-trigger/.dropdown-label-short rules above
+   (not the earlier navbar breakpoint) so it actually wins the cascade —
+   two same-specificity rules for the same class fall back to source order,
+   and an earlier media-query block loses to a later plain rule. */
+@media (max-width: 860px) {
+  .dropdown-trigger { padding: 0.35rem 0.5rem; font-size: 0.8rem; gap: 0.25rem; }
+  .dropdown-label-full { display: none; }
+  .dropdown-label-short { display: inline; }
+}
+
+.dropdown-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;
+  min-width: 160px; margin: 0; padding: 0.4rem; list-style: none;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  animation: dropdown-in 0.14s ease;
+}
+.dropdown-menu.align-left { right: auto; left: 0; }
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropdown-option {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0.5rem 0.7rem; border-radius: 8px; border: none; background: none;
+  color: var(--ink); font-size: 0.9rem; font-weight: 500; text-align: left; text-decoration: none;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.dropdown-option:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.dropdown-option.is-selected { color: var(--accent); font-weight: 700; }
+.dropdown-option svg { color: var(--accent); flex-shrink: 0; }
+
+/* ---------- Account menu (popover on desktop, inline in the mobile drawer) ---------- */
+.account-menu-popover { min-width: 200px; }
+.account-menu-divider { height: 1px; background: var(--line); margin: 0.35rem 0.2rem; }
+/* Left at its own resting color (not the shared --ink) so it reads as a
+   distinct, slightly-more-deliberate action than "登入後才能..." nav-style
+   options above it — the whole point of separating it out was to stop it
+   from being mistaken for a profile/menu link. */
+.account-menu-logout { color: var(--accent-dark); }
+
+.account-menu-heading {
+  display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.7rem 0.5rem;
+  font-weight: 700; color: var(--ink-soft); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.account-menu-inline { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.app-main { flex: 1; padding: 2.2rem 1.75rem 4rem; max-width: 980px; margin: 0 auto; width: 100%; }
+
+h1 {
+  margin-top: 0;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+h2 { font-family: var(--font-heading); font-weight: 900; letter-spacing: 0.01em; }
+/* Page titles get a short neon tube underneath; section titles a glowing
+   cyan tick on the left — the two recurring marks that tie every page back
+   to the signs on the street. */
+.page > h1:first-child, .page-head-row h1 { position: relative; padding-bottom: 0.45rem; }
+.page > h1:first-child::after, .page-head-row h1::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0; width: 56px; height: 3px; border-radius: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 20px rgba(255, 45, 149, calc(0.6 * var(--glow-strength)));
+}
+.page h2 { position: relative; padding-left: 0.9rem; }
+.page h2::before {
+  content: "";
+  position: absolute; left: 0; top: 0.3em; bottom: 0.25em; width: 3px; border-radius: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan), 0 0 16px rgba(34, 230, 255, calc(0.5 * var(--glow-strength)));
+}
+/* Applied to the whole page (not just the canvas) while a handwriting
+   mode is active — see Kana.jsx/Kanji.jsx. A short, fast stroke (the two
+   dakuten strokes on 濁音, especially) could still start a native
+   selection drag with an Apple Pencil even with the canvas itself locked
+   down, and it just grabbed the nearest selectable text elsewhere on the
+   page instead (the mode picker buttons above the canvas, not necessarily
+   anything under it). */
+.no-select-page { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
+.page-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.page-head-row h1 { margin-bottom: 0; }
+.subtitle { color: var(--ink-soft); margin-top: -0.6rem; }
+
+/* ---------- JLPT countdown card ---------- */
+.jlpt-card {
+  position: relative; overflow: hidden;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid var(--line); border-left: 3px solid var(--yellow);
+  border-radius: var(--radius); padding: 1.3rem 1.5rem;
+  margin: 1.3rem 0; box-shadow: var(--shadow-sm), inset 0 0 0 1px rgba(255, 228, 92, 0.06);
+}
+/* Faint 験 (exam) sign in the corner. */
+.jlpt-card::after {
+  content: "験";
+  position: absolute; right: 0.5rem; bottom: -0.6rem;
+  font-family: var(--font-display); font-size: 5.6rem; line-height: 1;
+  color: var(--yellow); opacity: 0.08; pointer-events: none;
+}
+.jlpt-card-head {
+  display: flex; align-items: center; gap: 0.5rem; font-weight: 900; font-size: 1.05rem;
+  color: var(--yellow); font-family: var(--font-heading); margin-bottom: 0.9rem;
+  text-shadow: 0 0 12px rgba(255, 228, 92, calc(0.5 * var(--glow-strength)));
+}
+.jlpt-rows { display: flex; flex-direction: column; gap: 0.6rem; }
+.jlpt-row { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.jlpt-row-label { width: 70px; flex-shrink: 0; font-weight: 700; color: var(--ink-soft); font-size: 0.88rem; }
+.jlpt-row-value { font-weight: 700; }
+.jlpt-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.7rem; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 700;
+}
+.jlpt-badge.tone-open { background: var(--accent-2-soft); color: var(--accent-2); }
+.jlpt-badge.tone-upcoming { background: var(--warn-bg); color: var(--warn-text); }
+.jlpt-badge.tone-closed { background: var(--accent-soft); color: var(--accent-dark); }
+.jlpt-badge.tone-muted { background: var(--cream-4); color: var(--ink-soft); }
+.jlpt-note { margin: 0.9rem 0 0; font-size: 0.82rem; color: var(--ink-soft); }
+.jlpt-source { margin: 0.4rem 0 0; font-size: 0.72rem; color: var(--muted-2); }
+
+/* ---------- Stat cards ---------- */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.stat-card {
+  --c: var(--cyan);
+  position: relative;
+  background: var(--glass); border-radius: var(--radius); padding: 1.1rem 1rem 1rem;
+  text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+}
+.stat-card:nth-child(5n+2) { --c: var(--pink); }
+.stat-card:nth-child(5n+3) { --c: var(--yellow); }
+.stat-card:nth-child(5n+4) { --c: var(--green); }
+.stat-card:nth-child(5n+5) { --c: var(--purple); }
+.stat-card-gold { --c: var(--yellow); }
+.stat-card:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 22px color-mix(in srgb, var(--c) 45%, transparent), var(--shadow-md); }
+.stat-value {
+  font-size: 2rem; font-weight: 400; color: var(--c); font-family: var(--font-display); font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--c) 70%, transparent), 0 0 24px color-mix(in srgb, var(--c) calc(45% * var(--glow-strength)), transparent);
+}
+.stat-label { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.3rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ---------- Progress overview: radar + category bars ---------- */
+.overview-panel {
+  display: grid; grid-template-columns: minmax(260px, 320px) 1fr; gap: 1.5rem; align-items: center;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.4rem; box-shadow: var(--shadow-sm); margin: 1rem 0 1.8rem;
+}
+@media (max-width: 700px) {
+  .overview-panel { grid-template-columns: 1fr; justify-items: center; }
+}
+
+.radar-chart-wrap { position: relative; width: 100%; max-width: 280px; margin: 0 auto; }
+.radar-chart { width: 100%; height: auto; overflow: visible; }
+.radar-grid-ring { fill: none; stroke: var(--line); stroke-width: 1; }
+.radar-grid-spoke { stroke: var(--line); stroke-width: 1; }
+.radar-data-fill { fill: var(--accent); fill-opacity: 0.14; stroke: none; }
+.radar-data-stroke { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.radar-data-dot { fill: var(--accent); stroke: var(--paper-raised); stroke-width: 2; }
+.radar-hit-area { fill: transparent; pointer-events: all; cursor: pointer; }
+.radar-axis-label { font-size: 0.7rem; font-weight: 700; fill: var(--ink-soft); }
+
+.radar-tooltip {
+  position: absolute; transform: translate(-50%, -125%); pointer-events: none;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px;
+  padding: 0.35rem 0.6rem; box-shadow: var(--shadow-md); text-align: center; white-space: nowrap;
+  display: flex; flex-direction: column; line-height: 1.3; z-index: 5;
+}
+.radar-tooltip strong { color: var(--accent-dark); font-size: 0.95rem; }
+.radar-tooltip span { color: var(--ink-soft); font-size: 0.72rem; }
+
+.category-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; width: 100%; }
+.category-bar-row { display: grid; grid-template-columns: 3.4em 1fr auto; align-items: center; gap: 0.7rem; }
+.category-bar-label { font-weight: 700; color: var(--ink-soft); font-size: 0.85rem; }
+.category-bar-track { height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.category-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); transition: width 0.4s ease; }
+.category-bar-value {
+  font-weight: 700; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; font-size: 0.85rem;
+  white-space: nowrap; min-width: 2.4em;
+}
+
+/* ---------- Coming soon (features gated until login exists) ---------- */
+.badge-coming-soon {
+  display: inline-block; margin-left: 0.5em; padding: 0.15em 0.55em; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
+  background: var(--accent-soft); color: var(--accent-dark); vertical-align: middle;
+}
+.navbar-links a .badge-coming-soon { background: var(--cream-4); color: var(--ink-soft); }
+.navbar-links a.active .badge-coming-soon,
+.navbar-links a:hover .badge-coming-soon { background: var(--accent-soft); color: var(--accent-dark); }
+.coming-soon { display: flex; justify-content: center; padding-top: 3rem; }
+.coming-soon-card {
+  max-width: 420px; text-align: center; padding: 2.2rem 1.8rem; background: var(--paper-raised);
+  border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); color: var(--ink-soft);
+}
+.coming-soon-card svg { color: var(--accent); margin-bottom: 0.8rem; }
+.coming-soon-card h1 { color: var(--ink); font-size: 1.3rem; margin-bottom: 0.6rem; }
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.7rem;
+  padding: 3rem 1.5rem; margin: 0.5rem 0; color: var(--ink-soft);
+  background: var(--paper-raised); border: 1px dashed var(--line); border-radius: var(--radius);
+}
+.empty-state svg { color: var(--muted-2); opacity: 0.8; }
+.empty-state p { max-width: 30em; }
+
+/* ---------- Pickers / filters ---------- */
+.level-picker, .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.3rem; align-items: center; }
+.filter-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-right: 1rem; }
+.filter-label { font-weight: 700; margin-right: 0.3rem; color: var(--ink-soft); font-size: 0.9rem; }
+/* .level-picker's own margin-bottom (for its standalone usage — directly
+   under a page's <h1>) throws off vertical centering when it's nested as
+   a flex item inside .filter-row next to a .filter-group (e.g. Kanji's
+   level picker + mode picker row): flex align-items: center centers each
+   item's margin box, so the extra bottom margin on just one of the two
+   items shifted its pills ~10px above the other group's. */
+.filter-row > .level-picker { margin-bottom: 0; }
+
+/* A .filter-row with two+ groups (e.g. level picker + mode picker) was
+   letting them compete for the same line at phone widths — one group's
+   buttons would wrap away from its own label mid-row while the other
+   group started its line, reading as disjointed. Forcing every direct
+   child onto its own full-width line (via flex-basis, not
+   flex-direction: column) fixes that while keeping the row's main axis
+   horizontal — switching to column previously made .search-box's
+   `flex: 1 1 240px` (sized for horizontal growth) instead grow tall along
+   the now-vertical main axis, which with its pill border-radius rendered
+   as a giant circle. */
+@media (max-width: 560px) {
+  .filter-row { align-items: stretch; gap: 0.8rem; }
+  .filter-row > * { flex-basis: 100%; margin-right: 0; }
+}
+
+button { cursor: pointer; font-family: inherit; }
+.level-picker button, .filter-group button {
+  border: 1px solid var(--line); background: var(--paper-raised); padding: 0.4rem 1rem; border-radius: 999px;
+  font-size: 0.9rem; font-weight: 600; color: var(--ink); transition: all 0.15s ease;
+}
+.level-picker button:hover, .filter-group button:hover { border-color: var(--accent); color: var(--accent-dark); }
+.level-picker button.active, .filter-group button.active {
+  background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Flashcard flip ---------- */
+.flashcard-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
+
+.flip-card {
+  width: 100%;
+  max-width: 440px;
+  height: 260px;
+  perspective: 1400px;
+  cursor: pointer;
+}
+.flip-card.slide-next { animation: card-slide-next 0.28s ease; }
+.flip-card.slide-prev { animation: card-slide-prev 0.28s ease; }
+@keyframes card-slide-next {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes card-slide-prev {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
+
+/* A flashcard is a lit sign: dark glass with a neon tube border — cyan on
+   the front, pink on the back — and the word itself glowing. */
+.flip-card-face {
+  --c: var(--cyan);
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--c);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--c) 50%, transparent), 0 0 40px color-mix(in srgb, var(--c) calc(30% * var(--glow-strength)), transparent), inset 0 0 24px color-mix(in srgb, var(--c) 10%, transparent), var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.8rem;
+  overflow: auto;
+}
+.flip-card-front { --c: var(--cyan); }
+.flip-card-back { --c: var(--pink); transform: rotateY(180deg); }
+.flip-card:hover .flip-card-inner { transform: translateY(-3px) rotateX(1deg); }
+.flip-card.is-flipped:hover .flip-card-inner { transform: rotateY(180deg) translateY(-3px); }
+
+.flashcard-main {
+  font-size: 2.9rem;
+  font-weight: 400;
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--c) 60%, transparent), 0 0 30px color-mix(in srgb, var(--c) calc(40% * var(--glow-strength)), transparent);
+}
+.flashcard-sub { color: var(--ink-soft); margin-top: 0.5rem; font-size: 1.1rem; }
+.flashcard-hint {
+  position: absolute;
+  bottom: 0.9rem;
+  left: 0; right: 0;
+  font-size: 0.75rem;
+  color: var(--muted-2);
+}
+.example { margin-top: 1rem; font-size: 0.95rem; }
+.example .reading { color: var(--ink-soft); }
+.example .zh { color: var(--accent-dark); margin-top: 0.2rem; font-weight: 600; }
+
+.flashcard-controls, .mark-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+.flashcard-controls button, .mark-controls button, .secondary-btn {
+  border: 1px solid var(--line-strong); background: transparent; padding: 0.55rem 1.1rem; border-radius: 8px;
+  font-weight: 700; transition: all 0.15s ease; color: var(--ink);
+}
+.flashcard-controls button:hover, .secondary-btn:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); transform: translateY(-1px); }
+.flashcard-controls button:active, .secondary-btn:active { transform: translateY(0) scale(0.98); }
+.btn-good { border-color: var(--accent-2) !important; color: var(--accent-2); }
+.btn-good:hover { background: var(--accent-2-soft); box-shadow: 0 0 14px var(--accent-2-soft) !important; color: var(--accent-2) !important; }
+.btn-good.active { background: var(--accent-2); color: #06140c; box-shadow: 0 0 16px var(--accent-2); }
+.btn-bad { border-color: var(--accent) !important; color: var(--accent); }
+.btn-bad:hover { background: var(--accent-soft); box-shadow: 0 0 14px var(--accent-soft) !important; color: var(--accent) !important; }
+.btn-bad.active { background: var(--accent); color: #fff; box-shadow: 0 0 16px var(--accent); }
+.progress-indicator { color: var(--ink-soft); font-size: 0.9rem; font-weight: 600; }
+
+.custom-word-badge {
+  position: absolute; top: 0.8rem; right: 1rem; font-size: 0.7rem; font-weight: 700;
+  color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0.15rem 0.6rem;
+}
+.add-word-form h2 { font-size: 1rem; margin-bottom: 0.9rem; }
+
+/* ---------- Modal dialog ---------- */
+/* Generic centered dialog shell (see components/Modal.jsx) — a dimmed,
+   click-to-dismiss backdrop with the actual content centered on top,
+   instead of content that used to just get inserted inline and shove the
+   rest of the page down. */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(20, 14, 10, 0.45); z-index: 60;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-panel {
+  background: var(--paper-raised); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+  padding: 1.4rem 1.5rem;
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; }
+.modal-header h2 { margin: 0; }
+.modal-close-btn {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--paper); color: var(--ink-soft); transition: all 0.15s ease;
+}
+.modal-close-btn:hover { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); }
+
+/* ---------- Kana chart ---------- */
+.kana-section { margin-bottom: 1.8rem; }
+.kana-table { display: flex; flex-direction: column; gap: 0.45rem; }
+.kana-row { display: grid; grid-template-columns: 3.2rem repeat(5, 1fr); gap: 0.45rem; align-items: stretch; }
+.kana-row-label { display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--ink-soft); font-weight: 700; }
+/* The kana chart is a wall of small shop signs: each column its own neon
+   color, each cell lit dimly until hovered, then it flares and buzzes. */
+.kana-cell {
+  --c: var(--cyan);
+  position: relative;
+  background: var(--glass); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.3rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.25s ease; color: var(--ink);
+}
+.kana-row .kana-cell:nth-child(2) { --c: var(--pink); }
+.kana-row .kana-cell:nth-child(3) { --c: var(--cyan); }
+.kana-row .kana-cell:nth-child(4) { --c: var(--yellow); }
+.kana-row .kana-cell:nth-child(5) { --c: var(--purple); }
+.kana-row .kana-cell:nth-child(6) { --c: var(--green); }
+.kana-cell:hover {
+  border-color: var(--c); transform: translateY(-3px);
+  box-shadow: 0 0 0 1px var(--c), 0 0 18px color-mix(in srgb, var(--c) 55%, transparent), 0 0 42px color-mix(in srgb, var(--c) calc(30% * var(--glow-strength)), transparent);
+}
+.kana-cell:hover .kana-char { animation: neon-buzz 0.4s steps(2, end) 1; text-shadow: 0 0 6px #fff, 0 0 14px var(--c), 0 0 30px var(--c); color: #fff; }
+.kana-cell:active { transform: translateY(0) scale(0.96); }
+.kana-cell.empty { background: transparent; border: none; box-shadow: none; }
+.kana-char {
+  font-size: 1.6rem; font-weight: 400; font-family: var(--font-display); line-height: 1.2;
+  color: var(--c);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--c) calc(60% * var(--glow-strength)), transparent);
+  transition: color 0.15s ease, text-shadow 0.2s ease;
+}
+.kana-romaji { font-size: 0.7rem; color: var(--ink-soft); letter-spacing: 0.08em; text-transform: uppercase; }
+:root[data-theme="light"] .kana-cell:hover .kana-char { color: var(--c); text-shadow: 0 0 10px color-mix(in srgb, var(--c) 40%, transparent); }
+
+/* On narrow screens the fixed 3.2rem label column eats into the 5 kana
+   cells' share of a much narrower row, squeezing them lopsided. Give the
+   label its own full-width row above instead — same grid, just re-flowed:
+   5 equal columns, and the label spans all of them so the cells wrap to
+   the row below on their own without any markup change. */
+@media (max-width: 600px) {
+  .kana-row { grid-template-columns: repeat(5, 1fr); row-gap: 0.3rem; }
+  .kana-row-label { grid-column: 1 / -1; justify-content: flex-start; padding-left: 0.15rem; }
+}
+
+/* ---------- Kanji grid ---------- */
+.kanji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+.kanji-card {
+  display: flex; flex-direction: column;
+  background: var(--paper-raised); border-radius: var(--radius); padding: 1.1rem; box-shadow: var(--shadow-sm);
+  text-align: center; border: 1px solid var(--line); transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.kanji-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.kanji-char {
+  font-size: 3rem; font-weight: 400; cursor: pointer; font-family: var(--font-display); line-height: 1.15;
+  color: var(--ink); transition: transform 0.15s ease, color 0.2s ease, text-shadow 0.25s ease;
+}
+.kanji-card:hover .kanji-char { color: var(--yellow); text-shadow: 0 0 10px var(--yellow), 0 0 28px rgba(255, 228, 92, calc(0.5 * var(--glow-strength))); }
+.kanji-card:hover { border-color: rgba(255, 228, 92, 0.5); }
+.kanji-char:hover { transform: scale(1.08); }
+.kanji-readings { font-size: 0.85rem; text-align: left; margin-top: 0.7rem; line-height: 1.6; color: var(--ink); }
+/* A handful of kanji have long onyomi/kunyomi/meaning lists (many
+   readings, or several distinct senses joined by '、'). Without a cap,
+   one such card silently drags every other card in its grid row up to
+   match its height (grid rows share height), leaving the shorter cards'
+   now-bottom-pinned mark buttons stranded under a large empty gap. */
+.kanji-readings-clamp {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.muted { color: var(--muted-2); }
+
+.kanji-mark {
+  display: inline-flex;
+  /* Cards in the same grid row are already stretched to equal height (CSS
+     Grid's default align-items: stretch), but readings text of varying
+     length still pushed this button row to a different height per card.
+     margin-top: auto (this is now a flex column) pins it to the bottom of
+     every card uniformly instead. */
+  margin-top: auto;
+  align-self: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.kanji-mark-btn {
+  width: 40px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--muted-2);
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.kanji-mark-btn:active { transform: scale(0.92); }
+.kanji-mark-btn.bad { border-right: 1px solid var(--line); }
+.kanji-mark-btn.bad:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.kanji-mark-btn.bad.is-active { background: var(--accent); color: #fff; }
+.kanji-mark-btn.good:hover { background: var(--accent-2-soft); color: var(--accent-2); }
+.kanji-mark-btn.good.is-active { background: var(--accent-2); color: #fff; }
+
+/* ---------- Search box (generic, used by Grammar/Kanji) ---------- */
+.search-box {
+  display: flex; align-items: center; gap: 0.5rem; flex: 1 1 240px; max-width: 360px;
+  border: 1px solid var(--line); background: var(--paper-raised); border-radius: 999px;
+  padding: 0.5rem 0.9rem; color: var(--muted-2);
+}
+.search-box:focus-within { border-color: var(--accent); color: var(--ink-soft); }
+.search-box input {
+  border: none; background: none; outline: none; flex: 1; font: inherit; color: var(--ink); min-width: 0;
+}
+.search-box input::placeholder { color: var(--muted-2); }
+.search-clear {
+  border: none; background: none; color: var(--muted-2); cursor: pointer; display: inline-flex;
+  padding: 2px; border-radius: 999px; transition: color 0.15s ease, background 0.15s ease;
+}
+.search-clear:hover { color: var(--accent-dark); background: var(--accent-soft); }
+.search-box-large { max-width: 480px; padding: 0.7rem 1.1rem; margin-bottom: 1.4rem; font-size: 1.05rem; }
+
+/* ---------- Search results ---------- */
+.search-results { display: flex; flex-direction: column; gap: 1.6rem; }
+.search-results h2 { margin-bottom: 0.6rem; }
+.search-result-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.search-result-item {
+  display: flex; align-items: baseline; gap: 0.7rem; padding: 0.65rem 0.9rem;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px;
+  text-decoration: none; color: var(--ink); transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.search-result-item:hover { border-color: var(--accent); transform: translateX(2px); }
+.search-result-level {
+  flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: var(--accent-dark);
+  background: var(--accent-soft); border-radius: 6px; padding: 0.1rem 0.4rem;
+}
+.search-result-main { font-weight: 400; font-family: var(--font-display); font-size: 1.1rem; flex-shrink: 0; }
+.search-result-reading { color: var(--ink-soft); font-size: 0.85rem; flex-shrink: 0; }
+.search-result-sub { color: var(--ink-soft); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Nav search (live dropdown, replaces the old /search page) ---------- */
+.nav-search { position: relative; }
+/* Fixed width, not an expand-on-focus animation — the box already does
+   its one job (opening the results panel) once you start typing, so
+   widening it too had nothing to justify itself with. */
+.nav-search-desktop { width: 170px; }
+.nav-search-desktop .search-box { max-width: none; padding: 0.4rem 0.8rem; }
+.nav-search-panel {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+  width: 380px; max-width: min(90vw, 420px); max-height: 70vh; overflow-y: auto;
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 0.9rem;
+}
+.nav-search-results { display: flex; flex-direction: column; gap: 1rem; }
+.nav-search-results h3 {
+  font-size: 0.72rem; font-weight: 800; color: var(--muted-2); text-transform: uppercase;
+  letter-spacing: 0.05em; margin-bottom: 0.4rem;
+}
+.nav-search-panel .search-result-list { gap: 0.35rem; }
+.nav-search-panel .empty-state { padding: 1rem 0; }
+.sk-search-result { align-items: center; }
+/* Drawer copy renders inline (no popover chrome, it's already inside a
+   scrollable panel) and takes the drawer's full width. */
+.nav-search-drawer { padding: 0.8rem 1.1rem; }
+.nav-search-drawer .nav-search-panel {
+  position: static; width: 100%; max-width: none; box-shadow: none; margin-top: 0.6rem;
+}
+/* .nav-search-desktop's own hide rule now lives with the rest of the
+   navbar->hamburger collapse (see the 1320px block near .navbar-toggle) —
+   they have to switch together or there's a width range where neither the
+   full bar nor the drawer has search in it. */
+
+/* ---------- Grammar ---------- */
+.grammar-list { display: flex; flex-direction: column; gap: 1.1rem; }
+.grammar-card {
+  background: var(--paper-raised); border-radius: var(--radius); padding: 1.3rem 1.4rem; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line); transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.grammar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.grammar-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.grammar-pattern { font-size: 1.4rem; font-weight: 400; color: var(--purple); font-family: var(--font-display); text-shadow: 0 0 12px color-mix(in srgb, var(--purple) calc(55% * var(--glow-strength)), transparent); }
+.grammar-card { background: var(--glass); }
+.grammar-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple), 0 0 24px color-mix(in srgb, var(--purple) 30%, transparent); }
+.grammar-meaning { font-weight: 700; margin-top: 0.2rem; color: var(--ink); }
+.grammar-formation {
+  display: inline-block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-2);
+  background: var(--accent-2-soft); border-radius: 8px; padding: 0.3rem 0.6rem; font-weight: 600;
+}
+.grammar-formation-label { font-weight: 800; }
+.grammar-explanation { color: var(--ink-soft); line-height: 1.6; margin-top: 0.6rem; }
+
+.tiny-btn { border: none; background: none; font-size: 1rem; cursor: pointer; transition: transform 0.15s ease; color: var(--ink); }
+.tiny-btn:hover { transform: scale(1.2); }
+
+/* ---------- Quiz ---------- */
+.quiz-runner { display: flex; flex-direction: column; gap: 1.2rem; }
+.quiz-question { background: var(--paper-raised); border-radius: var(--radius); padding: 1.3rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.quiz-question-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+.q-index { font-weight: 900; color: var(--accent); font-family: var(--font-heading); }
+.q-prompt { font-weight: 700; color: var(--ink); }
+.quiz-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; }
+.quiz-option {
+  border: 1px solid var(--line-strong); background: var(--cream-3); color: var(--ink); padding: 0.65rem 0.9rem; border-radius: 8px; text-align: left;
+  font-weight: 600; transition: all 0.18s ease;
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); transform: translateY(-1px); }
+.quiz-option.selected { border-color: var(--cyan); background: var(--cyan-soft); color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 0 14px var(--cyan-soft); }
+/* Right/wrong light up like the sign flipping to 正解 / 不正解. */
+.quiz-option.correct { border-color: var(--accent-2); background: var(--accent-2-soft); color: var(--accent-2); font-weight: 800; box-shadow: 0 0 0 1px var(--accent-2), 0 0 18px var(--accent-2-soft), 0 0 34px color-mix(in srgb, var(--accent-2) calc(30% * var(--glow-strength)), transparent); animation: neon-buzz 0.45s steps(2, end) 1; }
+.quiz-option.wrong { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); box-shadow: 0 0 0 1px var(--accent), 0 0 18px var(--accent-soft); }
+.quiz-explanation { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); background: var(--cream-4); padding: 0.6rem 0.8rem; border-radius: 8px; }
+.quiz-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+/* Primary action: a pink neon tube — solid fill with its own glow. */
+.submit-btn {
+  align-self: flex-start; background: var(--accent); color: #fff; border: none;
+  padding: 0.75rem 1.6rem; border-radius: 8px; font-weight: 800; letter-spacing: 0.04em;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent), 0 0 34px color-mix(in srgb, var(--accent) calc(35% * var(--glow-strength)), transparent);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.15s ease;
+}
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 75%, transparent), 0 0 48px color-mix(in srgb, var(--accent) calc(50% * var(--glow-strength)), transparent); }
+.submit-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.submit-btn:disabled { background: var(--disabled-bg); color: var(--muted-2); cursor: not-allowed; box-shadow: none; }
+.login-submit-btn { align-self: stretch; width: 100%; background: var(--accent); }
+.quiz-result { font-size: 1.3rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); }
+
+.timer-bar { font-weight: 700; margin-bottom: 1rem; }
+.time-up { color: var(--accent); }
+
+/* ---------- Speaking ---------- */
+.speaking-card { background: var(--paper-raised); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.speaking-target { font-size: 1.6rem; font-weight: 400; font-family: var(--font-display); color: var(--ink); text-shadow: 0 0 14px color-mix(in srgb, var(--orange) calc(50% * var(--glow-strength)), transparent); }
+.speaking-card { background: var(--glass); border-left: 3px solid var(--orange); }
+.speaking-reading, .speaking-zh { color: var(--ink-soft); margin-top: 0.25rem; }
+.speaking-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+.speaking-controls button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 600; transition: all 0.15s ease; }
+.speaking-controls button:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-1px); }
+.voice-visualizer {
+  position: relative;
+  margin-top: 1.1rem;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--cream-3);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.voice-visualizer canvas { width: 100%; height: 100%; display: block; }
+.voice-visualizer-placeholder { position: absolute; font-size: 0.82rem; color: var(--muted-2); pointer-events: none; }
+.voice-visualizer.is-live { border-color: var(--accent); background: var(--accent-soft); }
+
+.accuracy-note {
+  align-items: flex-start;
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  background: var(--cream-4);
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  line-height: 1.55;
+}
+.accuracy-note svg { margin-top: 0.15rem; color: var(--gold); }
+
+.speaking-result { margin-top: 1.1rem; }
+.score-badge { display: inline-block; margin-top: 0.4rem; padding: 0.35rem 0.9rem; border-radius: 999px; font-weight: 700; }
+.score-badge.good { background: var(--accent-2-soft); color: var(--accent-2); }
+.score-badge.mid { background: var(--warn-bg); color: var(--warn-text); }
+.score-badge.bad { background: var(--accent-soft); color: var(--accent-dark); }
+.warning { color: var(--warn-text); background: var(--warn-bg); padding: 0.7rem 1rem; border-radius: 10px; }
+
+/* ---------- Tables ---------- */
+.speaking-history table, .page table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: var(--paper-raised); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--line); color: var(--ink); }
+.page table th, .page table td { text-align: left; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+.page table th { background: var(--cream-4); font-weight: 700; }
+.page table tr:last-child td { border-bottom: none; }
+
+/* ---------- Icons (lucide-react, open source MIT) ---------- */
+.icon-btn, .icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.icon-btn svg, .icon-row svg { flex-shrink: 0; }
+.game-best-score { display: flex; margin: 0 0 1rem; color: var(--ink-soft); font-weight: 600; }
+.tiny-btn.icon-btn { gap: 0.3rem; }
+svg.pulse { animation: pulse-ring 1s ease-in-out infinite; color: var(--accent); }
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.75; }
+}
+
+/* ---------- Game hub ---------- */
+.back-link {
+  display: inline-flex; align-items: center; gap: 0.3rem; color: var(--ink-soft); text-decoration: none;
+  font-size: 0.88rem; font-weight: 600; margin-bottom: 0.6rem;
+}
+.back-link:hover { color: var(--accent-dark); }
+
+.game-hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-top: 1.5rem; }
+.game-card {
+  display: block; background: var(--paper-raised); border-radius: 18px; padding: 1.6rem;
+  text-decoration: none; color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.game-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+.game-card-icon {
+  width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--accent); color: var(--accent); margin-bottom: 0.9rem;
+  box-shadow: 0 0 12px var(--accent-soft);
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.game-card:hover .game-card-icon { background: var(--accent); color: #fff; box-shadow: 0 0 16px var(--accent), 0 0 36px var(--accent-soft); transform: rotate(-6deg) scale(1.06); }
+.game-card { background: var(--glass); }
+.game-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 30px var(--accent-soft), var(--shadow-lg); }
+.game-card-title { font-size: 1.15rem; font-weight: 800; font-family: var(--font-heading); margin-bottom: 0.4rem; }
+.game-card-desc { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin: 0; }
+
+.game-stat-row {
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem;
+  font-weight: 700; color: var(--ink);
+}
+.game-win-banner {
+  margin-top: 1.2rem; padding: 1rem 1.3rem; border-radius: 14px; background: var(--accent-2-soft);
+  color: var(--accent-2); font-weight: 700; font-size: 1.05rem;
+}
+
+/* ---------- Memory match ---------- */
+.memory-grid { display: grid; gap: 0.8rem; max-width: 640px; }
+.memory-card {
+  aspect-ratio: 1; border: none; background: none; padding: 0; cursor: pointer; perspective: 900px;
+}
+.memory-card-inner {
+  position: relative; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.memory-card.is-flipped .memory-card-inner { transform: rotateY(180deg); }
+.memory-card-face {
+  position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 0.4rem; font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line);
+}
+.memory-card-back {
+  background: var(--cream-4); color: var(--accent); font-size: 1.5rem; font-family: var(--font-display);
+  border-color: var(--accent); box-shadow: 0 0 10px var(--accent-soft), inset 0 0 18px var(--accent-soft);
+  text-shadow: 0 0 10px var(--accent);
+}
+.memory-card-front { background: var(--glass); color: var(--ink); transform: rotateY(180deg); font-family: var(--font-display); border-color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); }
+.memory-card.is-matched .memory-card-front { background: var(--accent-2-soft); border-color: var(--accent-2); color: var(--accent-2); }
+
+/* ---------- Blitz challenge ---------- */
+.blitz-arena { transition: background 0.15s ease; border-radius: 16px; }
+.blitz-arena.flash-good { background: var(--accent-2-soft); }
+.blitz-arena.flash-bad { background: var(--accent-soft); }
+.blitz-question { background: var(--paper-raised); border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.blitz-question .q-prompt { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+.life-full { color: var(--accent); fill: var(--accent); }
+.life-empty { color: var(--line); }
+
+/* ---------- Falling words ---------- */
+.falling-game { display: flex; flex-direction: column; gap: 1rem; }
+.falling-track {
+  position: relative; height: 220px; border-radius: var(--radius); background: var(--cream-3);
+  border: 1px solid var(--line-strong); overflow: hidden; transition: background 0.15s ease;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
+}
+.falling-track.flash-good { background: var(--accent-2-soft); }
+.falling-track.flash-bad { background: var(--accent-soft); }
+.falling-item {
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  font-size: 1.7rem; font-weight: 400; color: var(--yellow);
+  text-shadow: 0 0 8px var(--yellow), 0 0 22px rgba(255, 228, 92, 0.5);
+  font-family: var(--font-display);
+  animation-name: fall-down; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes fall-down {
+  from { top: 0%; }
+  to { top: 92%; }
+}
+.falling-options { max-width: 480px; }
+
+/* ---------- Writing practice ---------- */
+.writing-practice { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; align-items: start; }
+.writing-picker {
+  display: flex; flex-direction: column; gap: 0.55rem;
+  max-height: 560px; overflow-y: auto; padding-right: 0.3rem;
+}
+.writing-picker-row-label { font-size: 0.72rem; color: var(--ink-soft); font-weight: 700; padding-left: 0.15rem; margin-bottom: 0.25rem; }
+.writing-picker-cells { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.35rem; }
+.writing-picker-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 8px; padding: 0.4rem 0;
+  font-size: 1rem; font-weight: 700; font-family: var(--font-heading);
+  transition: all 0.15s ease;
+}
+.writing-picker-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+.writing-picker-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.writing-picker-btn.active .writing-picker-romaji { color: rgba(255,255,255,0.85); }
+/* や行/わ行/ん keep their empty slots instead of compacting — same
+   positions as the kana chart, just invisible rather than a hollow box. */
+.writing-picker-btn.empty { visibility: hidden; border: none; background: none; }
+.writing-picker-char { font-size: 1rem; }
+.writing-picker-romaji { font-size: 0.65rem; font-weight: 600; color: var(--ink-soft); }
+
+.writing-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 0; width: 100%; user-select: none; -webkit-user-select: none; }
+.writing-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.writing-romaji {
+  font-weight: 700; color: var(--accent-dark); letter-spacing: 0.05em; text-transform: uppercase;
+  background: var(--accent-soft); border-radius: 999px; padding: 0.3rem 0.9rem; font-size: 0.95rem;
+}
+
+.writing-canvas-wrap { display: flex; align-items: center; gap: 0.6rem; width: 100%; user-select: none; -webkit-user-select: none; }
+.writing-canvas {
+  flex: 1 1 auto; min-width: 0; max-width: 420px; aspect-ratio: 1 / 1; height: auto;
+  background: var(--paper-raised); border-radius: 16px;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--line); touch-action: none; cursor: crosshair;
+  /* touch-action:none stops scroll/zoom gestures but not text selection —
+     a quick short stroke (e.g. the two dakuten strokes on 濁音) landing
+     with an Apple Pencil could still start a native selection drag that
+     highlighted the page underneath the canvas instead of drawing.
+     -webkit-touch-callout also blocks the copy/paste bubble that a
+     stalled pen contact can trigger on iOS Safari. */
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.writing-canvas.locked { cursor: default; border-color: var(--accent-2); }
+.writing-nav {
+  flex: 0 0 auto;
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); border-radius: 999px; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: all 0.15s ease;
+}
+.writing-nav:hover { border-color: var(--accent); color: var(--accent-dark); transform: scale(1.05); }
+
+.writing-controls { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
+.pen-size-label { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+
+@media (max-width: 860px) {
+  .writing-practice { grid-template-columns: 1fr; gap: 1rem; }
+  .writing-stage { order: 1; }
+  .writing-picker { order: 2; max-height: none; overflow-y: visible; }
+}
+
+@media (max-width: 480px) {
+  .writing-nav { width: 34px; height: 34px; flex-basis: 34px; }
+  .writing-toolbar { gap: 0.6rem; }
+}
+
+/* ---------- Kana handwriting quiz ---------- */
+.kana-writequiz { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+
+.writequiz-setup { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1rem; }
+.writequiz-setup-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.writequiz-row-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.writequiz-row-chip {
+  display: flex; align-items: center; gap: 0.4rem; border: 1px solid var(--line); background: var(--paper-raised);
+  color: var(--ink); border-radius: 999px; padding: 0.4rem 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.15s ease;
+}
+.writequiz-row-chip:hover { border-color: var(--accent); color: var(--accent-dark); }
+.writequiz-row-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.writequiz-row-chip input { accent-color: var(--accent); }
+.writequiz-count-row { margin-top: -0.2rem; }
+.writequiz-pool-size { font-size: 0.85rem; }
+.writequiz-setup-footer { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.writequiz-wrongbook { border-top: 1px dashed var(--line); padding-top: 1rem; }
+
+.writequiz-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; user-select: none; -webkit-user-select: none; }
+/* .submit-btn defaults to align-self:flex-start (it usually sits inside its
+   own row of buttons) — the reading quiz's reveal button is a lone direct
+   child of this centered column instead, so it needs the override here. */
+.writequiz-stage > .submit-btn { align-self: center; }
+.writequiz-progress { font-weight: 700; color: var(--ink-soft); }
+.writequiz-romaji { font-size: 2rem; font-weight: 900; color: var(--accent-dark); font-family: var(--font-heading); letter-spacing: 0.06em; }
+.writequiz-romaji.revealed-romaji { font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+.writequiz-row-hint { font-size: 0.8rem; color: var(--ink-soft); margin-top: -0.6rem; }
+.writequiz-play-btn { font-size: 1rem; padding: 0.6rem 1.2rem; }
+.writequiz-suggestion {
+  font-size: 0.85rem; font-weight: 600; padding: 0.5rem 0.9rem; border-radius: 8px; max-width: 420px; text-align: center;
+}
+.writequiz-suggestion.suggest-correct { background: var(--accent-2-soft); color: var(--accent-2); }
+.writequiz-suggestion.suggest-wrong { background: var(--accent-soft); color: var(--accent-dark); }
+.writequiz-grade-actions { display: flex; align-items: center; gap: 1rem; }
+.writequiz-correct { border-color: var(--accent-2); color: var(--accent-2); }
+.writequiz-correct:hover { border-color: var(--accent-2); color: var(--accent-2); }
+.writequiz-wrong { border-color: var(--accent); color: var(--accent-dark); }
+/* Spins the icon swapped into the grade button while the final answer's
+   submit is in flight — the buttons were already disabled during that
+   request, but with no visual change at all it read as the app having
+   hung rather than just being mid-save. */
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.writequiz-done { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.writequiz-review-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; max-width: 720px; }
+.writequiz-review-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.5rem;
+  border: 2px solid var(--line); border-radius: 10px; background: var(--paper-raised);
+}
+.writequiz-review-item.correct { border-color: var(--accent-2); }
+.writequiz-review-item.wrong { border-color: var(--accent); }
+.writequiz-review-meta { display: flex; align-items: baseline; gap: 0.4rem; }
+.writequiz-review-char { font-weight: 900; font-family: var(--font-heading); }
+.writequiz-review-romaji { font-size: 0.8rem; color: var(--ink-soft); }
+
+.stroke-thumbnail { display: block; border-radius: 6px; }
+.stroke-thumbnail-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+.stroke-thumbnail-ink { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Kana reading-recall quiz ---------- */
+/* Shown the kana, say its reading out loud, then reveal — the opposite
+   direction of the handwriting quiz above, so it reuses most of its
+   .writequiz-* classes (progress line, romaji display, grade buttons,
+   done screen) but swaps the drawing canvas for a plain big-character
+   display, since there's nothing to draw here. */
+.readquiz-char-display {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 380px; aspect-ratio: 1 / 1;
+  background: var(--glass); border: 2px solid var(--cyan); border-radius: var(--radius-lg);
+  box-shadow: 0 0 14px var(--cyan-soft), 0 0 40px var(--cyan-soft), var(--shadow-lg); font-size: 7.5rem; font-weight: 400;
+  font-family: var(--font-display); color: var(--ink);
+  text-shadow: 0 0 12px var(--cyan), 0 0 36px rgba(34, 230, 255, 0.4);
+}
+.readquiz-review-char { font-size: 1.8rem; }
+
+/* The quiz canvas has no side elements (unlike writing-practice's prev/next
+   nav buttons) squeezing its width down, so on a narrow phone it renders
+   almost edge-to-edge — a `touch-action: none` block that big leaves barely
+   any margin to swipe-scroll past without accidentally starting a stroke. */
+@media (max-width: 480px) {
+  .writequiz-stage .writing-canvas { max-width: 260px; }
+}
+
+/* ---------- 404 ---------- */
+.notfound-page { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+.notfound-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; max-width: 420px; }
+.notfound-icon { color: var(--accent); opacity: 0.85; margin-bottom: 0.4rem; }
+.notfound-code {
+  font-size: 4.5rem; font-weight: 900; font-family: var(--font-heading); color: var(--accent); line-height: 1;
+}
+.notfound-card h1 { margin: 0.2rem 0 0; }
+.notfound-home-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.8rem;
+  background: var(--accent); color: #fff; border: none; padding: 0.75rem 1.6rem;
+  border-radius: 10px; font-weight: 700; text-decoration: none; box-shadow: var(--shadow-md);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.notfound-home-btn:hover { transform: translateY(-2px); background: var(--accent-dark); }
+
+/* ---------- Power-on for page content ---------- */
+/* A page switches on like a neon sign: two quick flickers, then steady. */
+.page { animation: power-on 0.55s ease-out; }
+@keyframes power-on {
+  0% { opacity: 0; transform: translateY(8px); }
+  35% { opacity: 0.9; transform: translateY(0); }
+  45% { opacity: 0.35; }
+  55% { opacity: 1; }
+  65% { opacity: 0.7; }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
+}
+
+/* ---------- Skeleton loading (per-page shapes instead of a text spinner) ---------- */
+.skeleton-block {
+  background: linear-gradient(100deg, var(--line) 30%, var(--paper) 45%, var(--line) 60%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+@keyframes skeleton-shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+.skeleton-wrap { pointer-events: none; }
+
+.sk-line { height: 0.95rem; width: 100%; margin: 0.35rem 0; }
+.sk-line.short { width: 45%; }
+.sk-line.wide { width: 85%; height: 1.2rem; }
+.sk-pill { height: 1.6rem; width: 3rem; border-radius: 999px; }
+.sk-pill.wide { height: 2.4rem; width: 110px; border-radius: 999px; }
+
+.quiz-question .sk-pill { flex-shrink: 0; }
+.sk-option { height: 2.6rem; border-radius: 10px; }
+
+.skeleton-flip-card {
+  width: 100%; max-width: 440px; height: 260px; border-radius: 16px; padding: 1.5rem;
+  background: var(--paper-raised); border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; cursor: default;
+}
+.sk-flashcard-main { height: 2.2rem; width: 55%; }
+.sk-flashcard-sub { height: 1rem; width: 35%; }
+
+.sk-kanji-char { height: 2.6rem; width: 2.6rem; margin: 0 auto 0.7rem; border-radius: 10px; }
+
+.sk-stat-value { height: 1.8rem; width: 60%; margin: 0 auto 0.5rem; }
+.stat-card .sk-line { margin: 0 auto; }
+
+.sk-speaking-target { height: 1.6rem; width: 70%; }
+.sk-speaking-sub { height: 0.85rem; width: 50%; margin-top: 0.45rem; }
+.sk-speaking-sub.short { width: 35%; }
+.sk-visualizer { height: 72px; width: 100%; border-radius: 12px; margin-top: 1.1rem; }
+
+.sk-memory-card { aspect-ratio: 1; border-radius: 10px; }
+
+/* ---------- Quiz history detail (Progress page) ---------- */
+/* Higher specificity than ".page table td" is required here, or that rule's
+   padding/border-bottom wins and leaves a padded, bordered "ghost" row
+   between every entry even while collapsed. */
+.page table tr.history-detail-row td { padding: 0; border: none; }
+/* The data row right before the table's final (always :last-child now)
+   detail row is effectively the last visible row — its border-bottom sits
+   right on top of the table's own outer border, reading as a doubled line. */
+.page table tr:has(+ tr.history-detail-row:last-child) td { border-bottom: none; }
+
+/* Below this width the 5-column layout (time/type/level/result/button) has
+   nowhere near enough room per column — cells wrap mid-word (the score
+   "12 / 20" breaking across lines) rather than the table just scrolling,
+   which is worse. Re-flow each data row into a small label/value card
+   stack instead of adding a horizontal scrollbar. */
+@media (max-width: 640px) {
+  .page .history-table thead { display: none; }
+  .page .history-table, .page .history-table tbody, .page .history-table tr, .page .history-table td {
+    display: block; width: 100%;
+  }
+  .page .history-table tbody tr:not(.history-detail-row) {
+    border-bottom: 1px solid var(--line);
+    padding: 0.4rem 0;
+  }
+  .page .history-table tr:not(.history-detail-row) td {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+    padding: 0.3rem 0.9rem; border-bottom: none; font-size: 0.88rem;
+  }
+  .page .history-table tr:not(.history-detail-row) td[data-label]::before {
+    content: attr(data-label); font-weight: 700; color: var(--ink-soft); flex-shrink: 0;
+  }
+  .page .history-table tr:not(.history-detail-row) td:last-child { justify-content: flex-end; }
+  .page .history-table tr:has(+ tr.history-detail-row:last-child) { border-bottom: none; }
+}
+/* Grid-template-rows 0fr/1fr trick: an animatable "auto height" collapse
+   without measuring pixel heights in JS. The row stays mounted so the
+   transition can play instead of the content just popping in/out. */
+.detail-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+.detail-collapse.open { grid-template-rows: 1fr; }
+.detail-collapse-inner { overflow: hidden; min-height: 0; }
+.history-detail {
+  padding: calc(0.2rem + 2px) 0.9rem 1.2rem;
+}
+.history-detail .quiz-question { margin-bottom: 1rem; }
+.history-detail .quiz-question:last-child { margin-bottom: 0; }
+.history-answer-line { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.3rem; display: flex; gap: 1.2rem; flex-wrap: wrap; }
+.history-answer-line strong { color: var(--ink); }
+.history-view-btn { font-size: 0.82rem; padding: 0.3rem 0.7rem; }
+.history-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.history-heading-row h2 { margin: 0; }
+.history-page-size { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+/* Dropdown's default trigger/menu sizing is tuned for the navbar (a much
+   bigger control next to a page heading looked out of proportion here). */
+.history-page-size .dropdown-trigger { padding: 0.3rem 0.6rem; font-size: 0.8rem; gap: 0.3rem; }
+.history-page-size .dropdown-menu { min-width: 90px; }
+.history-page-size .dropdown-option { padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+/* Page-size picker moved up next to the section heading (a row of buttons
+   sitting on its own beneath the table, apart from the prev/next controls,
+   read as orphaned) — this row is now just the prev/page/next group, so
+   centering it is a plain flex center instead of the previous 3-column
+   grid trick. */
+.history-pagination { display: flex; justify-content: center; margin-top: 1rem; }
+.pagination-controls { display: flex; align-items: center; gap: 0.8rem; }
+.pagination-controls button:disabled { opacity: 0.45; cursor: default; }
+.pagination-indicator { font-size: 0.88rem; color: var(--ink-soft); font-weight: 600; }
+.option-tag {
+  display: block; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem; opacity: 0.85;
+}
+
+/* ============================================================
+   TOKYO NIGHT — the street: neon signs, rain, hero, marquee, tiles
+   ============================================================ */
+
+/* Shared neon flicker/buzz. `neon-buzz` is a fast stutter for hover/hits;
+   `neon-flicker` is the long idle cycle a real tube does — mostly steady,
+   with two brief dips — desynced per sign via animation-delay. */
+@keyframes neon-buzz {
+  0% { opacity: 1; } 25% { opacity: 0.55; } 50% { opacity: 1; } 75% { opacity: 0.7; } 100% { opacity: 1; }
+}
+@keyframes neon-flicker {
+  0%, 41%, 44%, 71.5%, 73%, 100% { opacity: 1; }
+  42% { opacity: 0.45; } 43% { opacity: 0.85; }
+  72% { opacity: 0.3; } 72.6% { opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neon-flicker, .navbar::after { animation: none !important; }
+}
+
+/* ---------- Rain / bokeh canvas + cursor light ---------- */
+.neon-rain { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.cursor-light {
+  position: fixed; left: 0; top: 0; width: 520px; height: 520px; margin: -260px 0 0 -260px;
+  border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, rgba(255, 45, 149, 0.16) 0%, rgba(34, 230, 255, 0.08) 35%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0; transition: opacity 0.4s ease;
+  will-change: transform;
+}
+.cursor-light.is-on { opacity: 1; }
+:root[data-theme="light"] .cursor-light { mix-blend-mode: multiply; background: radial-gradient(circle, rgba(224, 24, 122, 0.08) 0%, rgba(10, 165, 194, 0.05) 35%, transparent 65%); }
+@media (hover: none), (prefers-reduced-motion: reduce) { .cursor-light { display: none; } }
+@media print { .neon-rain, .cursor-light { display: none; } }
+
+/* ---------- Neon logo (navbar brand + footer) ---------- */
+.neon-logo {
+  font-family: var(--font-display); font-weight: 400; letter-spacing: 0.1em;
+  color: #fff;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 10px var(--accent),
+    0 0 22px var(--accent),
+    0 0 40px color-mix(in srgb, var(--accent) calc(70% * var(--glow-strength)), transparent);
+}
+:root[data-theme="light"] .neon-logo { color: var(--accent); text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent); }
+.neon-logo-tag {
+  font-family: var(--font-body); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--cyan); text-shadow: 0 0 8px color-mix(in srgb, var(--cyan) calc(70% * var(--glow-strength)), transparent);
+  padding-left: 0.2rem; margin-top: 0.15rem;
+}
+.neon-logo-wrap { display: flex; flex-direction: column; line-height: 1.05; }
+
+/* ---------- Hero: the street at night ---------- */
+.night-hero {
+  position: relative;
+  min-height: min(78vh, 720px);
+  display: flex; align-items: center; justify-content: center;
+  margin: -2.2rem -1.75rem 1.5rem;
+  padding: 3.5rem 1.75rem 3rem;
+  overflow: hidden;
+  /* Vignette so the signs at the edges fade into the dark. */
+  box-shadow: inset 0 -80px 120px -60px var(--paper);
+}
+/* Wet asphalt: a horizon line of light with a soft reflection under it. */
+.night-hero::after {
+  content: "";
+  position: absolute; left: 8%; right: 8%; bottom: 2.2rem; height: 1px;
+  background: var(--cyan);
+  opacity: 0.55;
+  box-shadow: 0 0 10px var(--cyan), 0 0 30px var(--cyan), 0 14px 60px 20px color-mix(in srgb, var(--cyan) 18%, transparent);
+  pointer-events: none;
+}
+:root[data-theme="light"] .night-hero::after { opacity: 0.35; }
+
+.hero-signs { position: absolute; inset: 0; pointer-events: none; }
+
+/* A hanging vertical sign. Each is a real link to its section. --depth
+   scales how far it drifts with the pointer (parallax), --c is its tube
+   color. The frame, the text and the glow all come from the one color. */
+.neon-sign {
+  --c: var(--pink);
+  --depth: 1;
+  position: absolute;
+  pointer-events: auto;
+  writing-mode: vertical-rl; text-orientation: upright;
+  font-family: var(--font-display); font-size: clamp(1.15rem, 2.2vw, 1.7rem); letter-spacing: 0.16em;
+  color: #fff; text-decoration: none;
+  padding: 0.85rem 0.55rem;
+  border: 2px solid var(--c); border-radius: 8px;
+  background: rgba(7, 7, 15, 0.55);
+  text-shadow: 0 0 4px #fff, 0 0 12px var(--c), 0 0 26px var(--c);
+  box-shadow: 0 0 6px var(--c), 0 0 18px color-mix(in srgb, var(--c) 60%, transparent), 0 0 44px color-mix(in srgb, var(--c) calc(35% * var(--glow-strength)), transparent), inset 0 0 14px color-mix(in srgb, var(--c) 18%, transparent);
+  transform: translate(calc(var(--mx, 0) * var(--depth) * 26px), calc(var(--my, 0) * var(--depth) * 18px));
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, scale 0.25s ease;
+  animation: neon-flicker 9s linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+/* The little chain/bracket it hangs from. */
+.neon-sign::before {
+  content: "";
+  position: absolute; left: 50%; top: -22px; width: 2px; height: 22px;
+  background: var(--line-strong);
+  transform: translateX(-50%);
+}
+.neon-sign:hover {
+  scale: 1.06;
+  animation: neon-buzz 0.35s steps(2, end) 1;
+  box-shadow: 0 0 10px var(--c), 0 0 26px var(--c), 0 0 70px color-mix(in srgb, var(--c) 60%, transparent), inset 0 0 20px color-mix(in srgb, var(--c) 30%, transparent);
+}
+.neon-sign .sign-sub {
+  writing-mode: horizontal-tb; text-orientation: mixed;
+  display: block; margin-top: 0.5rem;
+  font-family: var(--font-body); font-size: 0.55rem; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--c); text-shadow: 0 0 8px var(--c);
+  opacity: 0.9;
+}
+:root[data-theme="light"] .neon-sign { color: var(--c); background: #fff; text-shadow: none; box-shadow: 0 0 0 1px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 25%, transparent); }
+:root[data-theme="light"] .neon-sign .sign-sub { text-shadow: none; }
+
+.neon-pink { --c: var(--pink); }
+.neon-cyan { --c: var(--cyan); }
+.neon-yellow { --c: var(--yellow); }
+.neon-orange { --c: var(--orange); }
+.neon-green { --c: var(--green); }
+.neon-purple { --c: var(--purple); }
+
+.hero-center { position: relative; z-index: 2; text-align: center; max-width: 720px; }
+/* Between phone and wide desktop the side columns of signs and the centered
+   title compete for the same width — narrow the title block so the signs
+   keep their own lane. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .hero-center { max-width: 520px; }
+  .neon-title { font-size: clamp(2.6rem, 7.5vw, 5rem); }
+  .neon-sign { font-size: clamp(1rem, 1.7vw, 1.3rem); }
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-size: 0.72rem; font-weight: 900; letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 1.2rem;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--cyan) calc(70% * var(--glow-strength)), transparent);
+}
+.hero-eyebrow::before, .hero-eyebrow::after { content: ""; width: 34px; height: 1px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+/* The headline: brand name as two neon tubes, lit in sequence on load. */
+.neon-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(3rem, 10vw, 7.2rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  margin: 0 0 1rem;
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 0 0.1em;
+}
+.neon-title .tube {
+  --c: var(--pink);
+  color: #fff;
+  text-shadow: 0 0 4px #fff, 0 0 12px var(--c), 0 0 30px var(--c), 0 0 70px color-mix(in srgb, var(--c) calc(80% * var(--glow-strength)), transparent);
+  animation: tube-on 1.4s steps(1, end) both, neon-flicker 11s linear 4s infinite;
+}
+.neon-title .tube-2 { --c: var(--cyan); animation-delay: 0.55s, 4.55s; }
+@keyframes tube-on {
+  0% { opacity: 0; } 18% { opacity: 0.4; } 26% { opacity: 0; } 40% { opacity: 0.85; } 48% { opacity: 0.2; } 58% { opacity: 1; } 66% { opacity: 0.6; } 74%, 100% { opacity: 1; }
+}
+:root[data-theme="light"] .neon-title .tube { color: var(--c); text-shadow: 0 0 14px color-mix(in srgb, var(--c) 30%, transparent); }
+.hero-welcome { font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 900; color: var(--ink); margin: 0 0 0.5rem; }
+.hero-subtitle { color: var(--ink-soft); font-size: 1.02rem; line-height: 1.7; margin: 0 auto 1.6rem; max-width: 36em; }
+.hero-actions { display: flex; align-items: center; justify-content: center; gap: 0.8rem; flex-wrap: wrap; }
+
+/* Neon-outline buttons that fill and blaze on hover. */
+.btn-neon {
+  --c: var(--pink);
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.8rem 1.6rem; border-radius: 8px; font-weight: 900; letter-spacing: 0.06em;
+  text-decoration: none; font-size: 0.98rem;
+  color: var(--c); border: 2px solid var(--c); background: transparent;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--c) calc(70% * var(--glow-strength)), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--c) 45%, transparent), inset 0 0 12px color-mix(in srgb, var(--c) 12%, transparent);
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-neon:hover { background: var(--c); color: #07070f; text-shadow: none; transform: translateY(-2px); box-shadow: 0 0 16px var(--c), 0 0 46px color-mix(in srgb, var(--c) 60%, transparent); }
+.btn-neon:active { transform: translateY(0) scale(0.98); }
+.btn-neon svg { transition: transform 0.2s ease; }
+.btn-neon:hover svg { transform: translateX(3px); }
+:root[data-theme="light"] .btn-neon:hover { color: #fff; }
+
+@media (max-width: 760px) {
+  .night-hero { min-height: 0; margin: -2.2rem -1.75rem 1rem; padding: 2.4rem 1rem 2.6rem; }
+  /* No room to hang signs around the title on a phone — they line up as a
+     row of small signs under it instead (still real links). */
+  .hero-signs { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.6rem; order: 2; }
+  .night-hero { flex-direction: column; }
+  .neon-sign { position: static; writing-mode: horizontal-tb; font-size: 0.95rem; padding: 0.5rem 0.8rem; transform: none !important; }
+  .neon-sign::before { display: none; }
+  .neon-sign .sign-sub { display: none; }
+  .neon-title { font-size: clamp(2.6rem, 14vw, 4rem); }
+}
+
+/* ---------- Marquee: station display strip ---------- */
+.marquee {
+  position: relative; overflow: hidden;
+  margin: 0 -1.75rem 2rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  background: var(--cream-3);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex; gap: 2.4rem; width: max-content;
+  animation: marquee-scroll 42s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-item {
+  display: inline-flex; align-items: center; gap: 2.4rem;
+  font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.14em; white-space: nowrap;
+  color: var(--ink-soft);
+}
+.marquee-item .lit { color: var(--c, var(--cyan)); text-shadow: 0 0 10px color-mix(in srgb, var(--c, var(--cyan)) calc(70% * var(--glow-strength)), transparent); }
+.marquee-item .dot { color: var(--muted-2); font-size: 0.6rem; }
+@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+/* ---------- District tiles (quick start) ---------- */
+.section-title { margin: 2rem 0 1rem; font-size: 1.3rem; }
+.district-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.9rem;
+}
+.district {
+  --c: var(--cyan);
+  position: relative;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 0.3rem;
+  min-height: 132px;
+  padding: 1rem 1.1rem 0.95rem;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid var(--line); border-left: 3px solid var(--c);
+  border-radius: var(--radius);
+  text-decoration: none; color: var(--ink);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+/* The kanji sign inside each tile: dim until the tile is hovered, then it
+   switches on in its color. */
+.district::before {
+  content: attr(data-kanji);
+  position: absolute; right: -0.05em; top: -0.28em;
+  font-family: var(--font-display); font-size: 5.8rem; line-height: 1;
+  color: var(--c); opacity: 0.12;
+  transition: opacity 0.25s ease, text-shadow 0.3s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.district:hover { transform: translateY(-4px); border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 24px color-mix(in srgb, var(--c) 45%, transparent), 0 0 60px color-mix(in srgb, var(--c) calc(25% * var(--glow-strength)), transparent), var(--shadow-lg); }
+.district:hover::before { opacity: 0.95; text-shadow: 0 0 10px var(--c), 0 0 30px var(--c); transform: translate(-4px, 4px) scale(1.05); animation: neon-buzz 0.4s steps(2, end) 1; }
+:root[data-theme="light"] .district:hover::before { opacity: 0.35; text-shadow: none; }
+.district-label { position: relative; font-weight: 900; font-size: 1.02rem; letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 0.45rem; }
+.district-label svg { color: var(--c); flex-shrink: 0; }
+.district-sub { position: relative; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase; color: var(--c); opacity: 0.85; }
+.district-arrow { position: absolute; right: 0.9rem; bottom: 0.95rem; color: var(--c); opacity: 0; transform: translateX(-6px); transition: opacity 0.2s ease, transform 0.25s ease; }
+.district:hover .district-arrow { opacity: 1; transform: translateX(0); }
+
+/* ---------- Scroll-stagger reveal (useStaggerReveal) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease var(--reveal-delay, 0ms), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+}
+.reveal.is-revealed { opacity: 1; transform: none; }
+/* .district's own hover transform must win once revealed. */
+.district.reveal.is-revealed:hover { transform: translateY(-4px); }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding: 1.4rem 1.75rem 1.6rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  background: var(--glass);
+}
+.site-footer-inner {
+  max-width: 980px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.site-footer .neon-logo { font-size: 0.95rem; }
+.site-footer-meta { font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase; font-size: 0.66rem; }
+
+/* ---------- Print ---------- */
+@media print {
+  .navbar, .no-print { display: none !important; }
+  .page { max-width: 100%; padding: 0; }
+  .quiz-question { break-inside: avoid; }
+  body { background: #fff; color: #000; }
+}

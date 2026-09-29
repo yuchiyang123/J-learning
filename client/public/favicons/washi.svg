@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#f4efe4"/>
+  <g transform="rotate(-4 32 32)">
+    <rect x="9" y="9" width="46" height="46" rx="5" fill="#b7282e"/>
+    <rect x="14" y="14" width="36" height="36" rx="2.5" fill="none" stroke="#f4efe4" stroke-width="1.6" opacity="0.75"/>
+    <text x="32" y="44" font-family="'Shippori Mincho','Noto Serif JP','Noto Serif TC',serif" font-size="30" font-weight="700" fill="#f4efe4" text-anchor="middle">学</text>
+  </g>
+</svg>

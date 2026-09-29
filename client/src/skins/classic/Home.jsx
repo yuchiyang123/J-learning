@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Type, BookOpen, PenTool, BookText, Headphones, Mic, ListChecks, Target, BarChart3, Gamepad2, MailCheck, X } from 'lucide-react';
-import { api } from '../api.js';
-import { useLocale } from '../i18n/LocaleContext.jsx';
-import JlptCountdown from '../components/JlptCountdown.jsx';
-import { StatGridSkeleton } from '../components/Skeleton.jsx';
+import { api } from '../../api.js';
+import { useLocale } from '../../i18n/LocaleContext.jsx';
+import JlptCountdown from '../../components/JlptCountdown.jsx';
+import { StatGridSkeleton } from '../../components/Skeleton.jsx';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
