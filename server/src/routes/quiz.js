@@ -3,7 +3,7 @@ import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { translate } from '../locale.js';
 import { optionalAuth, requireAuth } from '../auth.js';
-import { applyReview, practiceUpdatesSrs } from '../srs.js';
+import { applyReview, practiceUpdatesSrs, logResponse, normalizeResponseMs } from '../srs.js';
 
 const router = Router();
 
@@ -348,7 +348,8 @@ const clip = (v, n) => String(v ?? '').slice(0, n);
 const MAX_PRACTICE_ITEMS = 100;
 
 // POST /api/quiz/vocab-practice/submit
-//   { mode, prompt, level, items: [{ wordKey: 'word:12', prompt, answer, given, isCorrect, strokesList? }] }
+//   { mode, prompt, level, items: [{ wordKey: 'word:12', prompt, answer, given, isCorrect, responseMs?, strokesList? }] }
+// responseMs: time from the question appearing to the answer being submitted.
 // `prompt` is what the questions showed: 'kanji' | 'meaning' | 'audio'
 // ('reading' for kanji writing). Every run goes to quiz_results/history;
 // only recognition runs (see practiceUpdatesSrs) also move each word's SRS
@@ -375,6 +376,7 @@ router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
       selected: clip(item.given, 100),
       correctAnswer: clip(item.answer, 100),
       isCorrect,
+      responseMs: normalizeResponseMs(item.responseMs),
     };
     // Handwriting modes: one stroke set per written character.
     if (Array.isArray(item.strokesList)) {
@@ -394,7 +396,8 @@ router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
       if (!srsUpdated) return;
       for (const d of detail) {
         const [, itemType, itemId] = WORD_KEY.exec(d.questionId);
-        applyReview(userId, itemType, Number(itemId), d.isCorrect);
+        applyReview(userId, itemType, Number(itemId), d.isCorrect, d.responseMs);
+        logResponse(userId, itemType, Number(itemId), 'practice', d.isCorrect, d.responseMs);
       }
     });
     save();

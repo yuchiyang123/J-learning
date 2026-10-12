@@ -143,3 +143,34 @@ CREATE INDEX IF NOT EXISTS idx_user_words_user ON user_words(user_id, level);
 CREATE INDEX IF NOT EXISTS idx_game_scores_lookup ON game_scores(game, mode, level, score DESC);
 CREATE INDEX IF NOT EXISTS idx_game_scores_user ON game_scores(user_id, game, played_at);
 `);
+
+// ---------- Migrations (additive only; safe to run on every start) ----------
+//
+// CREATE TABLE IF NOT EXISTS above never alters a table that already exists,
+// so new columns on existing tables are added here, guarded by a column
+// check. Existing rows keep their data; new columns start out NULL.
+function addColumnIfMissing(table, column, type) {
+  const exists = db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column);
+  if (!exists) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+}
+
+// Response time per SRS item: the latest answer and a moving average.
+addColumnIfMissing('user_progress', 'last_response_ms', 'INTEGER');
+addColumnIfMissing('user_progress', 'avg_response_ms', 'INTEGER');
+
+// One row per timed recognition answer (flashcard 記得/不熟, kanji-prompt
+// typing/tiles) — user_progress only keeps a running average, so the
+// per-day response-time chart needs the individual answers.
+db.exec(`
+CREATE TABLE IF NOT EXISTS review_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  item_type TEXT NOT NULL,
+  item_id INTEGER NOT NULL,
+  source TEXT NOT NULL,             -- 'flashcard' | 'practice'
+  is_correct INTEGER NOT NULL,
+  response_ms INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_review_log_user ON review_log(user_id, created_at);
+`);

@@ -5,7 +5,7 @@
 //
 // Environment must be set before the app modules load (db.js and auth.js
 // read it at import time), hence the dynamic imports.
-process.env.DB_PATH = ':memory:';
+process.env.DB_PATH ??= ':memory:';
 process.env.JWT_SECRET = 'test-secret';
 process.env.JWT_ISSUER = 'test-issuer';
 process.env.JWT_AUDIENCE = 'test-audience';

@@ -147,6 +147,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
           answer: r.answer,
           given: r.given,
           isCorrect: r.isCorrect,
+          responseMs: r.responseMs ?? null,
           ...(r.strokesList ? { strokesList: r.strokesList } : {}),
         })),
       });

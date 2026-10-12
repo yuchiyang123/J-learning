@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2, Inbox } from 'lucide-react';
 import { api } from '../api.js';
@@ -146,6 +146,11 @@ export default function Vocabulary() {
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
 
+  // Response time = from this card's front appearing to 記得 / 不熟.
+  const shownAtRef = useRef(performance.now());
+  const currentKey = current ? wordKey(current) : null;
+  useEffect(() => { shownAtRef.current = performance.now(); }, [currentKey, view]);
+
   // Landed here from a site-wide search result (?id=) — jump straight to
   // that card instead of leaving the learner on whatever card index 0 is.
   // Forces filter back to 'all' since the target word may not be in the
@@ -213,7 +218,8 @@ export default function Vocabulary() {
       if (existing) return prev.map((p) => (p === existing ? { ...p, srs_level: nextSrs } : p));
       return [...prev, { item_type: itemType, item_id: itemId, srs_level: nextSrs }];
     });
-    await api.reviewProgress({ itemType, itemId, correct }).catch(() => {});
+    const responseMs = Math.round(performance.now() - shownAtRef.current);
+    await api.reviewProgress({ itemType, itemId, correct, responseMs }).catch(() => {});
     loadDue(false);
     next();
   }

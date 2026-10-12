@@ -430,6 +430,16 @@ const zhTW = {
   vocab_due_empty: "今天沒有到期的單字。可以切到「全部顯示」繼續學新的。",
   vp_source_due: "今天到期（{count}）",
   vp_saved_history_only: "已記錄到刷題紀錄。這類練習（看中文、聽寫、手寫）不影響複習排程，只有「看漢字」的打字與排序會更新記得／不熟。",
+  progress_rt_title: "反應時間（近 14 天）",
+  progress_rt_sub: "每天答對題目的平均反應時間：單字卡從正面出現到按「記得／不熟」，以及「看漢字」練習從出題到作答。越短代表認得越快。",
+  progress_rt_unit: "秒",
+  progress_rt_tooltip: "平均 {sec} 秒・{count} 題",
+  progress_rt_no_answers: "這天沒有答對的紀錄",
+  progress_rt_empty: "還沒有反應時間的紀錄。用單字卡或「看漢字」練習答題後就會出現。",
+  progress_rt_table: "看表格",
+  progress_rt_col_date: "日期",
+  progress_rt_col_avg: "平均反應時間",
+  progress_rt_col_count: "答對題數",
 };
 
 const zhCN = {
@@ -850,6 +860,16 @@ const zhCN = {
   vocab_due_empty: "今天没有到期的单词。可以切到「全部显示」继续学新的。",
   vp_source_due: "今天到期（{count}）",
   vp_saved_history_only: "已记录到刷题记录。这类练习（看中文、听写、手写）不影响复习排程，只有「看汉字」的打字与排序会更新记得／不熟。",
+  progress_rt_title: "反应时间（近 14 天）",
+  progress_rt_sub: "每天答对题目的平均反应时间：单词卡从正面出现到按「记得／不熟」，以及「看汉字」练习从出题到作答。越短代表认得越快。",
+  progress_rt_unit: "秒",
+  progress_rt_tooltip: "平均 {sec} 秒・{count} 题",
+  progress_rt_no_answers: "这天没有答对的记录",
+  progress_rt_empty: "还没有反应时间的记录。用单词卡或「看汉字」练习答题后就会出现。",
+  progress_rt_table: "看表格",
+  progress_rt_col_date: "日期",
+  progress_rt_col_avg: "平均反应时间",
+  progress_rt_col_count: "答对题数",
 };
 
 const en = {
@@ -1270,6 +1290,16 @@ const en = {
   vocab_due_empty: "Nothing is due today. Switch to All to learn new words.",
   vp_source_due: "Due today ({count})",
   vp_saved_history_only: "Saved to your history. This kind of practice (meaning, dictation, handwriting) doesn't change your review schedule — only typing or tiles from the kanji prompt do.",
+  progress_rt_title: "Response time (last 14 days)",
+  progress_rt_sub: "Daily average for correct answers: flashcards from the front appearing to Remember / Not yet, and kanji-prompt practice from question to answer. Shorter means faster recognition.",
+  progress_rt_unit: "s",
+  progress_rt_tooltip: "avg {sec} s · {count} answers",
+  progress_rt_no_answers: "No correct answers this day",
+  progress_rt_empty: "No response times yet — they appear once you answer flashcards or kanji-prompt practice.",
+  progress_rt_table: "Show as table",
+  progress_rt_col_date: "Date",
+  progress_rt_col_avg: "Average response time",
+  progress_rt_col_count: "Correct answers",
 };
 
 const ko = {
@@ -1690,6 +1720,16 @@ const ko = {
   vocab_due_empty: "오늘 복습할 단어가 없습니다. 「전체」로 바꿔 새 단어를 공부해 보세요.",
   vp_source_due: "오늘 복습 ({count})",
   vp_saved_history_only: "기록에 저장했어요. 이런 연습(뜻 보기, 받아쓰기, 손글씨)은 복습 일정에 반영되지 않고, 「한자 보기」 타자와 가나 맞추기만 반영됩니다.",
+  progress_rt_title: "반응 시간 (최근 14일)",
+  progress_rt_sub: "하루 동안 맞힌 문제의 평균 반응 시간: 단어 카드는 앞면이 나온 뒤 「기억/모름」을 누를 때까지, 「한자 보기」 연습은 출제부터 답할 때까지입니다. 짧을수록 빨리 알아본다는 뜻입니다.",
+  progress_rt_unit: "초",
+  progress_rt_tooltip: "평균 {sec}초 · {count}문제",
+  progress_rt_no_answers: "이 날은 맞힌 기록이 없습니다",
+  progress_rt_empty: "아직 반응 시간 기록이 없습니다. 단어 카드나 「한자 보기」 연습으로 답하면 나타납니다.",
+  progress_rt_table: "표로 보기",
+  progress_rt_col_date: "날짜",
+  progress_rt_col_avg: "평균 반응 시간",
+  progress_rt_col_count: "맞힌 문제 수",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

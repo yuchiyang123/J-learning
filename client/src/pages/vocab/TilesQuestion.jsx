@@ -24,12 +24,17 @@ export default function TilesQuestion({ word, prompt, isLast, onNext, onGraded }
   const [placed, setPlaced] = useState([]); // tile ids, in order
   const [result, setResult] = useState(null);
   const nextRef = useRef(null);
+  // Response time: question shown -> the last tile placed (the answer is
+  // complete then; the short pause before it's checked isn't the learner's).
+  const shownAt = useRef(performance.now());
+  const answeredAt = useRef(null);
 
   const given = placed.map((id) => tiles.find((x) => x.id === id).c).join('');
 
   useEffect(() => {
     if (result || placed.length !== slots.length) return undefined;
-    const timer = setTimeout(() => setResult({ correct: checkAnswer(given, word).correct, given }), 280);
+    const elapsed = Math.round((answeredAt.current ?? performance.now()) - shownAt.current);
+    const timer = setTimeout(() => setResult({ correct: checkAnswer(given, word).correct, given, responseMs: elapsed }), 280);
     return () => clearTimeout(timer);
   }, [placed, result, slots.length, given, word]);
   useEffect(() => {
@@ -39,7 +44,11 @@ export default function TilesQuestion({ word, prompt, isLast, onNext, onGraded }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
-  const place = (id) => { if (!result && placed.length < slots.length && !placed.includes(id)) setPlaced((p) => [...p, id]); };
+  const place = (id) => {
+    if (result || placed.length >= slots.length || placed.includes(id)) return;
+    if (placed.length + 1 === slots.length) answeredAt.current = performance.now();
+    setPlaced((p) => [...p, id]);
+  };
   const unplace = (id) => { if (!result) setPlaced((p) => p.filter((x) => x !== id)); };
 
   return (
@@ -83,7 +92,7 @@ export default function TilesQuestion({ word, prompt, isLast, onNext, onGraded }
             <button type="button" className="secondary-btn icon-btn" onClick={() => setPlaced([])} disabled={placed.length === 0}>
               <Eraser size={15} /> {t('vp_clear')}
             </button>
-            <button type="button" className="secondary-btn" onClick={() => setResult({ correct: false, given })}>{t('vp_give_up')}</button>
+            <button type="button" className="secondary-btn" onClick={() => setResult({ correct: false, given, responseMs: Math.round(performance.now() - shownAt.current) })}>{t('vp_give_up')}</button>
           </div>
           <p className="muted vp-romaji-hint">{t('vp_tiles_hint')}</p>
         </>
@@ -92,7 +101,7 @@ export default function TilesQuestion({ word, prompt, isLast, onNext, onGraded }
       {result && (
         <>
           <AnswerCard word={word} correct={result.correct} />
-          <button ref={nextRef} type="button" className="submit-btn icon-btn vp-next" onClick={() => onNext({ given: result.given, isCorrect: result.correct })}>
+          <button ref={nextRef} type="button" className="submit-btn icon-btn vp-next" onClick={() => onNext({ given: result.given, isCorrect: result.correct, responseMs: result.responseMs })}>
             {isLast ? t('vp_finish') : t('vp_next')} <ArrowRight size={16} />
           </button>
         </>
