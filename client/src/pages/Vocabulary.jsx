@@ -185,6 +185,9 @@ export default function Vocabulary() {
     setFlipped(false);
   }
 
+  // Due deck: buttons are review answers, not a 記得/不熟 toggle.
+  const reviewing = filter === 'due';
+
   async function mark(correct) {
     if (!current) return;
     const itemType = current.isCustom ? 'custom_word' : 'word';
@@ -193,10 +196,14 @@ export default function Vocabulary() {
     // Clicking the already-active button deselects it — clears the mark
     // entirely instead of forcing a switch to the other state. Stay on the
     // card rather than advancing, since this is a correction.
-    const isDeselect = (correct === false && currentSrs === 0) || (correct === true && currentSrs > 0);
+    // In the due deck every press is a review — a due card usually already
+    // has srs_level >= 1, so treating 記得 as "deselect" there would wipe
+    // the word's schedule instead of passing the review.
+    const isDeselect = !reviewing && ((correct === false && currentSrs === 0) || (correct === true && currentSrs > 0));
     if (isDeselect) {
       setProgress((prev) => prev.filter((p) => !(p.item_type === itemType && p.item_id === itemId)));
       await api.clearProgress({ itemType, itemId }).catch(() => {});
+      loadDue(false);
       return;
     }
 
@@ -340,13 +347,13 @@ export default function Vocabulary() {
 
           <div className="mark-controls">
             <button
-              className={`btn-bad icon-btn${currentSrs === 0 ? ' active' : ''}`}
+              className={`btn-bad icon-btn${!reviewing && currentSrs === 0 ? ' active' : ''}`}
               onClick={() => mark(false)}
             >
               <X size={16} /> {t('btn_dont_know')}
             </button>
             <button
-              className={`btn-good icon-btn${currentSrs > 0 ? ' active' : ''}`}
+              className={`btn-good icon-btn${!reviewing && currentSrs > 0 ? ' active' : ''}`}
               onClick={() => mark(true)}
             >
               <Check size={16} /> {t('btn_remember')}
