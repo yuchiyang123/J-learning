@@ -420,6 +420,11 @@ const zhTW = {
   type_vocab_tiles: "假名排序",
   type_vocab_handwrite: "手寫讀音",
   type_vocab_kanji_write: "單字手寫漢字",
+  vocab_front_label: "正面",
+  vocab_front_kana: "只看假名",
+  vocab_front_kanji: "只看漢字",
+  vocab_front_both: "漢字＋假名",
+  vocab_autoplay_label: "翻面發音",
 };
 
 const zhCN = {
@@ -830,6 +835,11 @@ const zhCN = {
   type_vocab_tiles: "假名排序",
   type_vocab_handwrite: "手写读音",
   type_vocab_kanji_write: "单词手写汉字",
+  vocab_front_label: "正面",
+  vocab_front_kana: "只看假名",
+  vocab_front_kanji: "只看汉字",
+  vocab_front_both: "汉字＋假名",
+  vocab_autoplay_label: "翻面发音",
 };
 
 const en = {
@@ -1240,6 +1250,11 @@ const en = {
   type_vocab_tiles: "Kana tiles",
   type_vocab_handwrite: "Write the reading",
   type_vocab_kanji_write: "Vocab kanji writing",
+  vocab_front_label: "Front",
+  vocab_front_kana: "Kana only",
+  vocab_front_kanji: "Kanji only",
+  vocab_front_both: "Kanji + kana",
+  vocab_autoplay_label: "Speak on flip",
 };
 
 const ko = {
@@ -1650,6 +1665,11 @@ const ko = {
   type_vocab_tiles: "가나 맞추기",
   type_vocab_handwrite: "읽기 손글씨",
   type_vocab_kanji_write: "단어 한자 손글씨",
+  vocab_front_label: "앞면",
+  vocab_front_kana: "가나만",
+  vocab_front_kanji: "한자만",
+  vocab_front_both: "한자＋가나",
+  vocab_autoplay_label: "뒤집을 때 발음",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

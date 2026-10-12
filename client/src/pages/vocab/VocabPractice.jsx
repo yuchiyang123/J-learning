@@ -4,7 +4,7 @@ import { api } from '../../api.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
 import StrokeThumbnail from '../../components/StrokeThumbnail.jsx';
-import { primaryReading, primaryKanji, readingVariants, kanjiVariants, toHiragana } from '../../lib/vocabAnswer.js';
+import { primaryReading, primaryKanji, readingVariants, kanjiVariants, hasKanji } from '../../lib/vocabAnswer.js';
 import TypingQuestion from './TypingQuestion.jsx';
 import TilesQuestion from './TilesQuestion.jsx';
 import HandwriteQuestion, { HW_CANVAS } from './HandwriteQuestion.jsx';
@@ -25,7 +25,6 @@ const PROMPTS = ['kanji', 'meaning', 'audio'];
 const COUNTS = [10, 20, 30];
 const PREFS_KEY = 'jp_vocab_practice';
 
-const hasKanji = (w) => /[㐀-鿿]/.test(primaryKanji(w)) && toHiragana(primaryKanji(w)) !== toHiragana(primaryReading(w));
 const kanaOnly = (s) => /^[ぁ-ゖァ-ヺー]+$/.test(s);
 
 // Which words a mode/prompt combination can actually ask about.

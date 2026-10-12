@@ -59,3 +59,9 @@
 
 /* ---------- Quiz history: one thumbnail per handwritten character ---------- */
 .history-strokes-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.4rem; }
+
+/* ---------- Flashcards: hint below the card, meaning as a sub-line ---------- */
+/* The hint used to sit inside the card face; it's moved out so the front
+   shows nothing but the word being tested. */
+.flashcard-hint.flashcard-hint-below { position: static; text-align: center; margin: -0.4rem 0 0; }
+.flashcard-sub.flashcard-meaning { font-size: 1.15rem; margin-top: 0.5rem; }

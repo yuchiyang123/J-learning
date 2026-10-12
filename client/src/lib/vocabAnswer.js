@@ -21,6 +21,11 @@ export const kanjiVariants = (word) => variants(word.kanji);
 export const primaryReading = (word) => readingVariants(word)[0] ?? '';
 export const primaryKanji = (word) => kanjiVariants(word)[0] ?? '';
 
+// A word "has kanji" when its written form actually contains kanji and
+// isn't just its reading again (some entries repeat the kana there).
+export const hasKanji = (word) =>
+  /[㐀-鿿]/.test(primaryKanji(word)) && toHiragana(primaryKanji(word)) !== toHiragana(primaryReading(word));
+
 export function toHiragana(s) {
   return [...s].map((c) => {
     const code = c.charCodeAt(0);

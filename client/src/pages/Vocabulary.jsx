@@ -11,8 +11,27 @@ import Modal from '../components/Modal.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 import VocabPractice from './vocab/VocabPractice.jsx';
+import { hasKanji } from '../lib/vocabAnswer.js';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
+
+// Flashcard preferences (per device). `front` decides what the card shows
+// before flipping — JLPT N5 tests recognition, so the default front is the
+// kana alone, or the kanji alone, never both plus a hint:
+//   kana  — front: kana only;  back: kanji (if any) + meaning
+//   kanji — words with kanji only; front: kanji only; back: reading + meaning
+//   both  — front: kanji + kana; back: meaning (the original layout)
+// `autoplay` speaks the word whenever the card is turned to its back.
+const CARD_PREFS_KEY = 'jp_flashcard_prefs';
+const FRONTS = ['kana', 'kanji', 'both'];
+function loadCardPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(CARD_PREFS_KEY) || '{}');
+    return { front: FRONTS.includes(p.front) ? p.front : 'kana', autoplay: p.autoplay !== false };
+  } catch {
+    return { front: 'kana', autoplay: true };
+  }
+}
 
 export default function Vocabulary() {
   const [searchParams] = useSearchParams();
@@ -26,6 +45,7 @@ export default function Vocabulary() {
   const [dir, setDir] = useState('next'); // 'next' | 'prev' — drives the card slide animation
   const [flipped, setFlipped] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [cardPrefs, setCardPrefs] = useState(loadCardPrefs);
   // 'cards' = flip-card review; 'practice' = typing / tiles / handwriting.
   const [view, setView] = useState(searchParams.get('view') === 'practice' ? 'practice' : 'cards');
   const { t, locale } = useLocale();
@@ -39,6 +59,20 @@ export default function Vocabulary() {
   const [wordsData, wordsLoading, reloadWords] = useCachedApi(wordsKey, () => api.getWords(level));
   const words = wordsData ?? [];
   const loading = wordsLoading || progressLoading;
+  // The kanji front only makes sense for words that are written in kanji.
+  const cardWords = useMemo(
+    () => (cardPrefs.front === 'kanji' ? words.filter(hasKanji) : words),
+    [words, cardPrefs.front]
+  );
+
+  function updateCardPrefs(patch) {
+    setCardPrefs((p) => {
+      const next = { ...p, ...patch };
+      try { localStorage.setItem(CARD_PREFS_KEY, JSON.stringify(next)); } catch { /* not persisted */ }
+      return next;
+    });
+    if (patch.front) { setIndex(0); setFlipped(false); }
+  }
 
   useEffect(() => {
     setIndex(0);
@@ -81,11 +115,11 @@ export default function Vocabulary() {
   // with srs_level 0) — a word never reviewed yet just hasn't been reached,
   // it isn't "known to be unknown" yet.
   const unknownWords = useMemo(
-    () => words.filter((w) => progressByKey.get(wordKey(w)) === 0),
-    [words, progressByKey]
+    () => cardWords.filter((w) => progressByKey.get(wordKey(w)) === 0),
+    [cardWords, progressByKey]
   );
 
-  const filteredWords = filter === 'unknown' ? unknownWords : words;
+  const filteredWords = filter === 'unknown' ? unknownWords : cardWords;
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
 
@@ -94,14 +128,14 @@ export default function Vocabulary() {
   // Forces filter back to 'all' since the target word may not be in the
   // '只顯示不會的' subset.
   useEffect(() => {
-    if (!urlWordId || words.length === 0) return;
-    const idx = words.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
+    if (!urlWordId || cardWords.length === 0) return;
+    const idx = cardWords.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
     if (idx === -1) return;
     setFilter('all');
     setIndex(idx);
     setFlipped(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlWordId, words.length]);
+  }, [urlWordId, cardWords.length]);
 
   function next() {
     setDir('next');
@@ -113,6 +147,12 @@ export default function Vocabulary() {
     setDir('prev');
     setFlipped(false);
     setIndex((i) => (i - 1 + filteredWords.length) % Math.max(filteredWords.length, 1));
+  }
+
+  function flip() {
+    const toBack = !flipped;
+    setFlipped(toBack);
+    if (toBack && cardPrefs.autoplay && current) speak(current.kana);
   }
 
   function changeFilter(f) {
@@ -175,6 +215,24 @@ export default function Vocabulary() {
         )
       )}
 
+      {view === 'cards' && (
+        <div className="filter-row">
+          <div className="filter-group">
+            <span className="filter-label">{t('vocab_front_label')}</span>
+            {FRONTS.map((f) => (
+              <button key={f} className={cardPrefs.front === f ? 'active' : ''} onClick={() => updateCardPrefs({ front: f })}>
+                {t(`vocab_front_${f}`)}
+              </button>
+            ))}
+          </div>
+          <div className="filter-group">
+            <span className="filter-label">{t('vocab_autoplay_label')}</span>
+            <button className={cardPrefs.autoplay ? 'active' : ''} onClick={() => updateCardPrefs({ autoplay: true })}>{t('settings_toggle_on')}</button>
+            <button className={!cardPrefs.autoplay ? 'active' : ''} onClick={() => updateCardPrefs({ autoplay: false })}>{t('settings_toggle_off')}</button>
+          </div>
+        </div>
+      )}
+
       {view === 'cards' && isLoggedIn && (
         <div className="filter-row">
           <div className="filter-group">
@@ -209,17 +267,17 @@ export default function Vocabulary() {
           <div
             key={wordKey(current)}
             className={`flip-card slide-${dir}${flipped ? ' is-flipped' : ''}`}
-            onClick={() => setFlipped((f) => !f)}
+            onClick={flip}
           >
             <div className="flip-card-inner">
-              <div className="flip-card-face flip-card-front">
-                {current.isCustom && <span className="custom-word-badge">{t('custom_word_badge')}</span>}
-                <div className="flashcard-main">{current.kanji || current.kana}</div>
-                {current.kanji && <div className="flashcard-sub">{current.kana}</div>}
-                <div className="flashcard-hint">{t('flip_hint')}</div>
-              </div>
+              <CardFront word={current} front={cardPrefs.front} />
               <div className="flip-card-face flip-card-back">
-                <div className="flashcard-main">{current.meaning}</div>
+                {current.isCustom && <span className="custom-word-badge">{t('custom_word_badge')}</span>}
+                {cardPrefs.front === 'kana' && current.kanji && <div className="flashcard-main" lang="ja">{current.kanji}</div>}
+                {cardPrefs.front === 'kanji' && <div className="flashcard-main" lang="ja">{current.kana}</div>}
+                <div className={cardPrefs.front === 'both' || (cardPrefs.front === 'kana' && !current.kanji) ? 'flashcard-main' : 'flashcard-sub flashcard-meaning'}>
+                  {current.meaning}
+                </div>
                 <div className="flashcard-sub">{current.part_of_speech}</div>
                 {current.example_jp && (
                   <div className="example">
@@ -228,10 +286,11 @@ export default function Vocabulary() {
                     <div className="zh">{current.example_zh}</div>
                   </div>
                 )}
-                <div className="flashcard-hint">{t('flip_hint')}</div>
               </div>
             </div>
           </div>
+          {/* Outside the card so its front carries nothing but the word. */}
+          <div className="flashcard-hint flashcard-hint-below">{t('flip_hint')}</div>
 
           <div className="flashcard-controls">
             <button className="icon-btn" onClick={() => speak(current.kana)}><Volume2 size={16} /> {t('btn_play_audio')}</button>
@@ -262,6 +321,18 @@ export default function Vocabulary() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// The card's front: only the form being tested, nothing else — no meaning,
+// no hint, no badge.
+function CardFront({ word, front }) {
+  const main = front === 'kana' ? word.kana : word.kanji || word.kana;
+  return (
+    <div className="flip-card-face flip-card-front">
+      <div className="flashcard-main" lang="ja">{main}</div>
+      {front === 'both' && word.kanji && <div className="flashcard-sub" lang="ja">{word.kana}</div>}
     </div>
   );
 }
