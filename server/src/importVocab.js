@@ -48,6 +48,44 @@ function parseCsv(text) {
 }
 
 const isKanaOnly = (s) => /^[぀-ゟ゠-ヿー～]*$/.test(s);
+const hasCjk = (s) => /[㐀-鿿]/.test(s);
+
+// A handful of source rows have their columns swapped — the kana in
+// `expression` and the kanji in `reading` (e.g. "うそ,嘘"). Taken as-is,
+// that put kanji into the reading field, which then showed up on
+// kana-only flashcard fronts and as the expected typing answer.
+function normalizePair(expression, reading) {
+  if (isKanaOnly(expression) && hasCjk(reading)) return { kanji: reading, kana: expression };
+  const kanji = expression === reading || isKanaOnly(expression) ? null : expression;
+  return { kanji, kana: reading };
+}
+
+function readRows(lv) {
+  const file = path.join(DATA_DIR, `${lv}.csv`);
+  if (!fs.existsSync(file)) return [];
+  return parseCsv(fs.readFileSync(file, 'utf-8')).slice(1).filter((c) => c.length >= 3 && c[0] && c[1] && c[2]);
+}
+
+// Fixes rows already imported with the swapped columns above: a word with
+// no kanji whose reading contains kanji is looked up in its level's CSV
+// and rewritten as kanji = that reading, kana = the expression. Idempotent
+// (fixed rows no longer match) and a no-op when the CSVs aren't present.
+export function repairSwappedReadings(db) {
+  const bad = db.prepare('SELECT id, level, kana FROM words WHERE kanji IS NULL').all().filter((w) => hasCjk(w.kana));
+  if (bad.length === 0) return 0;
+  const update = db.prepare('UPDATE words SET kanji = ?, kana = ? WHERE id = ?');
+  const byLevel = new Map();
+  let fixed = 0;
+  for (const w of bad) {
+    const lv = w.level.toLowerCase();
+    if (!byLevel.has(lv)) byLevel.set(lv, readRows(lv));
+    const row = byLevel.get(lv).find(([expression, reading]) => reading === w.kana && isKanaOnly(expression));
+    if (!row) continue;
+    update.run(w.kana, row[0], w.id);
+    fixed++;
+  }
+  return fixed;
+}
 
 // Loads and dedupes bulk vocabulary across all levels, skipping any word whose
 // (kanji||kana, kana) pair already exists in `existingKeys`.
@@ -57,16 +95,9 @@ export function loadBulkVocab(existingKeys) {
   const levels = ['n5', 'n4', 'n3', 'n2', 'n1'];
 
   for (const lv of levels) {
-    const file = path.join(DATA_DIR, `${lv}.csv`);
-    if (!fs.existsSync(file)) continue;
-    const text = fs.readFileSync(file, 'utf-8');
-    const rows = parseCsv(text).slice(1); // drop header
-    for (const cols of rows) {
-      if (cols.length < 3) continue;
+    for (const cols of readRows(lv)) {
       const [expression, reading, meaning] = cols;
-      if (!expression || !reading || !meaning) continue;
-      const kanji = expression === reading || isKanaOnly(expression) ? null : expression;
-      const kana = reading;
+      const { kanji, kana } = normalizePair(expression, reading);
       const key = `${kanji || ''}|${kana}`;
       if (seen.has(key)) continue;
       seen.add(key);

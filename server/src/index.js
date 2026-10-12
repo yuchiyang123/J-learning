@@ -8,7 +8,8 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { issueCsrfToken, requireCsrf } from './csrf.js';
-import './db.js';
+import { db } from './db.js';
+import { repairSwappedReadings } from './importVocab.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
@@ -119,6 +120,11 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'internal server error' });
 });
+
+// One-off data repair for vocabulary rows imported with swapped columns
+// (see importVocab.js); idempotent, so it's safe on every start.
+const repaired = repairSwappedReadings(db);
+if (repaired) console.log(`repaired ${repaired} vocabulary readings`);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
