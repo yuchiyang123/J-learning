@@ -28,6 +28,16 @@ export function applyReview(userId, itemType, itemId, correct) {
   return srsLevel;
 }
 
+// Which vocabulary-practice results count as a recognition review.
+// JLPT N5 tests recognition — reading a word from its written form — so
+// only practice that does exactly that moves the SRS schedule: typing or
+// tiles answered from the kanji prompt. Production modes (meaning -> word,
+// dictation) and the self-graded handwriting modes are still saved to
+// history, but never touch srs_level / next_review.
+export function practiceUpdatesSrs(mode, prompt) {
+  return (mode === 'typing' || mode === 'tiles') && prompt === 'kanji';
+}
+
 // What `itemType` means for the due queue. 'vocab' is every vocabulary
 // item: dictionary words and the user's own custom words (their SRS rows
 // are 'word' / 'custom_word', shared by flashcards and practice).

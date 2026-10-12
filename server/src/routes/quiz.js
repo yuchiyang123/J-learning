@@ -3,7 +3,7 @@ import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { translate } from '../locale.js';
 import { optionalAuth, requireAuth } from '../auth.js';
-import { applyReview } from '../srs.js';
+import { applyReview, practiceUpdatesSrs } from '../srs.js';
 
 const router = Router();
 
@@ -348,11 +348,13 @@ const clip = (v, n) => String(v ?? '').slice(0, n);
 const MAX_PRACTICE_ITEMS = 100;
 
 // POST /api/quiz/vocab-practice/submit
-//   { mode, level, items: [{ wordKey: 'word:12', prompt, answer, given, isCorrect, strokesList? }] }
-// Logged in: also moves each word's 記得/不熟 state (same SRS the
-// flashcards use), so practicing and flipping cards share one record.
+//   { mode, prompt, level, items: [{ wordKey: 'word:12', prompt, answer, given, isCorrect, strokesList? }] }
+// `prompt` is what the questions showed: 'kanji' | 'meaning' | 'audio'
+// ('reading' for kanji writing). Every run goes to quiz_results/history;
+// only recognition runs (see practiceUpdatesSrs) also move each word's SRS
+// state, shared with the flashcards. The response says which happened.
 router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
-  const { mode, level, items } = req.body;
+  const { mode, prompt, level, items } = req.body;
   const type = VOCAB_PRACTICE_TYPES[mode];
   if (!type || !/^N[1-5]$/.test(level || '') || !Array.isArray(items) || items.length === 0 || items.length > MAX_PRACTICE_ITEMS) {
     return res.status(400).json({ error: 'mode, level and 1-100 items required' });
@@ -383,11 +385,13 @@ router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
   if (detail.length === 0) return res.status(400).json({ error: 'no valid items' });
   const total = detail.length;
 
+  const srsUpdated = !!userId && practiceUpdatesSrs(mode, prompt);
   if (userId) {
     const save = db.transaction(() => {
       db.prepare(
         'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
       ).run(userId, type, level, total, correct, JSON.stringify(detail));
+      if (!srsUpdated) return;
       for (const d of detail) {
         const [, itemType, itemId] = WORD_KEY.exec(d.questionId);
         applyReview(userId, itemType, Number(itemId), d.isCorrect);
@@ -396,7 +400,7 @@ router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
     save();
   }
 
-  res.json({ total, correct, detail });
+  res.json({ total, correct, detail, srsUpdated });
 });
 
 // GET /api/quiz/vocab-practice/wrong?level=N5 -> ['word:12', 'custom_word:3', ...]

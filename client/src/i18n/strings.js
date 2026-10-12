@@ -374,7 +374,7 @@ const zhTW = {
   vp_pool_size: "可出題的單字：{count} 個",
   vp_pool_empty: "這個條件下沒有可以出題的單字，換個來源、出題方式或等級試試。",
   vp_start: "開始練習",
-  vp_login_hint: "登入後可以只練不熟的單字、重練錯題，練習結果也會自動更新單字的「記得／不熟」。",
+  vp_login_hint: "登入後可以練今天到期、不熟或練錯的單字；「看漢字」的打字與排序結果會更新單字的記得／不熟與複習排程。",
   vp_progress: "第 {current} / {total} 題",
   vp_ask_reading: "讀音是？",
   vp_ask_word: "日文怎麼說？",
@@ -414,7 +414,7 @@ const zhTW = {
   vp_again: "再來一輪",
   vp_retry_wrong: "重練答錯的（{count}）",
   vp_back_setup: "回設定",
-  vp_saved: "已記錄，並更新了這些單字的「記得／不熟」。",
+  vp_saved: "已記錄，並更新了這些單字的記得／不熟與複習排程。",
   vp_save_failed: "記錄失敗，這輪成績沒有存到。",
   type_vocab_typing: "單字打字",
   type_vocab_tiles: "假名排序",
@@ -429,6 +429,7 @@ const zhTW = {
   vocab_due_count: "今日到期：{count} 個單字",
   vocab_due_empty: "今天沒有到期的單字。可以切到「全部顯示」繼續學新的。",
   vp_source_due: "今天到期（{count}）",
+  vp_saved_history_only: "已記錄到刷題紀錄。這類練習（看中文、聽寫、手寫）不影響複習排程，只有「看漢字」的打字與排序會更新記得／不熟。",
 };
 
 const zhCN = {
@@ -793,7 +794,7 @@ const zhCN = {
   vp_pool_size: "可出题的单词：{count} 个",
   vp_pool_empty: "这个条件下没有可以出题的单词，换个来源、出题方式或等级试试。",
   vp_start: "开始练习",
-  vp_login_hint: "登录后可以只练不熟的单词、重练错题，练习结果也会自动更新单词的「记得／不熟」。",
+  vp_login_hint: "登录后可以练今天到期、不熟或练错的单词；「看汉字」的打字与排序结果会更新单词的记得／不熟与复习排程。",
   vp_progress: "第 {current} / {total} 题",
   vp_ask_reading: "读音是？",
   vp_ask_word: "日语怎么说？",
@@ -833,7 +834,7 @@ const zhCN = {
   vp_again: "再来一轮",
   vp_retry_wrong: "重练答错的（{count}）",
   vp_back_setup: "回设置",
-  vp_saved: "已记录，并更新了这些单词的「记得／不熟」。",
+  vp_saved: "已记录，并更新了这些单词的记得／不熟与复习排程。",
   vp_save_failed: "记录失败，这轮成绩没有存到。",
   type_vocab_typing: "单词打字",
   type_vocab_tiles: "假名排序",
@@ -848,6 +849,7 @@ const zhCN = {
   vocab_due_count: "今日到期：{count} 个单词",
   vocab_due_empty: "今天没有到期的单词。可以切到「全部显示」继续学新的。",
   vp_source_due: "今天到期（{count}）",
+  vp_saved_history_only: "已记录到刷题记录。这类练习（看中文、听写、手写）不影响复习排程，只有「看汉字」的打字与排序会更新记得／不熟。",
 };
 
 const en = {
@@ -1212,7 +1214,7 @@ const en = {
   vp_pool_size: "{count} words available",
   vp_pool_empty: "No words fit these settings — try another source, prompt or level.",
   vp_start: "Start",
-  vp_login_hint: "Log in to practice only unfamiliar or missed words; results also update each word's Remember / Not yet mark.",
+  vp_login_hint: "Log in to practice what's due today, unfamiliar or missed words; typing and tiles from the kanji prompt also update each word's review schedule.",
   vp_progress: "Question {current} / {total}",
   vp_ask_reading: "How is it read?",
   vp_ask_word: "How do you say it in Japanese?",
@@ -1252,7 +1254,7 @@ const en = {
   vp_again: "Another round",
   vp_retry_wrong: "Retry missed ({count})",
   vp_back_setup: "Settings",
-  vp_saved: "Saved, and these words' Remember / Not yet marks were updated.",
+  vp_saved: "Saved, and these words' review schedule was updated.",
   vp_save_failed: "Couldn't save this round.",
   type_vocab_typing: "Vocab typing",
   type_vocab_tiles: "Kana tiles",
@@ -1267,6 +1269,7 @@ const en = {
   vocab_due_count: "Due today: {count} words",
   vocab_due_empty: "Nothing is due today. Switch to All to learn new words.",
   vp_source_due: "Due today ({count})",
+  vp_saved_history_only: "Saved to your history. This kind of practice (meaning, dictation, handwriting) doesn't change your review schedule — only typing or tiles from the kanji prompt do.",
 };
 
 const ko = {
@@ -1631,7 +1634,7 @@ const ko = {
   vp_pool_size: "출제 가능한 단어: {count}개",
   vp_pool_empty: "이 조건에 맞는 단어가 없습니다. 범위, 출제 방식 또는 레벨을 바꿔 보세요.",
   vp_start: "연습 시작",
-  vp_login_hint: "로그인하면 모르는 단어나 틀린 문제만 연습할 수 있고, 결과가 단어의 「기억/모름」에도 반영됩니다.",
+  vp_login_hint: "로그인하면 오늘 복습, 모르는 단어, 틀린 단어만 연습할 수 있고, 「한자 보기」 타자와 가나 맞추기 결과는 복습 일정에도 반영됩니다.",
   vp_progress: "{current} / {total} 문제",
   vp_ask_reading: "읽는 법은?",
   vp_ask_word: "일본어로 뭐라고 할까요?",
@@ -1671,7 +1674,7 @@ const ko = {
   vp_again: "한 번 더",
   vp_retry_wrong: "틀린 것 다시 ({count})",
   vp_back_setup: "설정으로",
-  vp_saved: "기록했고, 이 단어들의 「기억/모름」도 업데이트했어요.",
+  vp_saved: "기록했고, 이 단어들의 복습 일정도 업데이트했어요.",
   vp_save_failed: "기록하지 못했어요. 이번 결과는 저장되지 않았습니다.",
   type_vocab_typing: "단어 타자",
   type_vocab_tiles: "가나 맞추기",
@@ -1686,6 +1689,7 @@ const ko = {
   vocab_due_count: "오늘 복습할 단어: {count}개",
   vocab_due_empty: "오늘 복습할 단어가 없습니다. 「전체」로 바꿔 새 단어를 공부해 보세요.",
   vp_source_due: "오늘 복습 ({count})",
+  vp_saved_history_only: "기록에 저장했어요. 이런 연습(뜻 보기, 받아쓰기, 손글씨)은 복습 일정에 반영되지 않고, 「한자 보기」 타자와 가나 맞추기만 반영됩니다.",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

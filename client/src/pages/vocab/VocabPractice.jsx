@@ -71,7 +71,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
   const [results, setResults] = useState([]);
-  const [saveState, setSaveState] = useState(null); // null | 'saving' | 'saved' | 'failed'
+  const [saveState, setSaveState] = useState(null); // null | 'saving' | 'saved' | 'saved-history' | 'failed'
   // The current question's verdict once it's shown, before 'next' commits it,
   // so the running score updates the moment you answer.
   const [pendingCorrect, setPendingCorrect] = useState(false);
@@ -137,8 +137,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
     if (!isLoggedIn) return;
     setSaveState('saving');
     try {
-      await api.submitVocabPractice({
+      const res = await api.submitVocabPractice({
         mode,
+        prompt: effectivePrompt,
         level,
         items: allResults.map((r) => ({
           wordKey: wordKey(r.word),
@@ -149,8 +150,8 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
           ...(r.strokesList ? { strokesList: r.strokesList } : {}),
         })),
       });
-      setSaveState('saved');
-      onProgressChanged?.();
+      setSaveState(res?.srsUpdated ? 'saved' : 'saved-history');
+      if (res?.srsUpdated) onProgressChanged?.();
     } catch {
       setSaveState('failed');
     }
@@ -211,6 +212,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
         </div>
         {saveState === 'saving' && <p className="muted vp-save-note"><Loader2 size={14} className="spin" /> {t('writequiz_saving')}</p>}
         {saveState === 'saved' && <p className="muted vp-save-note">{t('vp_saved')}</p>}
+        {saveState === 'saved-history' && <p className="muted vp-save-note">{t('vp_saved_history_only')}</p>}
         {saveState === 'failed' && <p className="warning">{t('vp_save_failed')}</p>}
 
         <ul className="vp-review-list">
