@@ -108,6 +108,8 @@ export const api = {
   submitKanaRead: (payload) => request('/quiz/kana-read/submit', { method: 'POST', body: JSON.stringify(payload) }),
   getKanaReadWrong: (script) => request(`/quiz/kana-read/wrong${script ? `?script=${script}` : ''}`),
   submitKanjiWrite: (payload) => request('/quiz/kanji-write/submit', { method: 'POST', body: JSON.stringify(payload) }),
+  submitVocabPractice: (payload) => request('/quiz/vocab-practice/submit', { method: 'POST', body: JSON.stringify(payload) }),
+  getVocabPracticeWrong: (level) => request(`/quiz/vocab-practice/wrong${level ? `?level=${level}` : ''}`),
   getKanjiWriteWrong: (level) => request(`/quiz/kanji-write/wrong${level ? `?level=${level}` : ''}`),
   getProgress: () => request('/progress'),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
