@@ -77,7 +77,7 @@ export default function HandwriteQuestion({ word, prompt, chars, recognize = fal
     <div className="vp-question">
       <QuestionPrompt word={word} prompt={prompt} />
 
-      <div className="vp-hw-strip" lang="ja">
+      <div className={`vp-hw-strip${revealed ? ' is-revealed' : ''}`} lang="ja">
         {chars.map((c, i) => (
           <button
             key={i}

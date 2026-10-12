@@ -73,6 +73,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
   const [qIndex, setQIndex] = useState(0);
   const [results, setResults] = useState([]);
   const [saveState, setSaveState] = useState(null); // null | 'saving' | 'saved' | 'failed'
+  // The current question's verdict once it's shown, before 'next' commits it,
+  // so the running score updates the moment you answer.
+  const [pendingCorrect, setPendingCorrect] = useState(false);
   const { mode, prompt, count } = prefs;
   const effectivePrompt = mode === 'kanji' ? 'reading' : prompt;
 
@@ -153,6 +156,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
     };
     const next = [...results, entry];
     setResults(next);
+    setPendingCorrect(false);
     if (qIndex + 1 < queue.length) setQIndex((i) => i + 1);
     else finish(next);
   }
@@ -168,6 +172,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
       prompt: effectivePrompt,
       isLast: qIndex + 1 === queue.length,
       onNext: handleNext,
+      onGraded: setPendingCorrect,
     };
     return (
       <div className="vp-stage">
@@ -176,7 +181,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
           <div className="vp-progress-bar" aria-hidden="true">
             <span style={{ width: `${(qIndex / queue.length) * 100}%` }} />
           </div>
-          <span className="vp-score-chip"><Check size={13} /> {correctCount}</span>
+          <span className="vp-score-chip"><Check size={13} /> {correctCount + (pendingCorrect ? 1 : 0)}</span>
         </div>
         {mode === 'typing' && <TypingQuestion {...common} />}
         {mode === 'tiles' && <TilesQuestion {...common} />}
@@ -207,14 +212,14 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
                 <span className="vp-review-reading" lang="ja">{r.word.kanji ? r.word.kana : ''}</span>
                 <span className="vp-review-meaning">{r.word.meaning}</span>
               </span>
-              {r.strokesList ? (
+              {r.strokesList?.some((st) => st.length) ? (
                 <span className="vp-review-strokes">
                   {r.strokesList.map((s, k) => (
                     <StrokeThumbnail key={k} strokes={s.length ? s : [[{ x: 0, y: 0 }]]} size={36} viewBox={HW_CANVAS} />
                   ))}
                 </span>
               ) : (
-                <span className="vp-review-given" lang="ja">{r.isCorrect ? '' : (r.given || '—')}</span>
+                <span className="vp-review-given" lang="ja">{r.isCorrect ? '' : r.given}</span>
               )}
             </li>
           ))}

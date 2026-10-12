@@ -143,6 +143,9 @@
   pointer-events: none; animation: vp-rise 0.3s ease;
 }
 .vp-hw-canvas { max-width: 300px; }
+/* Bigger once revealed — that's when you compare against the model. */
+.vp-hw-strip.is-revealed .vp-hw-slot { width: 112px; height: 112px; }
+.vp-hw-strip.is-revealed .vp-hw-model { font-size: 5rem; }
 
 /* ---------- done ---------- */
 .vp-done { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }

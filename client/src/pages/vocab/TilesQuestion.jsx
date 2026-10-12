@@ -7,7 +7,7 @@ import { QuestionPrompt, AnswerCard } from './QuestionParts.jsx';
 // Put the reading together from shuffled kana tiles (plus a few
 // look-alike / sound-alike decoys). Tap a tile to place it, tap a placed
 // tile to take it back; it checks itself once every slot is filled.
-export default function TilesQuestion({ word, prompt, isLast, onNext }) {
+export default function TilesQuestion({ word, prompt, isLast, onNext, onGraded }) {
   const { t } = useLocale();
   const answer = primaryReading(word);
   const slots = [...answer];
@@ -32,7 +32,12 @@ export default function TilesQuestion({ word, prompt, isLast, onNext }) {
     const timer = setTimeout(() => setResult({ correct: checkAnswer(given, word).correct, given }), 280);
     return () => clearTimeout(timer);
   }, [placed, result, slots.length, given, word]);
-  useEffect(() => { if (result) nextRef.current?.focus(); }, [result]);
+  useEffect(() => {
+    if (!result) return;
+    onGraded?.(result.correct);
+    nextRef.current?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   const place = (id) => { if (!result && placed.length < slots.length && !placed.includes(id)) setPlaced((p) => [...p, id]); };
   const unplace = (id) => { if (!result) setPlaced((p) => p.filter((x) => x !== id)); };

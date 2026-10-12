@@ -8,7 +8,7 @@ import { QuestionPrompt, AnswerCard } from './QuestionParts.jsx';
 // Type the answer. Latin letters turn into kana as you type (so no IME is
 // needed); text from a real IME — including kanji, which the meaning prompt
 // also accepts — passes straight through. Enter checks, Enter again moves on.
-export default function TypingQuestion({ word, prompt, isLast, onNext }) {
+export default function TypingQuestion({ word, prompt, isLast, onNext, onGraded }) {
   const { t } = useLocale();
   const [value, setValue] = useState('');
   const [result, setResult] = useState(null); // { correct, given, matched }
@@ -19,7 +19,12 @@ export default function TypingQuestion({ word, prompt, isLast, onNext }) {
   const acceptKanji = prompt === 'meaning' || prompt === 'audio';
 
   useEffect(() => { inputRef.current?.focus(); }, []);
-  useEffect(() => { if (result) nextRef.current?.focus(); }, [result]);
+  useEffect(() => {
+    if (!result) return;
+    onGraded?.(result.correct);
+    nextRef.current?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   function onChange(e) {
     const raw = e.target.value;
