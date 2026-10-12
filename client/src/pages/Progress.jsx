@@ -209,6 +209,13 @@ export default function ProgressPage() {
                                       {d.strokes?.length > 0 && (
                                         <StrokeThumbnail strokes={d.strokes} size={90} viewBox={420} />
                                       )}
+                                      {d.strokesList?.length > 0 && (
+                                        <div className="history-strokes-list">
+                                          {d.strokesList.map((st, k) => (
+                                            <StrokeThumbnail key={k} strokes={st.length ? st : [[{ x: 0, y: 0 }]]} size={60} viewBox={420} />
+                                          ))}
+                                        </div>
+                                      )}
                                       {d.explanation && (
                                         <div className="quiz-explanation icon-row">
                                           <Lightbulb size={15} /> <span>{d.explanation}</span>

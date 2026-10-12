@@ -53,7 +53,7 @@ app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 // never did. Give just those two routes headroom; everything else stays at
 // the tight default.
 app.use(
-  ['/api/quiz/kana-write/submit', '/api/quiz/kanji-write/submit'],
+  ['/api/quiz/kana-write/submit', '/api/quiz/kanji-write/submit', '/api/quiz/vocab-practice/submit'],
   express.json({ limit: '4mb' })
 );
 app.use(express.json({ limit: '50kb' }));

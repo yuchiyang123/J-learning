@@ -12,6 +12,10 @@ export const QUIZ_TYPE_LABEL_KEYS = {
   kana_write: 'type_kana_write',
   kana_read: 'type_kana_read',
   kanji_write: 'type_kanji_write',
+  vocab_typing: 'type_vocab_typing',
+  vocab_tiles: 'type_vocab_tiles',
+  vocab_handwrite: 'type_vocab_handwrite',
+  vocab_kanji_write: 'type_vocab_kanji_write',
   jlpt_mock: 'type_jlpt_mock',
 };
 

@@ -56,3 +56,6 @@
   .skin-card, .skin-preview-glyph { transition: none; }
   .spin { animation: none; }
 }
+
+/* ---------- Quiz history: one thumbnail per handwritten character ---------- */
+.history-strokes-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.4rem; }

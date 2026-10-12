@@ -3,6 +3,7 @@ import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { translate } from '../locale.js';
 import { optionalAuth, requireAuth } from '../auth.js';
+import { applyReview } from '../srs.js';
 
 const router = Router();
 
@@ -327,6 +328,93 @@ router.get('/kanji-write/wrong', requireAuth, (req, res) => {
     .filter((d) => !d.isCorrect)
     .map((d) => ({ char: d.correctAnswer, meaning: d.prompt }));
   res.json(wrong);
+});
+
+// ---------- Vocabulary practice (typing / tiles / handwriting) ----------
+//
+// The four practice modes on the vocabulary page are graded client-side
+// (typing and tiles compare against the word's readings exactly; the two
+// handwriting modes are self-graded after a shape-match suggestion), so
+// like kana-write this just tallies and persists. Each mode is its own
+// quiz_results.type so history can tell them apart.
+const VOCAB_PRACTICE_TYPES = {
+  typing: 'vocab_typing',
+  tiles: 'vocab_tiles',
+  handwrite: 'vocab_handwrite',
+  kanji: 'vocab_kanji_write',
+};
+const WORD_KEY = /^(word|custom_word):(\d+)$/;
+const clip = (v, n) => String(v ?? '').slice(0, n);
+const MAX_PRACTICE_ITEMS = 100;
+
+// POST /api/quiz/vocab-practice/submit
+//   { mode, level, items: [{ wordKey: 'word:12', prompt, answer, given, isCorrect, strokesList? }] }
+// Logged in: also moves each word's 記得/不熟 state (same SRS the
+// flashcards use), so practicing and flipping cards share one record.
+router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
+  const { mode, level, items } = req.body;
+  const type = VOCAB_PRACTICE_TYPES[mode];
+  if (!type || !/^N[1-5]$/.test(level || '') || !Array.isArray(items) || items.length === 0 || items.length > MAX_PRACTICE_ITEMS) {
+    return res.status(400).json({ error: 'mode, level and 1-100 items required' });
+  }
+  const userId = req.user?.id;
+  if (userId) touchUser(userId);
+
+  let correct = 0;
+  const detail = [];
+  for (const item of items) {
+    const m = WORD_KEY.exec(item?.wordKey || '');
+    if (!m) continue;
+    const isCorrect = !!item.isCorrect;
+    if (isCorrect) correct++;
+    const entry = {
+      questionId: m[0],
+      prompt: clip(item.prompt, 200),
+      selected: clip(item.given, 100),
+      correctAnswer: clip(item.answer, 100),
+      isCorrect,
+    };
+    // Handwriting modes: one stroke set per written character.
+    if (Array.isArray(item.strokesList)) {
+      entry.strokesList = item.strokesList.slice(0, 16).map((s) => (Array.isArray(s) ? s : []));
+    }
+    detail.push(entry);
+  }
+  if (detail.length === 0) return res.status(400).json({ error: 'no valid items' });
+  const total = detail.length;
+
+  if (userId) {
+    const save = db.transaction(() => {
+      db.prepare(
+        'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
+      ).run(userId, type, level, total, correct, JSON.stringify(detail));
+      for (const d of detail) {
+        const [, itemType, itemId] = WORD_KEY.exec(d.questionId);
+        applyReview(userId, itemType, Number(itemId), d.isCorrect);
+      }
+    });
+    save();
+  }
+
+  res.json({ total, correct, detail });
+});
+
+// GET /api/quiz/vocab-practice/wrong?level=N5 -> ['word:12', 'custom_word:3', ...]
+// Words whose most recent attempt in any practice mode was wrong.
+router.get('/vocab-practice/wrong', requireAuth, (req, res) => {
+  const { level } = req.query;
+  const types = Object.values(VOCAB_PRACTICE_TYPES);
+  let sql = `SELECT detail FROM quiz_results WHERE user_id = ? AND type IN (${types.map(() => '?').join(',')})`;
+  const params = [req.user.id, ...types];
+  if (level) { sql += ' AND level = ?'; params.push(level); }
+  sql += ' ORDER BY taken_at DESC LIMIT 300';
+  const lastOutcome = new Map();
+  for (const r of db.prepare(sql).all(...params)) {
+    for (const d of JSON.parse(r.detail || '[]')) {
+      if (!lastOutcome.has(d.questionId)) lastOutcome.set(d.questionId, d.isCorrect);
+    }
+  }
+  res.json([...lastOutcome.entries()].filter(([, ok]) => !ok).map(([key]) => key));
 });
 
 export default router;

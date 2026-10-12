@@ -10,6 +10,7 @@ import EmptyState from '../components/EmptyState.jsx';
 import Modal from '../components/Modal.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
+import VocabPractice from './vocab/VocabPractice.jsx';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
@@ -25,6 +26,8 @@ export default function Vocabulary() {
   const [dir, setDir] = useState('next'); // 'next' | 'prev' — drives the card slide animation
   const [flipped, setFlipped] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  // 'cards' = flip-card review; 'practice' = typing / tiles / handwriting.
+  const [view, setView] = useState(searchParams.get('view') === 'practice' ? 'practice' : 'cards');
   const { t, locale } = useLocale();
   const { isLoggedIn } = useAuth();
 
@@ -47,6 +50,11 @@ export default function Vocabulary() {
     setProgressLoading(true);
     api.getProgress().then(setProgress).finally(() => setProgressLoading(false));
   }, [isLoggedIn]);
+
+  // A practice run just moved words' 記得/不熟 state server-side.
+  function refreshProgress() {
+    if (isLoggedIn) api.getProgress().then(setProgress).catch(() => {});
+  }
 
   useEffect(() => { if (!isLoggedIn) setFilter('all'); }, [isLoggedIn]);
 
@@ -150,7 +158,24 @@ export default function Vocabulary() {
       <h1>{t('vocab_title')}</h1>
       <LevelPicker level={level} onChange={setLevel} />
 
-      {isLoggedIn && (
+      <div className="filter-group vocab-view-switch">
+        <button className={view === 'cards' ? 'active' : ''} onClick={() => setView('cards')}>{t('vp_tab_cards')}</button>
+        <button className={view === 'practice' ? 'active' : ''} onClick={() => setView('practice')}>{t('vp_tab_practice')}</button>
+      </div>
+
+      {view === 'practice' && (
+        loading ? <FlashcardSkeleton /> : (
+          <VocabPractice
+            level={level}
+            words={words}
+            progressByKey={progressByKey}
+            wordKey={wordKey}
+            onProgressChanged={refreshProgress}
+          />
+        )
+      )}
+
+      {view === 'cards' && isLoggedIn && (
         <div className="filter-row">
           <div className="filter-group">
             <span className="filter-label">{t('vocab_filter_label')}</span>
@@ -176,10 +201,10 @@ export default function Vocabulary() {
         />
       </Modal>
 
-      {loading && <FlashcardSkeleton />}
-      {!loading && !current && <EmptyState icon={<Inbox size={32} />} message={t('no_data_level')} />}
+      {view === 'cards' && loading && <FlashcardSkeleton />}
+      {view === 'cards' && !loading && !current && <EmptyState icon={<Inbox size={32} />} message={t('no_data_level')} />}
 
-      {!loading && current && (
+      {view === 'cards' && !loading && current && (
         <div className="flashcard-wrap">
           <div
             key={wordKey(current)}
