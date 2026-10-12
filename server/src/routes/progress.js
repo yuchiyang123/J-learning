@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { requireAuth } from '../auth.js';
-import { applyReview } from '../srs.js';
+import { applyReview, getDueItems, isDueItemType, logResponse, dailyResponseTimes } from '../srs.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -13,15 +13,38 @@ router.get('/', (req, res) => {
   res.json(rows);
 });
 
-// POST /api/progress/review { itemType, itemId, correct }
+// GET /api/progress/due?level=N5&itemType=vocab
+//   -> [{ itemType: 'word' | 'custom_word', itemId, nextReview }], oldest due first.
+// itemType is needed per entry: word and custom_word ids overlap.
+router.get('/due', (req, res) => {
+  const { level, itemType = 'vocab' } = req.query;
+  if (level && !/^N[1-5]$/.test(level)) return res.status(400).json({ error: 'level must be N1-N5' });
+  if (!isDueItemType(itemType)) return res.status(400).json({ error: 'unknown itemType' });
+  res.json(getDueItems(req.user.id, { itemType, level }));
+});
+
+// GET /api/progress/response-times?days=14&tz=480
+//   -> [{ date, avgMs, count }] per local day, correct answers only.
+// tz = the user's UTC offset in minutes (e.g. 480 for UTC+8).
+router.get('/response-times', (req, res) => {
+  const days = Math.min(Math.max(parseInt(req.query.days, 10) || 14, 1), 90);
+  const tz = parseInt(req.query.tz, 10);
+  const tzOffsetMinutes = Number.isFinite(tz) && Math.abs(tz) <= 14 * 60 ? tz : 0;
+  res.json(dailyResponseTimes(req.user.id, { days, tzOffsetMinutes }));
+});
+
+// POST /api/progress/review { itemType, itemId, correct, responseMs? }
+// responseMs: time from the card's front appearing to the answer; when
+// missing (or unusable) the response-time averages are left untouched.
 // simple SRS: correct -> srsLevel+1, next review pushed out; wrong -> reset to 0
 router.post('/review', (req, res) => {
   const userId = req.user.id;
-  const { itemType, itemId, correct } = req.body;
+  const { itemType, itemId, correct, responseMs } = req.body;
   if (!itemType || !itemId) return res.status(400).json({ error: 'itemType and itemId required' });
   touchUser(userId);
 
-  applyReview(userId, itemType, itemId, !!correct);
+  applyReview(userId, itemType, itemId, !!correct, responseMs);
+  logResponse(userId, itemType, itemId, 'flashcard', !!correct, responseMs);
 
   res.json({ ok: true });
 });

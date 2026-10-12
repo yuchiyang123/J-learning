@@ -46,11 +46,13 @@ export function QuestionPrompt({ word, prompt }) {
       </div>
     );
   }
+  // Kanji -> reading is pure recognition (what JLPT N5 tests), so only the
+  // written form is shown: the meaning would hand over a second cue that
+  // the exam doesn't give. The AnswerCard shows everything afterwards.
   return (
     <div className="vp-prompt">
       <span className="vp-prompt-ask">{t('vp_ask_reading')}</span>
       <span className="vp-prompt-main" lang="ja">{primaryKanji(word)}</span>
-      <span className="vp-prompt-sub">{word.meaning}</span>
     </div>
   );
 }

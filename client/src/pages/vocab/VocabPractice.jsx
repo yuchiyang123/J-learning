@@ -4,7 +4,7 @@ import { api } from '../../api.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
 import StrokeThumbnail from '../../components/StrokeThumbnail.jsx';
-import { primaryReading, primaryKanji, readingVariants, kanjiVariants, toHiragana } from '../../lib/vocabAnswer.js';
+import { primaryReading, primaryKanji, readingVariants, kanjiVariants, hasKanji } from '../../lib/vocabAnswer.js';
 import TypingQuestion from './TypingQuestion.jsx';
 import TilesQuestion from './TilesQuestion.jsx';
 import HandwriteQuestion, { HW_CANVAS } from './HandwriteQuestion.jsx';
@@ -25,7 +25,6 @@ const PROMPTS = ['kanji', 'meaning', 'audio'];
 const COUNTS = [10, 20, 30];
 const PREFS_KEY = 'jp_vocab_practice';
 
-const hasKanji = (w) => /[㐀-鿿]/.test(primaryKanji(w)) && toHiragana(primaryKanji(w)) !== toHiragana(primaryReading(w));
 const kanaOnly = (s) => /^[ぁ-ゖァ-ヺー]+$/.test(s);
 
 // Which words a mode/prompt combination can actually ask about.
@@ -62,17 +61,17 @@ function loadPrefs() {
   }
 }
 
-export default function VocabPractice({ level, words, progressByKey, wordKey, onProgressChanged }) {
+export default function VocabPractice({ level, words, progressByKey, wordKey, dueKeys = [], onProgressChanged }) {
   const { isLoggedIn } = useAuth();
   const { t } = useLocale();
   const [prefs, setPrefs] = useState(loadPrefs);
-  const [source, setSource] = useState('all'); // 'all' | 'unknown' | 'wrong'
+  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'unknown' | 'wrong'
   const [wrongKeys, setWrongKeys] = useState(null);
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
   const [results, setResults] = useState([]);
-  const [saveState, setSaveState] = useState(null); // null | 'saving' | 'saved' | 'failed'
+  const [saveState, setSaveState] = useState(null); // null | 'saving' | 'saved' | 'saved-history' | 'failed'
   // The current question's verdict once it's shown, before 'next' commits it,
   // so the running score updates the moment you answer.
   const [pendingCorrect, setPendingCorrect] = useState(false);
@@ -91,19 +90,27 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
   useEffect(() => { setStage('setup'); }, [level, words]);
 
   useEffect(() => {
-    if (!isLoggedIn) { setWrongKeys(null); setSource('all'); return; }
+    if (!isLoggedIn) { setWrongKeys(null); return; }
     api.getVocabPracticeWrong(level).then(setWrongKeys).catch(() => setWrongKeys([]));
   }, [isLoggedIn, level, stage]);
 
+  // Logged in, today's due reviews are the default source.
+  useEffect(() => { setSource(isLoggedIn ? 'due' : 'all'); }, [isLoggedIn]);
+
   const pool = useMemo(() => {
     let list = words.filter((w) => eligible(w, mode, effectivePrompt));
+    if (source === 'due') {
+      // Due order (most overdue first), not the dictionary's.
+      const byKey = new Map(list.map((w) => [wordKey(w), w]));
+      return dueKeys.map((k) => byKey.get(k)).filter(Boolean);
+    }
     if (source === 'unknown') list = list.filter((w) => progressByKey.get(wordKey(w)) === 0);
     if (source === 'wrong') {
       const set = new Set(wrongKeys ?? []);
       list = list.filter((w) => set.has(wordKey(w)));
     }
     return list;
-  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys]);
+  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys, dueKeys]);
 
   // A run in progress has no autosave — warn before the tab is closed.
   useEffect(() => {
@@ -112,6 +119,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, [stage]);
+
+  // Due reviews go most-overdue first; any other source is shuffled.
+  const ordered = (list) => (source === 'due' ? list : shuffle(list));
 
   function begin(list) {
     if (list.length === 0) return;
@@ -127,8 +137,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
     if (!isLoggedIn) return;
     setSaveState('saving');
     try {
-      await api.submitVocabPractice({
+      const res = await api.submitVocabPractice({
         mode,
+        prompt: effectivePrompt,
         level,
         items: allResults.map((r) => ({
           wordKey: wordKey(r.word),
@@ -136,11 +147,12 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
           answer: r.answer,
           given: r.given,
           isCorrect: r.isCorrect,
+          responseMs: r.responseMs ?? null,
           ...(r.strokesList ? { strokesList: r.strokesList } : {}),
         })),
       });
-      setSaveState('saved');
-      onProgressChanged?.();
+      setSaveState(res?.srsUpdated ? 'saved' : 'saved-history');
+      if (res?.srsUpdated) onProgressChanged?.();
     } catch {
       setSaveState('failed');
     }
@@ -201,6 +213,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
         </div>
         {saveState === 'saving' && <p className="muted vp-save-note"><Loader2 size={14} className="spin" /> {t('writequiz_saving')}</p>}
         {saveState === 'saved' && <p className="muted vp-save-note">{t('vp_saved')}</p>}
+        {saveState === 'saved-history' && <p className="muted vp-save-note">{t('vp_saved_history_only')}</p>}
         {saveState === 'failed' && <p className="warning">{t('vp_save_failed')}</p>}
 
         <ul className="vp-review-list">
@@ -231,7 +244,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
               <RotateCcw size={16} /> {t('vp_retry_wrong', { count: wrongWords.length })}
             </button>
           )}
-          <button className="secondary-btn icon-btn" onClick={() => begin(shuffle(pool).slice(0, count))}>
+          <button className="secondary-btn icon-btn" onClick={() => begin(ordered(pool).slice(0, count))}>
             <RefreshCw size={15} /> {t('vp_again')}
           </button>
           <button className="secondary-btn icon-btn" onClick={() => setStage('setup')}>
@@ -274,6 +287,11 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
 
       <div className="filter-group">
         <span className="filter-label">{t('vp_source_label')}</span>
+        {isLoggedIn && (
+          <button className={source === 'due' ? 'active' : ''} onClick={() => setSource('due')}>
+            {t('vp_source_due', { count: dueKeys.length })}
+          </button>
+        )}
         <button className={source === 'all' ? 'active' : ''} onClick={() => setSource('all')}>{t('vp_source_all')}</button>
         {isLoggedIn && (
           <>
@@ -293,7 +311,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
       </div>
 
       <div className="writequiz-setup-footer">
-        <button className="submit-btn" disabled={pool.length === 0} onClick={() => begin(shuffle(pool).slice(0, count))}>
+        <button className="submit-btn" disabled={pool.length === 0} onClick={() => begin(ordered(pool).slice(0, count))}>
           {t('vp_start')}
         </button>
         <span className="muted">

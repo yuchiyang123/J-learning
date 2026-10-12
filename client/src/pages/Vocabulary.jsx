@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2, Inbox } from 'lucide-react';
 import { api } from '../api.js';
@@ -11,8 +11,27 @@ import Modal from '../components/Modal.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 import VocabPractice from './vocab/VocabPractice.jsx';
+import { hasKanji } from '../lib/vocabAnswer.js';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
+
+// Flashcard preferences (per device). `front` decides what the card shows
+// before flipping — JLPT N5 tests recognition, so the default front is the
+// kana alone, or the kanji alone, never both plus a hint:
+//   kana  — front: kana only;  back: kanji (if any) + meaning
+//   kanji — words with kanji only; front: kanji only; back: reading + meaning
+//   both  — front: kanji + kana; back: meaning (the original layout)
+// `autoplay` speaks the word whenever the card is turned to its back.
+const CARD_PREFS_KEY = 'jp_flashcard_prefs';
+const FRONTS = ['kana', 'kanji', 'both'];
+function loadCardPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(CARD_PREFS_KEY) || '{}');
+    return { front: FRONTS.includes(p.front) ? p.front : 'kana', autoplay: p.autoplay !== false };
+  } catch {
+    return { front: 'kana', autoplay: true };
+  }
+}
 
 export default function Vocabulary() {
   const [searchParams] = useSearchParams();
@@ -21,11 +40,17 @@ export default function Vocabulary() {
   const [level, setLevel] = useState(LEVELS.includes(urlLevel) ? urlLevel : 'N5');
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
+  const [filter, setFilter] = useState('all'); // 'due' | 'all' | 'unknown'
+  // Items whose SRS review is due now (oldest first), refreshed after every
+  // review; `dueOrder` is the snapshot the 'due' card queue walks through, so
+  // reviewing a card doesn't reshuffle the queue under you.
+  const [due, setDue] = useState([]);
+  const [dueOrder, setDueOrder] = useState([]);
   const [index, setIndex] = useState(0);
   const [dir, setDir] = useState('next'); // 'next' | 'prev' — drives the card slide animation
   const [flipped, setFlipped] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [cardPrefs, setCardPrefs] = useState(loadCardPrefs);
   // 'cards' = flip-card review; 'practice' = typing / tiles / handwriting.
   const [view, setView] = useState(searchParams.get('view') === 'practice' ? 'practice' : 'cards');
   const { t, locale } = useLocale();
@@ -39,6 +64,20 @@ export default function Vocabulary() {
   const [wordsData, wordsLoading, reloadWords] = useCachedApi(wordsKey, () => api.getWords(level));
   const words = wordsData ?? [];
   const loading = wordsLoading || progressLoading;
+  // The kanji front only makes sense for words that are written in kanji.
+  const cardWords = useMemo(
+    () => (cardPrefs.front === 'kanji' ? words.filter(hasKanji) : words),
+    [words, cardPrefs.front]
+  );
+
+  function updateCardPrefs(patch) {
+    setCardPrefs((p) => {
+      const next = { ...p, ...patch };
+      try { localStorage.setItem(CARD_PREFS_KEY, JSON.stringify(next)); } catch { /* not persisted */ }
+      return next;
+    });
+    if (patch.front) { setIndex(0); setFlipped(false); }
+  }
 
   useEffect(() => {
     setIndex(0);
@@ -51,12 +90,25 @@ export default function Vocabulary() {
     api.getProgress().then(setProgress).finally(() => setProgressLoading(false));
   }, [isLoggedIn]);
 
-  // A practice run just moved words' 記得/不熟 state server-side.
+  const loadDue = useCallback((resetQueue) => {
+    if (!isLoggedIn) { setDue([]); setDueOrder([]); return; }
+    api.getDue({ level }).then((rows) => {
+      const keys = rows.map((r) => `${r.itemType}:${r.itemId}`);
+      setDue(keys);
+      if (resetQueue) setDueOrder(keys);
+    }).catch(() => {});
+  }, [isLoggedIn, level]);
+
+  useEffect(() => { loadDue(true); }, [loadDue]);
+
+  // A practice run just moved words' review state server-side.
   function refreshProgress() {
     if (isLoggedIn) api.getProgress().then(setProgress).catch(() => {});
+    loadDue(false);
   }
 
-  useEffect(() => { if (!isLoggedIn) setFilter('all'); }, [isLoggedIn]);
+  // Logged in, today's due reviews are the default deck.
+  useEffect(() => { setFilter(isLoggedIn ? 'due' : 'all'); }, [isLoggedIn]);
 
   function reloadWordsAfterMutation() {
     invalidateCache(wordsKey);
@@ -81,27 +133,37 @@ export default function Vocabulary() {
   // with srs_level 0) — a word never reviewed yet just hasn't been reached,
   // it isn't "known to be unknown" yet.
   const unknownWords = useMemo(
-    () => words.filter((w) => progressByKey.get(wordKey(w)) === 0),
-    [words, progressByKey]
+    () => cardWords.filter((w) => progressByKey.get(wordKey(w)) === 0),
+    [cardWords, progressByKey]
   );
 
-  const filteredWords = filter === 'unknown' ? unknownWords : words;
+  const dueWords = useMemo(() => {
+    const byKey = new Map(cardWords.map((w) => [wordKey(w), w]));
+    return dueOrder.map((k) => byKey.get(k)).filter(Boolean);
+  }, [cardWords, dueOrder]);
+
+  const filteredWords = filter === 'unknown' ? unknownWords : filter === 'due' ? dueWords : cardWords;
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
+
+  // Response time = from this card's front appearing to 記得 / 不熟.
+  const shownAtRef = useRef(performance.now());
+  const currentKey = current ? wordKey(current) : null;
+  useEffect(() => { shownAtRef.current = performance.now(); }, [currentKey, view]);
 
   // Landed here from a site-wide search result (?id=) — jump straight to
   // that card instead of leaving the learner on whatever card index 0 is.
   // Forces filter back to 'all' since the target word may not be in the
   // '只顯示不會的' subset.
   useEffect(() => {
-    if (!urlWordId || words.length === 0) return;
-    const idx = words.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
+    if (!urlWordId || cardWords.length === 0) return;
+    const idx = cardWords.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
     if (idx === -1) return;
     setFilter('all');
     setIndex(idx);
     setFlipped(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlWordId, words.length]);
+  }, [urlWordId, cardWords.length]);
 
   function next() {
     setDir('next');
@@ -115,11 +177,21 @@ export default function Vocabulary() {
     setIndex((i) => (i - 1 + filteredWords.length) % Math.max(filteredWords.length, 1));
   }
 
+  function flip() {
+    const toBack = !flipped;
+    setFlipped(toBack);
+    if (toBack && cardPrefs.autoplay && current) speak(current.kana);
+  }
+
   function changeFilter(f) {
+    if (f === 'due') setDueOrder(due);
     setFilter(f);
     setIndex(0);
     setFlipped(false);
   }
+
+  // Due deck: buttons are review answers, not a 記得/不熟 toggle.
+  const reviewing = filter === 'due';
 
   async function mark(correct) {
     if (!current) return;
@@ -129,10 +201,14 @@ export default function Vocabulary() {
     // Clicking the already-active button deselects it — clears the mark
     // entirely instead of forcing a switch to the other state. Stay on the
     // card rather than advancing, since this is a correction.
-    const isDeselect = (correct === false && currentSrs === 0) || (correct === true && currentSrs > 0);
+    // In the due deck every press is a review — a due card usually already
+    // has srs_level >= 1, so treating 記得 as "deselect" there would wipe
+    // the word's schedule instead of passing the review.
+    const isDeselect = !reviewing && ((correct === false && currentSrs === 0) || (correct === true && currentSrs > 0));
     if (isDeselect) {
       setProgress((prev) => prev.filter((p) => !(p.item_type === itemType && p.item_id === itemId)));
       await api.clearProgress({ itemType, itemId }).catch(() => {});
+      loadDue(false);
       return;
     }
 
@@ -142,7 +218,9 @@ export default function Vocabulary() {
       if (existing) return prev.map((p) => (p === existing ? { ...p, srs_level: nextSrs } : p));
       return [...prev, { item_type: itemType, item_id: itemId, srs_level: nextSrs }];
     });
-    await api.reviewProgress({ itemType, itemId, correct }).catch(() => {});
+    const responseMs = Math.round(performance.now() - shownAtRef.current);
+    await api.reviewProgress({ itemType, itemId, correct, responseMs }).catch(() => {});
+    loadDue(false);
     next();
   }
 
@@ -163,6 +241,12 @@ export default function Vocabulary() {
         <button className={view === 'practice' ? 'active' : ''} onClick={() => setView('practice')}>{t('vp_tab_practice')}</button>
       </div>
 
+      {isLoggedIn && (
+        <p className="vocab-due-count" aria-live="polite">
+          {t('vocab_due_count', { count: due.length })}
+        </p>
+      )}
+
       {view === 'practice' && (
         loading ? <FlashcardSkeleton /> : (
           <VocabPractice
@@ -170,15 +254,37 @@ export default function Vocabulary() {
             words={words}
             progressByKey={progressByKey}
             wordKey={wordKey}
+            dueKeys={due}
             onProgressChanged={refreshProgress}
           />
         )
+      )}
+
+      {view === 'cards' && (
+        <div className="filter-row">
+          <div className="filter-group">
+            <span className="filter-label">{t('vocab_front_label')}</span>
+            {FRONTS.map((f) => (
+              <button key={f} className={cardPrefs.front === f ? 'active' : ''} onClick={() => updateCardPrefs({ front: f })}>
+                {t(`vocab_front_${f}`)}
+              </button>
+            ))}
+          </div>
+          <div className="filter-group">
+            <span className="filter-label">{t('vocab_autoplay_label')}</span>
+            <button className={cardPrefs.autoplay ? 'active' : ''} onClick={() => updateCardPrefs({ autoplay: true })}>{t('settings_toggle_on')}</button>
+            <button className={!cardPrefs.autoplay ? 'active' : ''} onClick={() => updateCardPrefs({ autoplay: false })}>{t('settings_toggle_off')}</button>
+          </div>
+        </div>
       )}
 
       {view === 'cards' && isLoggedIn && (
         <div className="filter-row">
           <div className="filter-group">
             <span className="filter-label">{t('vocab_filter_label')}</span>
+            <button className={filter === 'due' ? 'active' : ''} onClick={() => changeFilter('due')}>
+              {t('vocab_filter_due')}
+            </button>
             <button className={filter === 'all' ? 'active' : ''} onClick={() => changeFilter('all')}>
               {t('vocab_filter_all')}
             </button>
@@ -202,24 +308,26 @@ export default function Vocabulary() {
       </Modal>
 
       {view === 'cards' && loading && <FlashcardSkeleton />}
-      {view === 'cards' && !loading && !current && <EmptyState icon={<Inbox size={32} />} message={t('no_data_level')} />}
+      {view === 'cards' && !loading && !current && (
+        <EmptyState icon={<Inbox size={32} />} message={filter === 'due' ? t('vocab_due_empty') : t('no_data_level')} />
+      )}
 
       {view === 'cards' && !loading && current && (
         <div className="flashcard-wrap">
           <div
             key={wordKey(current)}
             className={`flip-card slide-${dir}${flipped ? ' is-flipped' : ''}`}
-            onClick={() => setFlipped((f) => !f)}
+            onClick={flip}
           >
             <div className="flip-card-inner">
-              <div className="flip-card-face flip-card-front">
-                {current.isCustom && <span className="custom-word-badge">{t('custom_word_badge')}</span>}
-                <div className="flashcard-main">{current.kanji || current.kana}</div>
-                {current.kanji && <div className="flashcard-sub">{current.kana}</div>}
-                <div className="flashcard-hint">{t('flip_hint')}</div>
-              </div>
+              <CardFront word={current} front={cardPrefs.front} />
               <div className="flip-card-face flip-card-back">
-                <div className="flashcard-main">{current.meaning}</div>
+                {current.isCustom && <span className="custom-word-badge">{t('custom_word_badge')}</span>}
+                {cardPrefs.front === 'kana' && current.kanji && <div className="flashcard-main" lang="ja">{current.kanji}</div>}
+                {cardPrefs.front === 'kanji' && <div className="flashcard-main" lang="ja">{current.kana}</div>}
+                <div className={cardPrefs.front === 'both' || (cardPrefs.front === 'kana' && !current.kanji) ? 'flashcard-main' : 'flashcard-sub flashcard-meaning'}>
+                  {current.meaning}
+                </div>
                 <div className="flashcard-sub">{current.part_of_speech}</div>
                 {current.example_jp && (
                   <div className="example">
@@ -228,10 +336,11 @@ export default function Vocabulary() {
                     <div className="zh">{current.example_zh}</div>
                   </div>
                 )}
-                <div className="flashcard-hint">{t('flip_hint')}</div>
               </div>
             </div>
           </div>
+          {/* Outside the card so its front carries nothing but the word. */}
+          <div className="flashcard-hint flashcard-hint-below">{t('flip_hint')}</div>
 
           <div className="flashcard-controls">
             <button className="icon-btn" onClick={() => speak(current.kana)}><Volume2 size={16} /> {t('btn_play_audio')}</button>
@@ -244,13 +353,13 @@ export default function Vocabulary() {
 
           <div className="mark-controls">
             <button
-              className={`btn-bad icon-btn${currentSrs === 0 ? ' active' : ''}`}
+              className={`btn-bad icon-btn${!reviewing && currentSrs === 0 ? ' active' : ''}`}
               onClick={() => mark(false)}
             >
               <X size={16} /> {t('btn_dont_know')}
             </button>
             <button
-              className={`btn-good icon-btn${currentSrs > 0 ? ' active' : ''}`}
+              className={`btn-good icon-btn${!reviewing && currentSrs > 0 ? ' active' : ''}`}
               onClick={() => mark(true)}
             >
               <Check size={16} /> {t('btn_remember')}
@@ -262,6 +371,18 @@ export default function Vocabulary() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// The card's front: only the form being tested, nothing else — no meaning,
+// no hint, no badge.
+function CardFront({ word, front }) {
+  const main = front === 'kana' ? word.kana : word.kanji || word.kana;
+  return (
+    <div className="flip-card-face flip-card-front">
+      <div className="flashcard-main" lang="ja">{main}</div>
+      {front === 'both' && word.kanji && <div className="flashcard-sub" lang="ja">{word.kana}</div>}
     </div>
   );
 }

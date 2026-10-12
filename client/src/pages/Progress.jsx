@@ -10,6 +10,7 @@ import Dropdown from '../components/Dropdown.jsx';
 import StrokeThumbnail from '../components/StrokeThumbnail.jsx';
 import RadarChart from '../components/RadarChart.jsx';
 import CategoryBarChart from '../components/CategoryBarChart.jsx';
+import ResponseTimeChart from '../components/ResponseTimeChart.jsx';
 import { QUIZ_TYPE_LABEL_KEYS, QUIZ_TYPES_WITHOUT_LEVEL } from '../i18n/quizTypeLabels.js';
 import { formatServerTimestamp } from '../lib/formatDate.js';
 
@@ -29,6 +30,7 @@ const PAGE_SIZE_DROPDOWN_OPTIONS = PAGE_SIZE_OPTIONS.map((n) => ({ value: n, lab
 
 export default function ProgressPage() {
   const [stats, setStats] = useState(null);
+  const [responseTimes, setResponseTimes] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
@@ -45,6 +47,8 @@ export default function ProgressPage() {
     Promise.all([api.getStats(), api.getQuizHistory()])
       .then(([s, h]) => { setStats(s); setHistory(h); })
       .finally(() => setLoading(false));
+    // Separate so a failure here never blocks the rest of the page.
+    api.getResponseTimes(14).then(setResponseTimes).catch(() => setResponseTimes(null));
   }, [isLoggedIn]);
 
   useEffect(() => { setPage(0); }, [pageSize, history.length]);
@@ -126,6 +130,14 @@ export default function ProgressPage() {
             <RadarChart axes={categoryAxes} />
             <CategoryBarChart axes={categoryAxes} noDataLabel={t('progress_overview_no_data')} />
           </div>
+        </>
+      )}
+
+      {!loading && responseTimes && (
+        <>
+          <h2>{t('progress_rt_title')}</h2>
+          <p className="muted rt-sub">{t('progress_rt_sub')}</p>
+          <ResponseTimeChart data={responseTimes} />
         </>
       )}
 

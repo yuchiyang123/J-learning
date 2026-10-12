@@ -16,6 +16,7 @@ export default function TypingQuestion({ word, prompt, isLast, onNext, onGraded 
   const inputRef = useRef(null);
   const nextRef = useRef(null);
   const composing = useRef(false);
+  const shownAt = useRef(performance.now()); // response time starts when the question appears
   const acceptKanji = prompt === 'meaning' || prompt === 'audio';
 
   useEffect(() => { inputRef.current?.focus(); }, []);
@@ -38,11 +39,11 @@ export default function TypingQuestion({ word, prompt, isLast, onNext, onGraded 
     if (!giveUp && !given) return;
     const r = checkAnswer(given, word, { acceptKanji });
     setValue(given);
-    setResult({ correct: r.correct, given, matched: r.matched });
+    setResult({ correct: r.correct, given, matched: r.matched, responseMs: Math.round(performance.now() - shownAt.current) });
   }
 
   function next() {
-    onNext({ given: result.given, isCorrect: result.correct });
+    onNext({ given: result.given, isCorrect: result.correct, responseMs: result.responseMs });
   }
 
   const reading = primaryReading(word);

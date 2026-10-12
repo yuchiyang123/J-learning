@@ -112,9 +112,11 @@ export const api = {
   getVocabPracticeWrong: (level) => request(`/quiz/vocab-practice/wrong${level ? `?level=${level}` : ''}`),
   getKanjiWriteWrong: (level) => request(`/quiz/kanji-write/wrong${level ? `?level=${level}` : ''}`),
   getProgress: () => request('/progress'),
+  getDue: ({ level, itemType = 'vocab' } = {}) => request(`/progress/due?${new URLSearchParams({ itemType, ...(level ? { level } : {}) })}`),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
   clearProgress: ({ itemType, itemId }) => request(`/progress/${itemType}/${itemId}`, { method: 'DELETE' }),
   getStats: () => request('/progress/stats'),
+  getResponseTimes: (days = 14) => request(`/progress/response-times?${new URLSearchParams({ days, tz: -new Date().getTimezoneOffset() })}`),
   logSpeaking: (payload) => request('/speaking', { method: 'POST', body: JSON.stringify(payload) }),
   getSpeakingHistory: () => request('/speaking'),
 

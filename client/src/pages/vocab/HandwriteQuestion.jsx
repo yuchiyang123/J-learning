@@ -26,6 +26,8 @@ export default function HandwriteQuestion({ word, prompt, chars, recognize = fal
   const [slots, setSlots] = useState(() => chars.map(() => []));
   const [cur, setCur] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const shownAt = useRef(performance.now());
+  const answeredAt = useRef(null);
 
   const redraw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -69,8 +71,14 @@ export default function HandwriteQuestion({ word, prompt, chars, recognize = fal
   const flagged = suggestions ? suggestions.filter((s) => s && !s.suggestCorrect).length : 0;
   const allEmpty = slots.every((s) => s.length === 0);
 
+  function reveal() {
+    answeredAt.current = performance.now();
+    setRevealed(true);
+  }
+
   function grade(isCorrect) {
-    onNext({ isCorrect, given: isCorrect ? chars.join('') : '', strokesList: slots });
+    const responseMs = Math.round((answeredAt.current ?? performance.now()) - shownAt.current);
+    onNext({ isCorrect, given: isCorrect ? chars.join('') : '', strokesList: slots, responseMs });
   }
 
   return (
@@ -117,7 +125,7 @@ export default function HandwriteQuestion({ word, prompt, chars, recognize = fal
                 {t('vp_hw_next')} <ArrowRight size={15} />
               </button>
             ) : (
-              <button type="button" className="submit-btn" onClick={() => setRevealed(true)}>{t('vp_hw_reveal')}</button>
+              <button type="button" className="submit-btn" onClick={reveal}>{t('vp_hw_reveal')}</button>
             )}
           </div>
           <button type="button" className="vp-text-btn" onClick={() => grade(false)}>{t('vp_give_up')}</button>
