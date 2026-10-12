@@ -179,3 +179,6 @@
 @media (prefers-reduced-motion: reduce) {
   .vp-demo-tiles span, .vp-type-input.is-wrong, .vp-slots.is-wrong .vp-slot, .vp-answer, .vp-hw-model, .vp-slot.is-filled { animation: none; }
 }
+
+/* Due-today counter at the top of the vocabulary page. */
+.vocab-due-count { margin: -0.4rem 0 0.8rem; font-weight: 700; color: var(--accent); }

@@ -61,11 +61,11 @@ function loadPrefs() {
   }
 }
 
-export default function VocabPractice({ level, words, progressByKey, wordKey, onProgressChanged }) {
+export default function VocabPractice({ level, words, progressByKey, wordKey, dueKeys = [], onProgressChanged }) {
   const { isLoggedIn } = useAuth();
   const { t } = useLocale();
   const [prefs, setPrefs] = useState(loadPrefs);
-  const [source, setSource] = useState('all'); // 'all' | 'unknown' | 'wrong'
+  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'unknown' | 'wrong'
   const [wrongKeys, setWrongKeys] = useState(null);
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
   const [queue, setQueue] = useState([]);
@@ -90,19 +90,27 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
   useEffect(() => { setStage('setup'); }, [level, words]);
 
   useEffect(() => {
-    if (!isLoggedIn) { setWrongKeys(null); setSource('all'); return; }
+    if (!isLoggedIn) { setWrongKeys(null); return; }
     api.getVocabPracticeWrong(level).then(setWrongKeys).catch(() => setWrongKeys([]));
   }, [isLoggedIn, level, stage]);
 
+  // Logged in, today's due reviews are the default source.
+  useEffect(() => { setSource(isLoggedIn ? 'due' : 'all'); }, [isLoggedIn]);
+
   const pool = useMemo(() => {
     let list = words.filter((w) => eligible(w, mode, effectivePrompt));
+    if (source === 'due') {
+      // Due order (most overdue first), not the dictionary's.
+      const byKey = new Map(list.map((w) => [wordKey(w), w]));
+      return dueKeys.map((k) => byKey.get(k)).filter(Boolean);
+    }
     if (source === 'unknown') list = list.filter((w) => progressByKey.get(wordKey(w)) === 0);
     if (source === 'wrong') {
       const set = new Set(wrongKeys ?? []);
       list = list.filter((w) => set.has(wordKey(w)));
     }
     return list;
-  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys]);
+  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys, dueKeys]);
 
   // A run in progress has no autosave — warn before the tab is closed.
   useEffect(() => {
@@ -111,6 +119,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, [stage]);
+
+  // Due reviews go most-overdue first; any other source is shuffled.
+  const ordered = (list) => (source === 'due' ? list : shuffle(list));
 
   function begin(list) {
     if (list.length === 0) return;
@@ -230,7 +241,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
               <RotateCcw size={16} /> {t('vp_retry_wrong', { count: wrongWords.length })}
             </button>
           )}
-          <button className="secondary-btn icon-btn" onClick={() => begin(shuffle(pool).slice(0, count))}>
+          <button className="secondary-btn icon-btn" onClick={() => begin(ordered(pool).slice(0, count))}>
             <RefreshCw size={15} /> {t('vp_again')}
           </button>
           <button className="secondary-btn icon-btn" onClick={() => setStage('setup')}>
@@ -273,6 +284,11 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
 
       <div className="filter-group">
         <span className="filter-label">{t('vp_source_label')}</span>
+        {isLoggedIn && (
+          <button className={source === 'due' ? 'active' : ''} onClick={() => setSource('due')}>
+            {t('vp_source_due', { count: dueKeys.length })}
+          </button>
+        )}
         <button className={source === 'all' ? 'active' : ''} onClick={() => setSource('all')}>{t('vp_source_all')}</button>
         {isLoggedIn && (
           <>
@@ -292,7 +308,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, on
       </div>
 
       <div className="writequiz-setup-footer">
-        <button className="submit-btn" disabled={pool.length === 0} onClick={() => begin(shuffle(pool).slice(0, count))}>
+        <button className="submit-btn" disabled={pool.length === 0} onClick={() => begin(ordered(pool).slice(0, count))}>
           {t('vp_start')}
         </button>
         <span className="muted">

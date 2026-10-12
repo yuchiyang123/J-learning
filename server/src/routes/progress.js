@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { requireAuth } from '../auth.js';
-import { applyReview } from '../srs.js';
+import { applyReview, getDueItems, isDueItemType } from '../srs.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -11,6 +11,16 @@ router.use(requireAuth);
 router.get('/', (req, res) => {
   const rows = db.prepare('SELECT * FROM user_progress WHERE user_id = ?').all(req.user.id);
   res.json(rows);
+});
+
+// GET /api/progress/due?level=N5&itemType=vocab
+//   -> [{ itemType: 'word' | 'custom_word', itemId, nextReview }], oldest due first.
+// itemType is needed per entry: word and custom_word ids overlap.
+router.get('/due', (req, res) => {
+  const { level, itemType = 'vocab' } = req.query;
+  if (level && !/^N[1-5]$/.test(level)) return res.status(400).json({ error: 'level must be N1-N5' });
+  if (!isDueItemType(itemType)) return res.status(400).json({ error: 'unknown itemType' });
+  res.json(getDueItems(req.user.id, { itemType, level }));
 });
 
 // POST /api/progress/review { itemType, itemId, correct }

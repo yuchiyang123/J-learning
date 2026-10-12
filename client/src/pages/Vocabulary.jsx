@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2, Inbox } from 'lucide-react';
 import { api } from '../api.js';
@@ -40,7 +40,12 @@ export default function Vocabulary() {
   const [level, setLevel] = useState(LEVELS.includes(urlLevel) ? urlLevel : 'N5');
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
+  const [filter, setFilter] = useState('all'); // 'due' | 'all' | 'unknown'
+  // Items whose SRS review is due now (oldest first), refreshed after every
+  // review; `dueOrder` is the snapshot the 'due' card queue walks through, so
+  // reviewing a card doesn't reshuffle the queue under you.
+  const [due, setDue] = useState([]);
+  const [dueOrder, setDueOrder] = useState([]);
   const [index, setIndex] = useState(0);
   const [dir, setDir] = useState('next'); // 'next' | 'prev' — drives the card slide animation
   const [flipped, setFlipped] = useState(false);
@@ -85,12 +90,25 @@ export default function Vocabulary() {
     api.getProgress().then(setProgress).finally(() => setProgressLoading(false));
   }, [isLoggedIn]);
 
-  // A practice run just moved words' 記得/不熟 state server-side.
+  const loadDue = useCallback((resetQueue) => {
+    if (!isLoggedIn) { setDue([]); setDueOrder([]); return; }
+    api.getDue({ level }).then((rows) => {
+      const keys = rows.map((r) => `${r.itemType}:${r.itemId}`);
+      setDue(keys);
+      if (resetQueue) setDueOrder(keys);
+    }).catch(() => {});
+  }, [isLoggedIn, level]);
+
+  useEffect(() => { loadDue(true); }, [loadDue]);
+
+  // A practice run just moved words' review state server-side.
   function refreshProgress() {
     if (isLoggedIn) api.getProgress().then(setProgress).catch(() => {});
+    loadDue(false);
   }
 
-  useEffect(() => { if (!isLoggedIn) setFilter('all'); }, [isLoggedIn]);
+  // Logged in, today's due reviews are the default deck.
+  useEffect(() => { setFilter(isLoggedIn ? 'due' : 'all'); }, [isLoggedIn]);
 
   function reloadWordsAfterMutation() {
     invalidateCache(wordsKey);
@@ -119,7 +137,12 @@ export default function Vocabulary() {
     [cardWords, progressByKey]
   );
 
-  const filteredWords = filter === 'unknown' ? unknownWords : cardWords;
+  const dueWords = useMemo(() => {
+    const byKey = new Map(cardWords.map((w) => [wordKey(w), w]));
+    return dueOrder.map((k) => byKey.get(k)).filter(Boolean);
+  }, [cardWords, dueOrder]);
+
+  const filteredWords = filter === 'unknown' ? unknownWords : filter === 'due' ? dueWords : cardWords;
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
 
@@ -156,6 +179,7 @@ export default function Vocabulary() {
   }
 
   function changeFilter(f) {
+    if (f === 'due') setDueOrder(due);
     setFilter(f);
     setIndex(0);
     setFlipped(false);
@@ -183,6 +207,7 @@ export default function Vocabulary() {
       return [...prev, { item_type: itemType, item_id: itemId, srs_level: nextSrs }];
     });
     await api.reviewProgress({ itemType, itemId, correct }).catch(() => {});
+    loadDue(false);
     next();
   }
 
@@ -203,6 +228,12 @@ export default function Vocabulary() {
         <button className={view === 'practice' ? 'active' : ''} onClick={() => setView('practice')}>{t('vp_tab_practice')}</button>
       </div>
 
+      {isLoggedIn && (
+        <p className="vocab-due-count" aria-live="polite">
+          {t('vocab_due_count', { count: due.length })}
+        </p>
+      )}
+
       {view === 'practice' && (
         loading ? <FlashcardSkeleton /> : (
           <VocabPractice
@@ -210,6 +241,7 @@ export default function Vocabulary() {
             words={words}
             progressByKey={progressByKey}
             wordKey={wordKey}
+            dueKeys={due}
             onProgressChanged={refreshProgress}
           />
         )
@@ -237,6 +269,9 @@ export default function Vocabulary() {
         <div className="filter-row">
           <div className="filter-group">
             <span className="filter-label">{t('vocab_filter_label')}</span>
+            <button className={filter === 'due' ? 'active' : ''} onClick={() => changeFilter('due')}>
+              {t('vocab_filter_due')}
+            </button>
             <button className={filter === 'all' ? 'active' : ''} onClick={() => changeFilter('all')}>
               {t('vocab_filter_all')}
             </button>
@@ -260,7 +295,9 @@ export default function Vocabulary() {
       </Modal>
 
       {view === 'cards' && loading && <FlashcardSkeleton />}
-      {view === 'cards' && !loading && !current && <EmptyState icon={<Inbox size={32} />} message={t('no_data_level')} />}
+      {view === 'cards' && !loading && !current && (
+        <EmptyState icon={<Inbox size={32} />} message={filter === 'due' ? t('vocab_due_empty') : t('no_data_level')} />
+      )}
 
       {view === 'cards' && !loading && current && (
         <div className="flashcard-wrap">

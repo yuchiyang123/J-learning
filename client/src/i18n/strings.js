@@ -425,6 +425,10 @@ const zhTW = {
   vocab_front_kanji: "只看漢字",
   vocab_front_both: "漢字＋假名",
   vocab_autoplay_label: "翻面發音",
+  vocab_filter_due: "今天到期",
+  vocab_due_count: "今日到期：{count} 個單字",
+  vocab_due_empty: "今天沒有到期的單字。可以切到「全部顯示」繼續學新的。",
+  vp_source_due: "今天到期（{count}）",
 };
 
 const zhCN = {
@@ -840,6 +844,10 @@ const zhCN = {
   vocab_front_kanji: "只看汉字",
   vocab_front_both: "汉字＋假名",
   vocab_autoplay_label: "翻面发音",
+  vocab_filter_due: "今天到期",
+  vocab_due_count: "今日到期：{count} 个单词",
+  vocab_due_empty: "今天没有到期的单词。可以切到「全部显示」继续学新的。",
+  vp_source_due: "今天到期（{count}）",
 };
 
 const en = {
@@ -1255,6 +1263,10 @@ const en = {
   vocab_front_kanji: "Kanji only",
   vocab_front_both: "Kanji + kana",
   vocab_autoplay_label: "Speak on flip",
+  vocab_filter_due: "Due today",
+  vocab_due_count: "Due today: {count} words",
+  vocab_due_empty: "Nothing is due today. Switch to All to learn new words.",
+  vp_source_due: "Due today ({count})",
 };
 
 const ko = {
@@ -1670,6 +1682,10 @@ const ko = {
   vocab_front_kanji: "한자만",
   vocab_front_both: "한자＋가나",
   vocab_autoplay_label: "뒤집을 때 발음",
+  vocab_filter_due: "오늘 복습",
+  vocab_due_count: "오늘 복습할 단어: {count}개",
+  vocab_due_empty: "오늘 복습할 단어가 없습니다. 「전체」로 바꿔 새 단어를 공부해 보세요.",
+  vp_source_due: "오늘 복습 ({count})",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };
