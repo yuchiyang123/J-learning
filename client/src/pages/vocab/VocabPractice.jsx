@@ -65,7 +65,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
   const { isLoggedIn } = useAuth();
   const { t } = useLocale();
   const [prefs, setPrefs] = useState(loadPrefs);
-  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'unknown' | 'wrong'
+  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'known' | 'unknown' | 'wrong'
   const [wrongKeys, setWrongKeys] = useState(null);
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
   const [queue, setQueue] = useState([]);
@@ -105,6 +105,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
       return dueKeys.map((k) => byKey.get(k)).filter(Boolean);
     }
     if (source === 'unknown') list = list.filter((w) => progressByKey.get(wordKey(w)) === 0);
+    // 記得的: marked as remembered at least once (srs_level >= 1), due or not —
+    // for checking that words you think you know really stick.
+    if (source === 'known') list = list.filter((w) => progressByKey.get(wordKey(w)) > 0);
     if (source === 'wrong') {
       const set = new Set(wrongKeys ?? []);
       list = list.filter((w) => set.has(wordKey(w)));
@@ -295,6 +298,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
         <button className={source === 'all' ? 'active' : ''} onClick={() => setSource('all')}>{t('vp_source_all')}</button>
         {isLoggedIn && (
           <>
+            <button className={source === 'known' ? 'active' : ''} onClick={() => setSource('known')}>{t('vp_source_known')}</button>
             <button className={source === 'unknown' ? 'active' : ''} onClick={() => setSource('unknown')}>{t('vp_source_unknown')}</button>
             <button className={source === 'wrong' ? 'active' : ''} onClick={() => setSource('wrong')}>
               {t('vp_source_wrong', { count: wrongKeys?.length ?? 0 })}
