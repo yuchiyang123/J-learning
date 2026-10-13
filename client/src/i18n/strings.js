@@ -440,6 +440,7 @@ const zhTW = {
   progress_rt_col_date: "日期",
   progress_rt_col_avg: "平均反應時間",
   progress_rt_col_count: "答對題數",
+  vp_source_known: "記得的單字",
 };
 
 const zhCN = {
@@ -870,6 +871,7 @@ const zhCN = {
   progress_rt_col_date: "日期",
   progress_rt_col_avg: "平均反应时间",
   progress_rt_col_count: "答对题数",
+  vp_source_known: "记得的单词",
 };
 
 const en = {
@@ -1300,6 +1302,7 @@ const en = {
   progress_rt_col_date: "Date",
   progress_rt_col_avg: "Average response time",
   progress_rt_col_count: "Correct answers",
+  vp_source_known: "Marked remembered",
 };
 
 const ko = {
@@ -1730,6 +1733,7 @@ const ko = {
   progress_rt_col_date: "날짜",
   progress_rt_col_avg: "평균 반응 시간",
   progress_rt_col_count: "맞힌 문제 수",
+  vp_source_known: "기억한 단어",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };
