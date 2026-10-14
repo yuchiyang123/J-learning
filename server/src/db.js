@@ -188,3 +188,16 @@ CREATE TABLE IF NOT EXISTS pending_tests (
   PRIMARY KEY (user_id, item_type, item_id)
 );
 `);
+
+// Flashcard bookmarks, so "where was I" follows the account across devices:
+// one row per deck (level:deck:front -> the card's word key) plus '__deck'
+// for which deck was open last.
+db.exec(`
+CREATE TABLE IF NOT EXISTS user_bookmarks (
+  user_id TEXT NOT NULL,
+  bookmark_id TEXT NOT NULL,
+  item_key TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (user_id, bookmark_id)
+);
+`);

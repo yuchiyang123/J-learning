@@ -12,6 +12,7 @@ import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 import VocabPractice from './vocab/VocabPractice.jsx';
 import { hasKanji } from '../lib/vocabAnswer.js';
+import { getBookmark, setBookmark, syncBookmarks, DECK_ID } from '../lib/bookmarks.js';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
@@ -24,22 +25,11 @@ const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 // `autoplay` speaks the word whenever the card is turned to its back.
 // Bookmark: the card you were last on, per level / deck / front mode, so
 // reopening the page picks up where you left off (e.g. card 423 of 718)
-// instead of starting over. Stored as the word's key, not its position,
+// instead of starting over — on any device when logged in (lib/bookmarks.js
+// syncs them to the account). Stored as the word's key, not its position,
 // so it survives words being added. Not kept for the due deck, which is a
 // fresh list every day.
-const BOOKMARK_KEY = 'jp_vocab_bookmarks';
-const LAST_DECK_KEY = 'jp_vocab_deck';
 const DECKS = ['due', 'all', 'unknown', 'pending'];
-function readBookmarks() {
-  try { return JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '{}') || {}; } catch { return {}; }
-}
-function writeBookmark(id, key) {
-  try {
-    const all = readBookmarks();
-    if (key) all[id] = key; else delete all[id];
-    localStorage.setItem(BOOKMARK_KEY, JSON.stringify(all));
-  } catch { /* storage unavailable */ }
-}
 
 const CARD_PREFS_KEY = 'jp_flashcard_prefs';
 const FRONTS = ['kana', 'kanji', 'both'];
@@ -136,9 +126,26 @@ export default function Vocabulary() {
   // time (logged in) it's today's due reviews.
   useEffect(() => {
     if (!isLoggedIn) { setFilter('all'); return; }
-    let last = null;
-    try { last = localStorage.getItem(LAST_DECK_KEY); } catch { /* storage unavailable */ }
+    const last = getBookmark(DECK_ID);
     setFilter(DECKS.includes(last) ? last : 'due');
+  }, [isLoggedIn]);
+
+  // Logged in: pull the account's bookmarks (another device may have moved
+  // on). If they differ, re-open at them — the deck only if it hasn't been
+  // changed here since the page opened.
+  const [bookmarksVersion, setBookmarksVersion] = useState(0);
+  const pickedDeckHere = useRef(false);
+  // After every sync, re-apply what's stored rather than relying on whether
+  // this particular sync changed anything (an earlier one may already have).
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    syncBookmarks().catch(() => {}).then(() => {
+      if (!pickedDeckHere.current) {
+        const d = getBookmark(DECK_ID);
+        if (DECKS.includes(d)) setFilter(d);
+      }
+      setBookmarksVersion((v) => v + 1);
+    });
   }, [isLoggedIn]);
 
   function reloadWordsAfterMutation() {
@@ -193,19 +200,19 @@ export default function Vocabulary() {
   // on the card that was moved to.
   useEffect(() => {
     if (filteredWords.length === 0) return;
-    const saved = bookmarkId ? readBookmarks()[bookmarkId] : null;
+    const saved = bookmarkId ? getBookmark(bookmarkId) : null;
     const idx = saved ? filteredWords.findIndex((w) => wordKey(w) === saved) : -1;
     setIndex(idx >= 0 ? idx : 0);
     setFlipped(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookmarkId, level, filteredWords.length]);
+  }, [bookmarkId, level, filteredWords.length, bookmarksVersion]);
 
   // Saved only when the learner moves (next / prev / mark / back to first),
   // never from an effect — automatic index resets (level or language
   // switches, list reloads) must not overwrite where they really were.
   function saveBookmarkAt(i) {
     const w = filteredWords[i];
-    if (bookmarkId && w) writeBookmark(bookmarkId, wordKey(w));
+    if (bookmarkId && w) setBookmark(bookmarkId, wordKey(w), { sync: isLoggedIn });
   }
 
   function backToFirst() {
@@ -228,7 +235,7 @@ export default function Vocabulary() {
     if (!urlWordId || cardWords.length === 0) return;
     const idx = cardWords.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
     if (idx === -1) return;
-    writeBookmark(`${level}:all:${cardPrefs.front}`, wordKey(cardWords[idx]));
+    setBookmark(`${level}:all:${cardPrefs.front}`, wordKey(cardWords[idx]), { sync: isLoggedIn });
     setFilter('all');
     setIndex(idx);
     setFlipped(false);
@@ -259,7 +266,8 @@ export default function Vocabulary() {
 
   function changeFilter(f) {
     if (f === 'due') setDueOrder(due);
-    try { localStorage.setItem(LAST_DECK_KEY, f); } catch { /* not persisted */ }
+    pickedDeckHere.current = true;
+    setBookmark(DECK_ID, f, { sync: isLoggedIn });
     setFilter(f);
     setIndex(0);
     setFlipped(false);

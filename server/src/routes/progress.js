@@ -36,6 +36,38 @@ router.get('/due', (req, res) => {
   res.json(getDueItems(req.user.id, { itemType, level }));
 });
 
+// ---------- flashcard bookmarks ----------
+const BOOKMARK_ID = /^N[1-5]:(all|unknown|pending):(kana|kanji|both)$/;
+const DECK_BOOKMARK = '__deck';
+const DECKS = new Set(['due', 'all', 'unknown', 'pending']);
+const WORD_KEY = /^(word|custom_word):\d+$/;
+
+// GET /api/progress/bookmarks -> { [bookmarkId]: itemKey }
+router.get('/bookmarks', (req, res) => {
+  const rows = db.prepare('SELECT bookmark_id, item_key FROM user_bookmarks WHERE user_id = ?').all(req.user.id);
+  res.json(Object.fromEntries(rows.map((r) => [r.bookmark_id, r.item_key])));
+});
+
+// PUT /api/progress/bookmarks { id, key }   (key null -> removed)
+//   id  'N5:all:kana' (level:deck:front) -> key 'word:12' | 'custom_word:3'
+//   id  '__deck'                         -> key 'due' | 'all' | 'unknown' | 'pending'
+router.put('/bookmarks', (req, res) => {
+  const { id, key } = req.body;
+  const isDeck = id === DECK_BOOKMARK;
+  if (!isDeck && !BOOKMARK_ID.test(id || '')) return res.status(400).json({ error: 'bad bookmark id' });
+  if (key != null && !(isDeck ? DECKS.has(key) : WORD_KEY.test(key))) return res.status(400).json({ error: 'bad bookmark key' });
+  touchUser(req.user.id);
+  if (key == null) {
+    db.prepare('DELETE FROM user_bookmarks WHERE user_id = ? AND bookmark_id = ?').run(req.user.id, id);
+  } else {
+    db.prepare(
+      `INSERT INTO user_bookmarks (user_id, bookmark_id, item_key) VALUES (?, ?, ?)
+       ON CONFLICT(user_id, bookmark_id) DO UPDATE SET item_key = excluded.item_key, updated_at = datetime('now')`
+    ).run(req.user.id, id, key);
+  }
+  res.json({ ok: true });
+});
+
 // GET /api/progress/pending -> [{ itemType, itemId }]: words marked 待考.
 router.get('/pending', (req, res) => {
   res.json(getPending(req.user.id));

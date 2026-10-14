@@ -113,6 +113,8 @@ export const api = {
   getKanjiWriteWrong: (level) => request(`/quiz/kanji-write/wrong${level ? `?level=${level}` : ''}`),
   getProgress: () => request('/progress'),
   getPending: () => request('/progress/pending'),
+  getBookmarks: () => request('/progress/bookmarks'),
+  putBookmark: ({ id, key }) => request('/progress/bookmarks', { method: 'PUT', body: JSON.stringify({ id, key }) }),
   setPending: ({ itemType, itemId, pending }) => request('/progress/pending', { method: 'PUT', body: JSON.stringify({ itemType, itemId, pending }) }),
   getDue: ({ level, itemType = 'vocab' } = {}) => request(`/progress/due?${new URLSearchParams({ itemType, ...(level ? { level } : {}) })}`),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
