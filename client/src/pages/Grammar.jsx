@@ -36,7 +36,7 @@ export default function Grammar() {
   const { t, locale } = useLocale();
   const { isLoggedIn } = useAuth();
 
-  const [list, loading] = useCachedApi(`grammar:${level}:${locale}`, () => api.getGrammar(level));
+  const [list, loading] = useCachedApi(`grammar:${level}:${locale}`, () => api.getGrammar(level), { persist: true });
 
   // Clears the query when the user picks a different level manually, but
   // not on mount — mounting with a URL-provided ?q= (from site-wide search)

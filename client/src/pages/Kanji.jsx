@@ -26,7 +26,7 @@ export default function Kanji() {
   const { t, locale } = useLocale();
   const { isLoggedIn } = useAuth();
 
-  const [list, loading] = useCachedApi(`kanji:${level}:${locale}`, () => api.getKanji(level));
+  const [list, loading] = useCachedApi(`kanji:${level}:${locale}`, () => api.getKanji(level), { persist: true });
 
   // Clears the query when the user picks a different level manually, but
   // not on mount — mounting with a URL-provided ?q= (from site-wide search)

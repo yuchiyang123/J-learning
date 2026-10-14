@@ -16,20 +16,51 @@ async function getCsrfToken() {
   return csrfToken;
 }
 
+// The last user /me confirmed, kept on the device. The /me round trip to
+// the SSO service can take seconds on some networks (Cloudflare routes HiNet
+// traffic overseas), and every logged-in page used to wait for it before
+// even starting its own requests. Starting from the remembered user lets
+// them begin at once; /me still runs and, if the session is gone, flips the
+// UI to logged out. This only decides what the UI shows first — the API
+// verifies the session cookie on every request regardless.
+const USER_HINT_KEY = 'jp_auth_user';
+function readUserHint() {
+  try {
+    const u = JSON.parse(localStorage.getItem(USER_HINT_KEY) || 'null');
+    return u && typeof u === 'object' && u.id ? u : null;
+  } catch {
+    return null;
+  }
+}
+function writeUserHint(u) {
+  try {
+    if (u) localStorage.setItem(USER_HINT_KEY, JSON.stringify({ id: u.id, userName: u.userName }));
+    else localStorage.removeItem(USER_HINT_KEY);
+  } catch { /* storage unavailable */ }
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [hint] = useState(readUserHint);
+  const [user, setUserState] = useState(hint);
+  const [loading, setLoading] = useState(!hint);
+  const setUser = useCallback((u) => { setUserState(u); writeUserHint(u); }, []);
 
   const refresh = useCallback(async () => {
     try {
       const res = await fetch(`${AUTH_BASE}/api/auth/me`, { credentials: 'include' });
-      setUser(res.ok ? await res.json() : null);
+      const next = res.ok ? await res.json() : null;
+      // Keep the same object when /me just confirms the remembered user, so
+      // pages don't refetch because `user` changed identity.
+      setUserState((prev) => (prev && next && prev.id === next.id && prev.userName === next.userName ? prev : next));
+      writeUserHint(next);
     } catch {
-      setUser(null);
+      // Network failure isn't a logout: keep the remembered user (the API
+      // still enforces the real session) rather than flashing logged out.
+      if (!hint) setUser(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [hint, setUser]);
 
   useEffect(() => { refresh(); }, [refresh]);
 
