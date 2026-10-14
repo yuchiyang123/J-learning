@@ -94,6 +94,35 @@ export function practiceUpdatesSrs(mode, prompt) {
   return (mode === 'typing' || mode === 'tiles') && prompt === 'kanji';
 }
 
+// ---------- 待考 (pending test) ----------
+const PENDING_ITEM_TYPES = new Set(['word', 'custom_word']);
+export const isPendingItemType = (t) => PENDING_ITEM_TYPES.has(t);
+
+export function getPending(userId) {
+  return db.prepare(
+    'SELECT item_type AS itemType, item_id AS itemId FROM pending_tests WHERE user_id = ? ORDER BY created_at, item_id'
+  ).all(userId);
+}
+
+export function setPending(userId, itemType, itemId, pending) {
+  if (pending) {
+    db.prepare('INSERT OR IGNORE INTO pending_tests (user_id, item_type, item_id) VALUES (?, ?, ?)').run(userId, itemType, itemId);
+  } else {
+    db.prepare('DELETE FROM pending_tests WHERE user_id = ? AND item_type = ? AND item_id = ?').run(userId, itemType, itemId);
+  }
+}
+
+export function isPending(userId, itemType, itemId) {
+  return !!db.prepare('SELECT 1 FROM pending_tests WHERE user_id = ? AND item_type = ? AND item_id = ?').get(userId, itemType, itemId);
+}
+
+// A 待考 word is settled by an objectively graded practice answer — typing
+// or tiles, with any prompt: right -> 記得, wrong -> 不熟. The handwriting
+// modes are self-graded, so they never settle one.
+export function practiceSettlesPending(mode) {
+  return mode === 'typing' || mode === 'tiles';
+}
+
 // What `itemType` means for the due queue. 'vocab' is every vocabulary
 // item: dictionary words and the user's own custom words (their SRS rows
 // are 'word' / 'custom_word', shared by flashcards and practice).

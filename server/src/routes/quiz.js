@@ -3,7 +3,7 @@ import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { translate } from '../locale.js';
 import { optionalAuth, requireAuth } from '../auth.js';
-import { applyReview, practiceUpdatesSrs, logResponse, normalizeResponseMs } from '../srs.js';
+import { applyReview, practiceUpdatesSrs, logResponse, normalizeResponseMs, isPending, setPending, practiceSettlesPending } from '../srs.js';
 
 const router = Router();
 
@@ -388,22 +388,34 @@ router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
   const total = detail.length;
 
   const srsUpdated = !!userId && practiceUpdatesSrs(mode, prompt);
+  const settles = !!userId && practiceSettlesPending(mode);
+  const resolvedPending = [];
   if (userId) {
     const save = db.transaction(() => {
       db.prepare(
         'INSERT INTO quiz_results (user_id, type, level, total, correct, detail) VALUES (?,?,?,?,?,?)'
       ).run(userId, type, level, total, correct, JSON.stringify(detail));
-      if (!srsUpdated) return;
       for (const d of detail) {
-        const [, itemType, itemId] = WORD_KEY.exec(d.questionId);
-        applyReview(userId, itemType, Number(itemId), d.isCorrect, d.responseMs);
-        logResponse(userId, itemType, Number(itemId), 'practice', d.isCorrect, d.responseMs);
+        const [, itemType, rawId] = WORD_KEY.exec(d.questionId);
+        const itemId = Number(rawId);
+        // A 待考 word answered in an auto-graded mode is settled by this
+        // answer (right -> 記得, wrong -> 不熟), whatever the prompt — that's
+        // the test it was waiting for.
+        const settlesThis = settles && isPending(userId, itemType, itemId);
+        if (srsUpdated || settlesThis) {
+          applyReview(userId, itemType, itemId, d.isCorrect, srsUpdated ? d.responseMs : null);
+          if (srsUpdated) logResponse(userId, itemType, itemId, 'practice', d.isCorrect, d.responseMs);
+        }
+        if (settlesThis) {
+          setPending(userId, itemType, itemId, false);
+          resolvedPending.push({ key: d.questionId, isCorrect: d.isCorrect });
+        }
       }
     });
     save();
   }
 
-  res.json({ total, correct, detail, srsUpdated });
+  res.json({ total, correct, detail, srsUpdated, resolvedPending });
 });
 
 // GET /api/quiz/vocab-practice/wrong?level=N5 -> ['word:12', 'custom_word:3', ...]

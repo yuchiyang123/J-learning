@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { db } from '../db.js';
 import { touchUser } from '../users.js';
 import { requireAuth } from '../auth.js';
-import { applyReview, getDueItems, isDueItemType, logResponse, dailyResponseTimes } from '../srs.js';
+import { applyReview, getDueItems, isDueItemType, logResponse, dailyResponseTimes, getPending, setPending, isPendingItemType } from '../srs.js';
 
 const router = Router();
 
@@ -36,6 +36,23 @@ router.get('/due', (req, res) => {
   res.json(getDueItems(req.user.id, { itemType, level }));
 });
 
+// GET /api/progress/pending -> [{ itemType, itemId }]: words marked 待考.
+router.get('/pending', (req, res) => {
+  res.json(getPending(req.user.id));
+});
+
+// PUT /api/progress/pending { itemType, itemId, pending: true | false }
+router.put('/pending', (req, res) => {
+  const { itemType, itemId, pending } = req.body;
+  const id = Number(itemId);
+  if (!isPendingItemType(itemType) || !Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: 'itemType (word | custom_word) and a numeric itemId required' });
+  }
+  touchUser(req.user.id);
+  setPending(req.user.id, itemType, id, !!pending);
+  res.json({ ok: true });
+});
+
 // GET /api/progress/response-times?days=14&tz=480
 //   -> [{ date, avgMs, count }] per local day, correct answers only.
 // tz = the user's UTC offset in minutes (e.g. 480 for UTC+8).
@@ -57,6 +74,8 @@ router.post('/review', (req, res) => {
   touchUser(userId);
 
   applyReview(userId, itemType, itemId, !!correct, responseMs);
+  // Marking 記得 / 不熟 by hand is a decision too, so it settles 待考.
+  setPending(userId, itemType, itemId, false);
   logResponse(userId, itemType, itemId, 'flashcard', !!correct, responseMs);
 
   res.json({ ok: true });

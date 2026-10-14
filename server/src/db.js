@@ -174,3 +174,17 @@ CREATE TABLE IF NOT EXISTS review_log (
 );
 CREATE INDEX IF NOT EXISTS idx_review_log_user ON review_log(user_id, created_at);
 `);
+
+// 待考 (to be tested): words the learner has flagged to be checked by a
+// practice test. Kept apart from user_progress on purpose — a progress row
+// carries an SRS state (srs_level 0 reads as 不熟), and a word waiting for
+// its test hasn't been judged either way yet.
+db.exec(`
+CREATE TABLE IF NOT EXISTS pending_tests (
+  user_id TEXT NOT NULL,
+  item_type TEXT NOT NULL,
+  item_id INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (user_id, item_type, item_id)
+);
+`);

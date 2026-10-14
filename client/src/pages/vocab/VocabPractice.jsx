@@ -61,16 +61,17 @@ function loadPrefs() {
   }
 }
 
-export default function VocabPractice({ level, words, progressByKey, wordKey, dueKeys = [], onProgressChanged }) {
+export default function VocabPractice({ level, words, progressByKey, wordKey, dueKeys = [], pendingKeys = new Set(), onProgressChanged }) {
   const { isLoggedIn } = useAuth();
   const { t } = useLocale();
   const [prefs, setPrefs] = useState(loadPrefs);
-  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'known' | 'unknown' | 'wrong'
+  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'known' | 'unknown' | 'pending' | 'wrong'
   const [wrongKeys, setWrongKeys] = useState(null);
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
   const [results, setResults] = useState([]);
+  const [resolvedCount, setResolvedCount] = useState(0); // 待考 words settled by the last run
   const [saveState, setSaveState] = useState(null); // null | 'saving' | 'saved' | 'saved-history' | 'failed'
   // The current question's verdict once it's shown, before 'next' commits it,
   // so the running score updates the moment you answer.
@@ -108,12 +109,13 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
     // 記得的: marked as remembered at least once (srs_level >= 1), due or not —
     // for checking that words you think you know really stick.
     if (source === 'known') list = list.filter((w) => progressByKey.get(wordKey(w)) > 0);
+    if (source === 'pending') list = list.filter((w) => pendingKeys.has(wordKey(w)));
     if (source === 'wrong') {
       const set = new Set(wrongKeys ?? []);
       list = list.filter((w) => set.has(wordKey(w)));
     }
     return list;
-  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys, dueKeys]);
+  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys, dueKeys, pendingKeys]);
 
   // A run in progress has no autosave — warn before the tab is closed.
   useEffect(() => {
@@ -132,6 +134,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
     setQIndex(0);
     setResults([]);
     setSaveState(null);
+    setResolvedCount(0);
     setStage('active');
   }
 
@@ -154,8 +157,10 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
           ...(r.strokesList ? { strokesList: r.strokesList } : {}),
         })),
       });
+      const resolved = res?.resolvedPending?.length ?? 0;
+      setResolvedCount(resolved);
       setSaveState(res?.srsUpdated ? 'saved' : 'saved-history');
-      if (res?.srsUpdated) onProgressChanged?.();
+      if (res?.srsUpdated || resolved) onProgressChanged?.();
     } catch {
       setSaveState('failed');
     }
@@ -216,7 +221,8 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
         </div>
         {saveState === 'saving' && <p className="muted vp-save-note"><Loader2 size={14} className="spin" /> {t('writequiz_saving')}</p>}
         {saveState === 'saved' && <p className="muted vp-save-note">{t('vp_saved')}</p>}
-        {saveState === 'saved-history' && <p className="muted vp-save-note">{t('vp_saved_history_only')}</p>}
+        {saveState === 'saved-history' && resolvedCount === 0 && <p className="muted vp-save-note">{t('vp_saved_history_only')}</p>}
+        {resolvedCount > 0 && <p className="vp-save-note vp-pending-resolved">{t('vp_pending_resolved', { count: resolvedCount })}</p>}
         {saveState === 'failed' && <p className="warning">{t('vp_save_failed')}</p>}
 
         <ul className="vp-review-list">
@@ -300,6 +306,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
           <>
             <button className={source === 'known' ? 'active' : ''} onClick={() => setSource('known')}>{t('vp_source_known')}</button>
             <button className={source === 'unknown' ? 'active' : ''} onClick={() => setSource('unknown')}>{t('vp_source_unknown')}</button>
+            <button className={source === 'pending' ? 'active' : ''} onClick={() => setSource('pending')}>
+              {t('vp_source_pending', { count: pendingKeys.size })}
+            </button>
             <button className={source === 'wrong' ? 'active' : ''} onClick={() => setSource('wrong')}>
               {t('vp_source_wrong', { count: wrongKeys?.length ?? 0 })}
             </button>
@@ -322,6 +331,11 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
           {pool.length === 0 ? t('vp_pool_empty') : t('vp_pool_size', { count: pool.length })}
         </span>
       </div>
+      {source === 'pending' && (
+        <p className="muted vp-login-hint">
+          {mode === 'typing' || mode === 'tiles' ? t('vp_pending_hint') : t('vp_pending_hint_selfgraded')}
+        </p>
+      )}
       {!isLoggedIn && <p className="muted vp-login-hint">{t('vp_login_hint')}</p>}
     </div>
   );

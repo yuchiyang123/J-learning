@@ -90,3 +90,27 @@
 .rt-table table { border-collapse: collapse; margin-top: 0.4rem; }
 .rt-table th, .rt-table td { padding: 0.2rem 0.9rem 0.2rem 0; text-align: left; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .rt-empty { margin: 0.2rem 0 1.4rem; }
+
+/* ---------- Flashcards: 待考 button, back-to-first, no scrollbar on the faces ---------- */
+.mark-controls .btn-pending {
+  background-image: none !important; border-color: var(--line-strong, var(--line)) !important;
+  background-color: var(--paper-raised) !important; color: var(--ink);
+}
+.mark-controls .btn-pending:hover { border-color: var(--accent) !important; }
+.mark-controls .btn-pending.active {
+  background-color: var(--gold, #c99a3a) !important; border-color: var(--gold, #c99a3a) !important; color: #fff;
+}
+.progress-indicator { display: flex; align-items: center; justify-content: center; gap: 0.7rem; }
+.vocab-first-btn {
+  display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.15rem 0.55rem;
+  border: 1px solid var(--line); border-radius: 999px; background: transparent;
+  color: var(--ink-soft); font: inherit; font-size: 0.78rem; cursor: pointer;
+}
+.vocab-first-btn:hover { color: var(--accent); border-color: var(--accent); }
+/* A long example sentence used to put a scrollbar on the card's back (and
+   the 3D flip made it flash on the way over). The face still scrolls by
+   wheel / swipe if it ever needs to; the bar just isn't drawn. */
+.flip-card .flip-card-face { scrollbar-width: none; -ms-overflow-style: none; }
+.flip-card .flip-card-face::-webkit-scrollbar { display: none; }
+.flashcard-wrap { overflow-x: clip; }
+.vp-pending-resolved { color: var(--accent-2); font-weight: 700; }

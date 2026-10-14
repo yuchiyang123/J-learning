@@ -441,6 +441,15 @@ const zhTW = {
   progress_rt_col_avg: "平均反應時間",
   progress_rt_col_count: "答對題數",
   vp_source_known: "記得的單字",
+  btn_pending: "待考",
+  btn_pending_title: "標記為待考：之後用打字或假名排序考，考對自動標記記得，考錯標記不熟",
+  vocab_filter_pending: "待考（{count}）",
+  vocab_pending_empty: "還沒有待考的單字。在卡片上按「待考」就會加進來。",
+  vocab_back_to_first: "回到第一張",
+  vp_source_pending: "待考（{count}）",
+  vp_pending_hint: "考對的待考單字會標記為記得、考錯標記為不熟，並移出待考。",
+  vp_pending_hint_selfgraded: "手寫是自己打分，不會改變待考單字的狀態；要自動標記記得／不熟，請用打字或假名排序。",
+  vp_pending_resolved: "{count} 個待考單字已依這次結果標記為記得／不熟。",
 };
 
 const zhCN = {
@@ -872,6 +881,15 @@ const zhCN = {
   progress_rt_col_avg: "平均反应时间",
   progress_rt_col_count: "答对题数",
   vp_source_known: "记得的单词",
+  btn_pending: "待考",
+  btn_pending_title: "标记为待考：之后用打字或假名排序考，考对自动标记记得，考错标记不熟",
+  vocab_filter_pending: "待考（{count}）",
+  vocab_pending_empty: "还没有待考的单词。在卡片上按「待考」就会加进来。",
+  vocab_back_to_first: "回到第一张",
+  vp_source_pending: "待考（{count}）",
+  vp_pending_hint: "考对的待考单词会标记为记得、考错标记为不熟，并移出待考。",
+  vp_pending_hint_selfgraded: "手写是自己打分，不会改变待考单词的状态；要自动标记记得／不熟，请用打字或假名排序。",
+  vp_pending_resolved: "{count} 个待考单词已按这次结果标记为记得／不熟。",
 };
 
 const en = {
@@ -1303,6 +1321,15 @@ const en = {
   progress_rt_col_avg: "Average response time",
   progress_rt_col_count: "Correct answers",
   vp_source_known: "Marked remembered",
+  btn_pending: "To test",
+  btn_pending_title: "Mark to test: a later typing or tiles answer marks it Remember if right, Not yet if wrong",
+  vocab_filter_pending: "To test ({count})",
+  vocab_pending_empty: "No words marked to test yet. Press “To test” on a card to add one.",
+  vocab_back_to_first: "Back to first",
+  vp_source_pending: "To test ({count})",
+  vp_pending_hint: "Words to test are marked Remember if you get them right, Not yet if wrong, and leave the list.",
+  vp_pending_hint_selfgraded: "Handwriting is self-graded, so it won't settle words to test — use typing or tiles for that.",
+  vp_pending_resolved: "{count} word(s) to test were marked Remember / Not yet from this round.",
 };
 
 const ko = {
@@ -1734,6 +1761,15 @@ const ko = {
   progress_rt_col_avg: "평균 반응 시간",
   progress_rt_col_count: "맞힌 문제 수",
   vp_source_known: "기억한 단어",
+  btn_pending: "시험 대기",
+  btn_pending_title: "시험 대기로 표시: 이후 타자나 가나 맞추기로 맞히면 기억, 틀리면 모름으로 표시됩니다",
+  vocab_filter_pending: "시험 대기 ({count})",
+  vocab_pending_empty: "시험 대기 단어가 없습니다. 카드에서 「시험 대기」를 누르면 추가됩니다.",
+  vocab_back_to_first: "처음으로",
+  vp_source_pending: "시험 대기 ({count})",
+  vp_pending_hint: "시험 대기 단어는 맞히면 기억, 틀리면 모름으로 표시되고 목록에서 빠집니다.",
+  vp_pending_hint_selfgraded: "손글씨는 스스로 채점하므로 시험 대기 단어의 상태를 바꾸지 않습니다. 타자나 가나 맞추기를 사용하세요.",
+  vp_pending_resolved: "시험 대기 단어 {count}개를 이번 결과에 따라 기억/모름으로 표시했어요.",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

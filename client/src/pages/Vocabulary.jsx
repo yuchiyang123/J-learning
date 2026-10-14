@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2, Inbox } from 'lucide-react';
+import { Volume2, ArrowLeft, ArrowRight, X, Check, Plus, Trash2, Inbox, ClipboardCheck, RotateCcw } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { useLocale } from '../i18n/LocaleContext.jsx';
@@ -22,6 +22,25 @@ const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 //   kanji — words with kanji only; front: kanji only; back: reading + meaning
 //   both  — front: kanji + kana; back: meaning (the original layout)
 // `autoplay` speaks the word whenever the card is turned to its back.
+// Bookmark: the card you were last on, per level / deck / front mode, so
+// reopening the page picks up where you left off (e.g. card 423 of 718)
+// instead of starting over. Stored as the word's key, not its position,
+// so it survives words being added. Not kept for the due deck, which is a
+// fresh list every day.
+const BOOKMARK_KEY = 'jp_vocab_bookmarks';
+const LAST_DECK_KEY = 'jp_vocab_deck';
+const DECKS = ['due', 'all', 'unknown', 'pending'];
+function readBookmarks() {
+  try { return JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '{}') || {}; } catch { return {}; }
+}
+function writeBookmark(id, key) {
+  try {
+    const all = readBookmarks();
+    if (key) all[id] = key; else delete all[id];
+    localStorage.setItem(BOOKMARK_KEY, JSON.stringify(all));
+  } catch { /* storage unavailable */ }
+}
+
 const CARD_PREFS_KEY = 'jp_flashcard_prefs';
 const FRONTS = ['kana', 'kanji', 'both'];
 function loadCardPrefs() {
@@ -40,7 +59,9 @@ export default function Vocabulary() {
   const [level, setLevel] = useState(LEVELS.includes(urlLevel) ? urlLevel : 'N5');
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // 'due' | 'all' | 'unknown'
+  const [filter, setFilter] = useState('all'); // 'due' | 'all' | 'unknown' | 'pending'
+  // Words marked 待考 (to be tested), as 'word:12' / 'custom_word:3' keys.
+  const [pending, setPendingKeys] = useState(() => new Set());
   // Items whose SRS review is due now (oldest first), refreshed after every
   // review; `dueOrder` is the snapshot the 'due' card queue walks through, so
   // reviewing a card doesn't reshuffle the queue under you.
@@ -61,7 +82,7 @@ export default function Vocabulary() {
   // (SRS state) is per-user and genuinely live, so it stays a plain fetch,
   // separate from the cached word list, on its own loading flag.
   const wordsKey = `words:${level}:${locale}`;
-  const [wordsData, wordsLoading, reloadWords] = useCachedApi(wordsKey, () => api.getWords(level));
+  const [wordsData, wordsLoading, reloadWords] = useCachedApi(wordsKey, () => api.getWords(level), { persist: true });
   const words = wordsData ?? [];
   const loading = wordsLoading || progressLoading;
   // The kanji front only makes sense for words that are written in kanji.
@@ -79,10 +100,6 @@ export default function Vocabulary() {
     if (patch.front) { setIndex(0); setFlipped(false); }
   }
 
-  useEffect(() => {
-    setIndex(0);
-    setFlipped(false);
-  }, [level, locale]);
 
   useEffect(() => {
     if (!isLoggedIn) { setProgress([]); setProgressLoading(false); return; }
@@ -101,14 +118,28 @@ export default function Vocabulary() {
 
   useEffect(() => { loadDue(true); }, [loadDue]);
 
+  const loadPending = useCallback(() => {
+    if (!isLoggedIn) { setPendingKeys(new Set()); return; }
+    api.getPending().then((rows) => setPendingKeys(new Set(rows.map((r) => `${r.itemType}:${r.itemId}`)))).catch(() => {});
+  }, [isLoggedIn]);
+
+  useEffect(() => { loadPending(); }, [loadPending]);
+
   // A practice run just moved words' review state server-side.
   function refreshProgress() {
     if (isLoggedIn) api.getProgress().then(setProgress).catch(() => {});
     loadDue(false);
+    loadPending();
   }
 
-  // Logged in, today's due reviews are the default deck.
-  useEffect(() => { setFilter(isLoggedIn ? 'due' : 'all'); }, [isLoggedIn]);
+  // The deck you were last in is remembered with the bookmark; the first
+  // time (logged in) it's today's due reviews.
+  useEffect(() => {
+    if (!isLoggedIn) { setFilter('all'); return; }
+    let last = null;
+    try { last = localStorage.getItem(LAST_DECK_KEY); } catch { /* storage unavailable */ }
+    setFilter(DECKS.includes(last) ? last : 'due');
+  }, [isLoggedIn]);
 
   function reloadWordsAfterMutation() {
     invalidateCache(wordsKey);
@@ -142,9 +173,47 @@ export default function Vocabulary() {
     return dueOrder.map((k) => byKey.get(k)).filter(Boolean);
   }, [cardWords, dueOrder]);
 
-  const filteredWords = filter === 'unknown' ? unknownWords : filter === 'due' ? dueWords : cardWords;
+  const pendingWords = useMemo(() => cardWords.filter((w) => pending.has(wordKey(w))), [cardWords, pending]);
+
+  const filteredWords =
+    filter === 'unknown' ? unknownWords
+      : filter === 'due' ? dueWords
+        : filter === 'pending' ? pendingWords
+          : cardWords;
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
+  const currentPending = current ? pending.has(wordKey(current)) : false;
+
+  // ---- bookmark ----
+  const bookmarkId = filter === 'due' ? null : `${level}:${filter}:${cardPrefs.front}`;
+  // Which card the deck opens on: the bookmarked one, or the first. One
+  // effect decides it — whenever the deck, level or list changes — so there
+  // is no separate "reset to card 1" step that could race the restore. Also
+  // re-runs when a deck shrinks (marking a card out of 只顯示不會的), landing
+  // on the card that was moved to.
+  useEffect(() => {
+    if (filteredWords.length === 0) return;
+    const saved = bookmarkId ? readBookmarks()[bookmarkId] : null;
+    const idx = saved ? filteredWords.findIndex((w) => wordKey(w) === saved) : -1;
+    setIndex(idx >= 0 ? idx : 0);
+    setFlipped(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookmarkId, level, filteredWords.length]);
+
+  // Saved only when the learner moves (next / prev / mark / back to first),
+  // never from an effect — automatic index resets (level or language
+  // switches, list reloads) must not overwrite where they really were.
+  function saveBookmarkAt(i) {
+    const w = filteredWords[i];
+    if (bookmarkId && w) writeBookmark(bookmarkId, wordKey(w));
+  }
+
+  function backToFirst() {
+    setDir('prev');
+    setFlipped(false);
+    setIndex(0);
+    saveBookmarkAt(0);
+  }
 
   // Response time = from this card's front appearing to 記得 / 不熟.
   const shownAtRef = useRef(performance.now());
@@ -159,6 +228,7 @@ export default function Vocabulary() {
     if (!urlWordId || cardWords.length === 0) return;
     const idx = cardWords.findIndex((w) => !w.isCustom && String(w.id) === urlWordId);
     if (idx === -1) return;
+    writeBookmark(`${level}:all:${cardPrefs.front}`, wordKey(cardWords[idx]));
     setFilter('all');
     setIndex(idx);
     setFlipped(false);
@@ -168,13 +238,17 @@ export default function Vocabulary() {
   function next() {
     setDir('next');
     setFlipped(false);
-    setIndex((i) => (i + 1) % Math.max(filteredWords.length, 1));
+    const n = (index + 1) % Math.max(filteredWords.length, 1);
+    setIndex(n);
+    saveBookmarkAt(n);
   }
 
   function prev() {
     setDir('prev');
     setFlipped(false);
-    setIndex((i) => (i - 1 + filteredWords.length) % Math.max(filteredWords.length, 1));
+    const n = (index - 1 + filteredWords.length) % Math.max(filteredWords.length, 1);
+    setIndex(n);
+    saveBookmarkAt(n);
   }
 
   function flip() {
@@ -185,6 +259,7 @@ export default function Vocabulary() {
 
   function changeFilter(f) {
     if (f === 'due') setDueOrder(due);
+    try { localStorage.setItem(LAST_DECK_KEY, f); } catch { /* not persisted */ }
     setFilter(f);
     setIndex(0);
     setFlipped(false);
@@ -218,10 +293,26 @@ export default function Vocabulary() {
       if (existing) return prev.map((p) => (p === existing ? { ...p, srs_level: nextSrs } : p));
       return [...prev, { item_type: itemType, item_id: itemId, srs_level: nextSrs }];
     });
+    setPendingKeys((prev) => {
+      if (!prev.has(`${itemType}:${itemId}`)) return prev;
+      const n = new Set(prev); n.delete(`${itemType}:${itemId}`); return n;
+    });
     const responseMs = Math.round(performance.now() - shownAtRef.current);
     await api.reviewProgress({ itemType, itemId, correct, responseMs }).catch(() => {});
     loadDue(false);
     next();
+  }
+
+  // 待考: flag the word to be settled by a practice test (typing / tiles):
+  // right -> 記得, wrong -> 不熟. Pressing it again removes the flag.
+  async function togglePending() {
+    if (!current) return;
+    const itemType = current.isCustom ? 'custom_word' : 'word';
+    const key = wordKey(current);
+    const on = !pending.has(key);
+    setPendingKeys((prev) => { const n = new Set(prev); if (on) n.add(key); else n.delete(key); return n; });
+    await api.setPending({ itemType, itemId: current.id, pending: on }).catch(() => {});
+    if (on) next();
   }
 
   async function deleteCustom() {
@@ -255,6 +346,7 @@ export default function Vocabulary() {
             progressByKey={progressByKey}
             wordKey={wordKey}
             dueKeys={due}
+            pendingKeys={pending}
             onProgressChanged={refreshProgress}
           />
         )
@@ -291,6 +383,9 @@ export default function Vocabulary() {
             <button className={filter === 'unknown' ? 'active' : ''} onClick={() => changeFilter('unknown')}>
               {t('vocab_filter_unknown')}
             </button>
+            <button className={filter === 'pending' ? 'active' : ''} onClick={() => changeFilter('pending')}>
+              {t('vocab_filter_pending', { count: pending.size })}
+            </button>
           </div>
           <button className="secondary-btn icon-btn" onClick={() => setShowAddForm((s) => !s)}>
             <Plus size={15} /> {t('vocab_add_word_btn')}
@@ -309,7 +404,10 @@ export default function Vocabulary() {
 
       {view === 'cards' && loading && <FlashcardSkeleton />}
       {view === 'cards' && !loading && !current && (
-        <EmptyState icon={<Inbox size={32} />} message={filter === 'due' ? t('vocab_due_empty') : t('no_data_level')} />
+        <EmptyState
+          icon={<Inbox size={32} />}
+          message={filter === 'due' ? t('vocab_due_empty') : filter === 'pending' ? t('vocab_pending_empty') : t('no_data_level')}
+        />
       )}
 
       {view === 'cards' && !loading && current && (
@@ -353,13 +451,22 @@ export default function Vocabulary() {
 
           <div className="mark-controls">
             <button
-              className={`btn-bad icon-btn${!reviewing && currentSrs === 0 ? ' active' : ''}`}
+              className={`btn-bad icon-btn${!reviewing && !currentPending && currentSrs === 0 ? ' active' : ''}`}
               onClick={() => mark(false)}
             >
               <X size={16} /> {t('btn_dont_know')}
             </button>
+            {isLoggedIn && (
+              <button
+                className={`btn-pending icon-btn${currentPending ? ' active' : ''}`}
+                onClick={togglePending}
+                title={t('btn_pending_title')}
+              >
+                <ClipboardCheck size={16} /> {t('btn_pending')}
+              </button>
+            )}
             <button
-              className={`btn-good icon-btn${!reviewing && currentSrs > 0 ? ' active' : ''}`}
+              className={`btn-good icon-btn${!reviewing && !currentPending && currentSrs > 0 ? ' active' : ''}`}
               onClick={() => mark(true)}
             >
               <Check size={16} /> {t('btn_remember')}
@@ -368,6 +475,11 @@ export default function Vocabulary() {
 
           <div className="progress-indicator">
             {index + 1} / {filteredWords.length}
+            {index > 0 && bookmarkId && (
+              <button type="button" className="vocab-first-btn" onClick={backToFirst}>
+                <RotateCcw size={13} /> {t('vocab_back_to_first')}
+              </button>
+            )}
           </div>
         </div>
       )}

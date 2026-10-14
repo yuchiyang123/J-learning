@@ -112,6 +112,8 @@ export const api = {
   getVocabPracticeWrong: (level) => request(`/quiz/vocab-practice/wrong${level ? `?level=${level}` : ''}`),
   getKanjiWriteWrong: (level) => request(`/quiz/kanji-write/wrong${level ? `?level=${level}` : ''}`),
   getProgress: () => request('/progress'),
+  getPending: () => request('/progress/pending'),
+  setPending: ({ itemType, itemId, pending }) => request('/progress/pending', { method: 'PUT', body: JSON.stringify({ itemType, itemId, pending }) }),
   getDue: ({ level, itemType = 'vocab' } = {}) => request(`/progress/due?${new URLSearchParams({ itemType, ...(level ? { level } : {}) })}`),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
   clearProgress: ({ itemType, itemId }) => request(`/progress/${itemType}/${itemId}`, { method: 'DELETE' }),
