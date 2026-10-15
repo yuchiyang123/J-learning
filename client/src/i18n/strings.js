@@ -450,6 +450,7 @@ const zhTW = {
   vp_pending_hint: "考對的待考單字會標記為記得、考錯標記為不熟，並移出待考。",
   vp_pending_hint_selfgraded: "手寫是自己打分，不會改變待考單字的狀態；要自動標記記得／不熟，請用打字或假名排序。",
   vp_pending_resolved: "{count} 個待考單字已依這次結果標記為記得／不熟。",
+  vocab_homophones: "同音字",
 };
 
 const zhCN = {
@@ -890,6 +891,7 @@ const zhCN = {
   vp_pending_hint: "考对的待考单词会标记为记得、考错标记为不熟，并移出待考。",
   vp_pending_hint_selfgraded: "手写是自己打分，不会改变待考单词的状态；要自动标记记得／不熟，请用打字或假名排序。",
   vp_pending_resolved: "{count} 个待考单词已按这次结果标记为记得／不熟。",
+  vocab_homophones: "同音词",
 };
 
 const en = {
@@ -1330,6 +1332,7 @@ const en = {
   vp_pending_hint: "Words to test are marked Remember if you get them right, Not yet if wrong, and leave the list.",
   vp_pending_hint_selfgraded: "Handwriting is self-graded, so it won't settle words to test — use typing or tiles for that.",
   vp_pending_resolved: "{count} word(s) to test were marked Remember / Not yet from this round.",
+  vocab_homophones: "Same reading",
 };
 
 const ko = {
@@ -1770,6 +1773,7 @@ const ko = {
   vp_pending_hint: "시험 대기 단어는 맞히면 기억, 틀리면 모름으로 표시되고 목록에서 빠집니다.",
   vp_pending_hint_selfgraded: "손글씨는 스스로 채점하므로 시험 대기 단어의 상태를 바꾸지 않습니다. 타자나 가나 맞추기를 사용하세요.",
   vp_pending_resolved: "시험 대기 단어 {count}개를 이번 결과에 따라 기억/모름으로 표시했어요.",
+  vocab_homophones: "같은 읽기",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

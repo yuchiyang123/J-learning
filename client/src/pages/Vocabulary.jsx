@@ -11,7 +11,7 @@ import Modal from '../components/Modal.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
 import { invalidateCache } from '../lib/apiCache.js';
 import VocabPractice from './vocab/VocabPractice.jsx';
-import { hasKanji } from '../lib/vocabAnswer.js';
+import { hasKanji, primaryReading, toHiragana } from '../lib/vocabAnswer.js';
 import { getBookmark, setBookmark, syncBookmarks, DECK_ID } from '../lib/bookmarks.js';
 
 const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
@@ -190,6 +190,23 @@ export default function Vocabulary() {
   const current = filteredWords[index];
   const currentSrs = current ? progressByKey.get(wordKey(current)) : undefined;
   const currentPending = current ? pending.has(wordKey(current)) : false;
+
+  // Words in this level read the same way (あつい: 暑い / 熱い / 厚い). A
+  // kana-only front can't say which one it means, so the back lists the
+  // others — learning one teaches you the set.
+  const byReading = useMemo(() => {
+    const map = new Map();
+    for (const w of words) {
+      const r = toHiragana(primaryReading(w));
+      if (!r) continue;
+      if (!map.has(r)) map.set(r, []);
+      map.get(r).push(w);
+    }
+    return map;
+  }, [words]);
+  const homophones = current
+    ? (byReading.get(toHiragana(primaryReading(current))) || []).filter((w) => w !== current && (w.kanji || '') !== (current.kanji || ''))
+    : [];
 
   // ---- bookmark ----
   const bookmarkId = filter === 'due' ? null : `${level}:${filter}:${cardPrefs.front}`;
@@ -435,6 +452,16 @@ export default function Vocabulary() {
                   {current.meaning}
                 </div>
                 <div className="flashcard-sub">{current.part_of_speech}</div>
+                {homophones.length > 0 && (
+                  <div className="flashcard-homophones">
+                    <span className="flashcard-homophones-label">{t('vocab_homophones')}</span>
+                    {homophones.map((w) => (
+                      <span key={wordKey(w)} className="flashcard-homophone">
+                        <span lang="ja">{w.kanji || w.kana}</span>：{w.meaning}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {current.example_jp && (
                   <div className="example">
                     <div>{current.example_jp}</div>

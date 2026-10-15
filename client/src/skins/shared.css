@@ -114,3 +114,12 @@
 .flip-card .flip-card-face::-webkit-scrollbar { display: none; }
 .flashcard-wrap { overflow-x: clip; }
 .vp-pending-resolved { color: var(--accent-2); font-weight: 700; }
+
+/* ---------- Flashcards: homophones listed on the back ---------- */
+.flashcard-homophones {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.2rem 0.8rem;
+  margin-top: 0.5rem; padding-top: 0.45rem; border-top: 1px dashed var(--line);
+  font-size: 0.82rem; color: var(--ink-soft);
+}
+.flashcard-homophones-label { font-weight: 700; }
+.flashcard-homophone span { font-weight: 700; color: var(--ink); }

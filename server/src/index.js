@@ -10,6 +10,7 @@ import rateLimit from 'express-rate-limit';
 import { issueCsrfToken, requireCsrf } from './csrf.js';
 import { db } from './db.js';
 import { repairSwappedReadings } from './importVocab.js';
+import { applyMeaningFixes, mergeDuplicateWords } from './meaningFixes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
@@ -125,6 +126,13 @@ app.use((err, req, res, next) => {
 // (see importVocab.js); idempotent, so it's safe on every start.
 const repaired = repairSwappedReadings(db);
 if (repaired) console.log(`repaired ${repaired} vocabulary readings`);
+// Hand-checked meaning corrections and duplicate-word merges (see
+// meaningFixes.js); both idempotent and id-preserving for kept words.
+const merged = mergeDuplicateWords(db);
+if (merged) console.log(`merged ${merged} duplicate vocabulary rows`);
+const fixed = applyMeaningFixes(db);
+if (fixed.updated) console.log(`corrected ${fixed.updated} vocabulary meanings`);
+if (fixed.unmatched.length) console.warn(`meaning fixes with no matching word: ${fixed.unmatched.join(', ')}`);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
