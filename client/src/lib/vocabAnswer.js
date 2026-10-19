@@ -115,6 +115,9 @@ export function mistakeKind(given, word) {
     if (a === g) return null;
     if (stripLong(a) === stripLong(g)) return 'vp_mistake_long_vowel';
     if (stripSokuon(a) === stripSokuon(g)) return 'vp_mistake_sokuon';
+    // っ written full size (がつこう for がっこう) is a 促音 slip, not one of
+    // the ゃゅょ small-kana ones — check it before the small-kana rule.
+    if (a.replace(/っ/g, 'つ') === g.replace(/っ/g, 'つ') && a.includes('っ') !== g.includes('っ')) return 'vp_mistake_sokuon';
     if (stripDakuten(a) === stripDakuten(g)) return 'vp_mistake_dakuten';
     if (enlargeSmall(a) === enlargeSmall(g)) return 'vp_mistake_small_kana';
   }
@@ -159,4 +162,87 @@ export function distractorsFor(answer, count) {
   }
   const picked = near.sort(() => Math.random() - 0.5).slice(0, Math.ceil(count / 2));
   return [...picked, ...random].slice(0, count);
+}
+
+// ---------- confusable readings (易混淆辨別) ----------
+//
+// Wrong-but-plausible versions of a reading, one per classic learner
+// mistake: a voicing mark added or dropped (ひらがな / ひらかな), a small
+// kana written large or the reverse (きょう / きよう), a small っ dropped or
+// added (がっこう / がこう), a long vowel dropped or added (とおか / とか),
+// and ん / う swapped at the end (じかん / じかう). Returned in the
+// answer's own script, never equal to any accepted reading. Each entry is
+// { text, kind } where kind is the vp_mistake_* key it illustrates.
+const LARGE_TO_SMALL = { や: 'ゃ', ゆ: 'ゅ', よ: 'ょ' };
+const SOKUON_BEFORE = /[かきくけこさしすせそたちつてとぱぴぷぺぽ]/;
+// Only these rows take a voicing mark in real words (no ゔ from う).
+const VOICEABLE = /[かきくけこさしすせそたちつてとはひふへほ]/;
+const toKatakana = (s) => [...s].map((c) => {
+  const code = c.charCodeAt(0);
+  return code >= 0x3041 && code <= 0x3096 ? String.fromCharCode(code + 0x60) : c;
+}).join('');
+
+export function confusablesFor(word) {
+  const reading = primaryReading(word);
+  if (!reading) return [];
+  const isKata = /[\u30a1-\u30f6]/.test(reading);
+  const h = toHiragana(reading);
+  const chars = [...h];
+  const accepted = new Set(readingVariants(word).map((v) => norm(v)));
+  const out = new Map();
+  const add = (text, kind) => {
+    if (!text || text === h || accepted.has(text) || out.has(text)) return;
+    out.set(text, kind);
+  };
+  const swap = (i, c) => chars.slice(0, i).join('') + c + chars.slice(i + 1).join('');
+
+  chars.forEach((c, i) => {
+    // voicing marks
+    const plain = stripDakuten(c);
+    if (plain !== c) add(swap(i, plain), 'vp_mistake_dakuten');
+    else if (VOICEABLE.test(c)) add(swap(i, (c + '\u3099').normalize('NFC')), 'vp_mistake_dakuten');
+    // small <-> large
+    if (SMALL[c] && c !== 'っ') add(swap(i, SMALL[c]), 'vp_mistake_small_kana');
+    if (LARGE_TO_SMALL[c] && i > 0 && VOWEL_OF.get(chars[i - 1]) === 'i') add(swap(i, LARGE_TO_SMALL[c]), 'vp_mistake_small_kana');
+    // っ dropped / written large / added
+    if (c === 'っ') {
+      add(chars.filter((_, j) => j !== i).join(''), 'vp_mistake_sokuon');
+      add(swap(i, 'つ'), 'vp_mistake_sokuon');
+    } else if (i > 0 && SOKUON_BEFORE.test(c) && chars[i - 1] !== 'っ' && chars[i - 1] !== 'ん' && VOWEL_OF.get(chars[i - 1])) {
+      add(chars.slice(0, i).join('') + 'っ' + chars.slice(i).join(''), 'vp_mistake_sokuon');
+    }
+    // long vowel dropped (ー or a lengthening vowel)
+    const v = i > 0 ? VOWEL_OF.get(chars[i - 1]) : null;
+    if (c === 'ー' || (v && LENGTHENS[v].includes(c))) add(chars.filter((_, j) => j !== i).join(''), 'vp_mistake_long_vowel');
+  });
+  // long vowel added once, after the last o-row syllable that isn't
+  // already long (とか -> とおか style)
+  for (let i = chars.length - 1; i >= 0; i--) {
+    const next = chars[i + 1];
+    if (VOWEL_OF.get(chars[i]) === 'o' && next !== 'う' && next !== 'お' && next !== 'ー') {
+      add(chars.slice(0, i + 1).join('') + 'う' + chars.slice(i + 1).join(''), 'vp_mistake_long_vowel');
+      break;
+    }
+  }
+  // final ん <-> う
+  const last = chars.length - 1;
+  if (chars[last] === 'ん') add(swap(last, 'う'), null);
+  else if (chars[last] === 'う' && last > 0) add(swap(last, 'ん'), null);
+
+  return [...out.entries()].map(([text, kind]) => ({ text: isKata ? toKatakana(text) : text, kind }));
+}
+
+// Up to `count` distractors for a reading, spread over different mistake
+// kinds first so each question tests more than one kind of slip.
+export function pickConfusables(word, count = 3) {
+  const all = confusablesFor(word);
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  const picked = [];
+  const kinds = new Set();
+  for (const c of all) if (picked.length < count && !kinds.has(c.kind)) { picked.push(c); kinds.add(c.kind); }
+  for (const c of all) if (picked.length < count && !picked.includes(c)) picked.push(c);
+  return picked;
 }

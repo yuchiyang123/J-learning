@@ -23,13 +23,13 @@ function freshWord() {
 }
 const historyCount = () => db.prepare('SELECT COUNT(*) AS n FROM quiz_results WHERE user_id = ?').get(U).n;
 
-test('only typing/tiles with the kanji prompt count as a recognition review', () => {
-  const yes = [['typing', 'kanji'], ['tiles', 'kanji']];
+test('only typing/tiles/choice with the kanji prompt count as a recognition review', () => {
+  const yes = [['typing', 'kanji'], ['tiles', 'kanji'], ['choice', 'kanji']];
   const no = [
     ['typing', 'meaning'], ['typing', 'audio'], ['tiles', 'meaning'], ['tiles', 'audio'],
     ['handwrite', 'kanji'], ['handwrite', 'meaning'], ['handwrite', 'audio'],
     ['kanji', 'reading'], ['kanji', 'kanji'],
-    ['typing', undefined], ['tiles', null],
+    ['typing', undefined], ['tiles', null], ['choice', 'meaning'], ['choice', 'audio'],
   ];
   for (const [m, p] of yes) assert.equal(practiceUpdatesSrs(m, p), true, `${m}/${p}`);
   for (const [m, p] of no) assert.equal(practiceUpdatesSrs(m, p), false, `${m}/${p}`);

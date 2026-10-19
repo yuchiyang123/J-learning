@@ -90,8 +90,11 @@ export function dailyResponseTimes(userId, { days = 14, tzOffsetMinutes = 0 } = 
 // tiles answered from the kanji prompt. Production modes (meaning -> word,
 // dictation) and the self-graded handwriting modes are still saved to
 // history, but never touch srs_level / next_review.
+// 'choice' (pick the right reading among confusable ones — the JLPT 漢字読み
+// question format) is recognition too.
+const AUTO_GRADED = new Set(['typing', 'tiles', 'choice']);
 export function practiceUpdatesSrs(mode, prompt) {
-  return (mode === 'typing' || mode === 'tiles') && prompt === 'kanji';
+  return AUTO_GRADED.has(mode) && prompt === 'kanji';
 }
 
 // ---------- 待考 (pending test) ----------
@@ -120,7 +123,7 @@ export function isPending(userId, itemType, itemId) {
 // or tiles, with any prompt: right -> 記得, wrong -> 不熟. The handwriting
 // modes are self-graded, so they never settle one.
 export function practiceSettlesPending(mode) {
-  return mode === 'typing' || mode === 'tiles';
+  return AUTO_GRADED.has(mode);
 }
 
 // What `itemType` means for the due queue. 'vocab' is every vocabulary

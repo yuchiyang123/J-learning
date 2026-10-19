@@ -16,6 +16,7 @@ export const QUIZ_TYPE_LABEL_KEYS = {
   vocab_tiles: 'type_vocab_tiles',
   vocab_handwrite: 'type_vocab_handwrite',
   vocab_kanji_write: 'type_vocab_kanji_write',
+  vocab_choice: 'type_vocab_choice',
   jlpt_mock: 'type_jlpt_mock',
 };
 

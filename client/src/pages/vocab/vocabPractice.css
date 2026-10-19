@@ -182,3 +182,23 @@
 
 /* Due-today counter at the top of the vocabulary page. */
 .vocab-due-count { margin: -0.4rem 0 0.8rem; font-weight: 700; color: var(--accent); }
+
+/* ---------- 易混淆辨別 (pick the right reading) ---------- */
+.vp-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; width: 100%; max-width: 460px; }
+.vp-choice {
+  position: relative; padding: 0.85rem 0.8rem 0.85rem 2.2rem; text-align: center; cursor: pointer;
+  font: inherit; font-size: 1.45rem; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--ink); background: var(--paper-raised);
+  border: 2px solid var(--line); border-radius: var(--radius, 12px);
+  transition: transform 0.12s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+.vp-choice:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent); }
+.vp-choice-key { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); font-size: 0.75rem; color: var(--ink-soft); font-weight: 600; }
+.vp-choice.is-answer { border-color: var(--accent-2); color: var(--accent-2); }
+.vp-choice.is-picked-wrong { border-color: var(--accent); color: var(--accent); text-decoration: line-through; }
+.vp-choice.is-dim { opacity: 0.45; }
+.vp-choice:disabled { cursor: default; }
+.vp-demo-choice { gap: 0.5rem; }
+.vp-demo-ok { color: var(--accent-2); }
+.vp-demo-no { color: var(--ink-soft); text-decoration: line-through; }
+@media (max-width: 420px) { .vp-choice { font-size: 1.2rem; padding-left: 1.9rem; } }

@@ -4,10 +4,11 @@ import { api } from '../../api.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { useLocale } from '../../i18n/LocaleContext.jsx';
 import StrokeThumbnail from '../../components/StrokeThumbnail.jsx';
-import { primaryReading, primaryKanji, readingVariants, kanjiVariants, hasKanji } from '../../lib/vocabAnswer.js';
+import { primaryReading, primaryKanji, readingVariants, kanjiVariants, hasKanji, confusablesFor } from '../../lib/vocabAnswer.js';
 import TypingQuestion from './TypingQuestion.jsx';
 import TilesQuestion from './TilesQuestion.jsx';
 import HandwriteQuestion, { HW_CANVAS } from './HandwriteQuestion.jsx';
+import ChoiceQuestion from './ChoiceQuestion.jsx';
 import './vocabPractice.css';
 
 // 單字練習: the production side of vocabulary — instead of flipping a card
@@ -20,7 +21,7 @@ import './vocabPractice.css';
 // logged in, moves each word's 記得/不熟 state the same way the flashcard
 // buttons do.
 
-const MODES = ['typing', 'tiles', 'handwrite', 'kanji'];
+const MODES = ['typing', 'choice', 'tiles', 'handwrite', 'kanji'];
 const PROMPTS = ['kanji', 'meaning', 'audio'];
 const COUNTS = [10, 20, 30];
 const PREFS_KEY = 'jp_vocab_practice';
@@ -35,6 +36,8 @@ function eligible(word, mode, prompt) {
   if (mode === 'kanji') return hasKanji(word) && [...primaryKanji(word)].length <= 4;
   if (prompt === 'kanji' && !hasKanji(word)) return false;
   if (mode === 'tiles') return kanaOnly(reading) && len >= 2 && len <= 8;
+  // Needs at least two plausible near-misses to make a real question.
+  if (mode === 'choice') return kanaOnly(reading) && len >= 2 && confusablesFor(word).length >= 2;
   if (mode === 'handwrite') return kanaOnly(reading) && len <= 6;
   return true;
 }
@@ -65,8 +68,10 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
   const { isLoggedIn } = useAuth();
   const { t } = useLocale();
   const [prefs, setPrefs] = useState(loadPrefs);
-  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'known' | 'unknown' | 'pending' | 'wrong'
+  const [source, setSource] = useState(isLoggedIn ? 'due' : 'all'); // 'due' | 'all' | 'mistakes' | 'known' | 'unknown' | 'pending' | 'wrong'
   const [wrongKeys, setWrongKeys] = useState(null);
+  // 我的錯字: [{ key, wrong, attempts }], most wrong first.
+  const [mistakes, setMistakes] = useState([]);
   const [stage, setStage] = useState('setup'); // 'setup' | 'active' | 'done'
   const [queue, setQueue] = useState([]);
   const [qIndex, setQIndex] = useState(0);
@@ -91,8 +96,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
   useEffect(() => { setStage('setup'); }, [level, words]);
 
   useEffect(() => {
-    if (!isLoggedIn) { setWrongKeys(null); return; }
+    if (!isLoggedIn) { setWrongKeys(null); setMistakes([]); return; }
     api.getVocabPracticeWrong(level).then(setWrongKeys).catch(() => setWrongKeys([]));
+    api.getVocabMistakes(level).then(setMistakes).catch(() => setMistakes([]));
   }, [isLoggedIn, level, stage]);
 
   // Logged in, today's due reviews are the default source.
@@ -105,6 +111,11 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
       const byKey = new Map(list.map((w) => [wordKey(w), w]));
       return dueKeys.map((k) => byKey.get(k)).filter(Boolean);
     }
+    if (source === 'mistakes') {
+      // Most-missed first, not the dictionary's order.
+      const byKey = new Map(list.map((w) => [wordKey(w), w]));
+      return mistakes.map((m) => byKey.get(m.key)).filter(Boolean);
+    }
     if (source === 'unknown') list = list.filter((w) => progressByKey.get(wordKey(w)) === 0);
     // 記得的: marked as remembered at least once (srs_level >= 1), due or not —
     // for checking that words you think you know really stick.
@@ -115,7 +126,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
       list = list.filter((w) => set.has(wordKey(w)));
     }
     return list;
-  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys, dueKeys, pendingKeys]);
+  }, [words, mode, effectivePrompt, source, progressByKey, wordKey, wrongKeys, dueKeys, pendingKeys, mistakes]);
 
   // A run in progress has no autosave — warn before the tab is closed.
   useEffect(() => {
@@ -126,7 +137,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
   }, [stage]);
 
   // Due reviews go most-overdue first; any other source is shuffled.
-  const ordered = (list) => (source === 'due' ? list : shuffle(list));
+  // Due reviews (most overdue) and 我的錯字 (most missed) keep their order;
+  // any other source is shuffled.
+  const ordered = (list) => (source === 'due' || source === 'mistakes' ? list : shuffle(list));
 
   function begin(list) {
     if (list.length === 0) return;
@@ -207,6 +220,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
         {mode === 'tiles' && <TilesQuestion {...common} />}
         {mode === 'handwrite' && <HandwriteQuestion {...common} chars={[...primaryReading(current)]} recognize />}
         {mode === 'kanji' && <HandwriteQuestion {...common} chars={[...primaryKanji(current)]} />}
+        {mode === 'choice' && <ChoiceQuestion {...common} />}
       </div>
     );
   }
@@ -309,6 +323,9 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
             <button className={source === 'pending' ? 'active' : ''} onClick={() => setSource('pending')}>
               {t('vp_source_pending', { count: pendingKeys.size })}
             </button>
+            <button className={source === 'mistakes' ? 'active' : ''} onClick={() => setSource('mistakes')}>
+              {t('vp_source_mistakes', { count: mistakes.length })}
+            </button>
             <button className={source === 'wrong' ? 'active' : ''} onClick={() => setSource('wrong')}>
               {t('vp_source_wrong', { count: wrongKeys?.length ?? 0 })}
             </button>
@@ -333,7 +350,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
       </div>
       {source === 'pending' && (
         <p className="muted vp-login-hint">
-          {mode === 'typing' || mode === 'tiles' ? t('vp_pending_hint') : t('vp_pending_hint_selfgraded')}
+          {mode === 'typing' || mode === 'tiles' || mode === 'choice' ? t('vp_pending_hint') : t('vp_pending_hint_selfgraded')}
         </p>
       )}
       {!isLoggedIn && <p className="muted vp-login-hint">{t('vp_login_hint')}</p>}
@@ -347,6 +364,13 @@ function ModeDemo({ mode }) {
     return (
       <span className="vp-demo vp-demo-typing" aria-hidden="true">
         <span className="vp-demo-latin">sensei</span><span className="vp-demo-arrow">→</span><span lang="ja">せんせい</span>
+      </span>
+    );
+  }
+  if (mode === 'choice') {
+    return (
+      <span className="vp-demo vp-demo-choice" aria-hidden="true" lang="ja">
+        <span className="vp-demo-ok">がっこう</span><span className="vp-demo-no">がつこう</span>
       </span>
     );
   }

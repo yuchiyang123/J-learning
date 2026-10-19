@@ -451,6 +451,11 @@ const zhTW = {
   vp_pending_hint_selfgraded: "手寫是自己打分，不會改變待考單字的狀態；要自動標記記得／不熟，請用打字或假名排序。",
   vp_pending_resolved: "{count} 個待考單字已依這次結果標記為記得／不熟。",
   vocab_homophones: "同音字",
+  vp_mode_choice: "易混淆辨別",
+  vp_mode_desc_choice: "從長得很像的讀音裡選出正確的：濁音、小字、促音、長音（考試的漢字讀音題就是這樣出）。",
+  vp_source_mistakes: "我的錯字（{count}）",
+  vp_choice_hint: "也可以按鍵盤 1～4 選答案。",
+  type_vocab_choice: "易混淆辨別",
 };
 
 const zhCN = {
@@ -892,6 +897,11 @@ const zhCN = {
   vp_pending_hint_selfgraded: "手写是自己打分，不会改变待考单词的状态；要自动标记记得／不熟，请用打字或假名排序。",
   vp_pending_resolved: "{count} 个待考单词已按这次结果标记为记得／不熟。",
   vocab_homophones: "同音词",
+  vp_mode_choice: "易混淆辨别",
+  vp_mode_desc_choice: "从长得很像的读音里选出正确的：浊音、小字、促音、长音（考试的汉字读音题就是这样出）。",
+  vp_source_mistakes: "我的错字（{count}）",
+  vp_choice_hint: "也可以按键盘 1～4 选答案。",
+  type_vocab_choice: "易混淆辨别",
 };
 
 const en = {
@@ -1333,6 +1343,11 @@ const en = {
   vp_pending_hint_selfgraded: "Handwriting is self-graded, so it won't settle words to test — use typing or tiles for that.",
   vp_pending_resolved: "{count} word(s) to test were marked Remember / Not yet from this round.",
   vocab_homophones: "Same reading",
+  vp_mode_choice: "Spot the reading",
+  vp_mode_desc_choice: "Pick the right reading among near-misses: voicing marks, small kana, small っ, long vowels — the JLPT kanji-reading format.",
+  vp_source_mistakes: "My mistakes ({count})",
+  vp_choice_hint: "Keys 1–4 pick an answer too.",
+  type_vocab_choice: "Spot the reading",
 };
 
 const ko = {
@@ -1774,6 +1789,11 @@ const ko = {
   vp_pending_hint_selfgraded: "손글씨는 스스로 채점하므로 시험 대기 단어의 상태를 바꾸지 않습니다. 타자나 가나 맞추기를 사용하세요.",
   vp_pending_resolved: "시험 대기 단어 {count}개를 이번 결과에 따라 기억/모름으로 표시했어요.",
   vocab_homophones: "같은 읽기",
+  vp_mode_choice: "헷갈리는 읽기",
+  vp_mode_desc_choice: "비슷한 읽기 중 정답 고르기: 탁음, 작은 글자, 촉음, 장음 (JLPT 한자 읽기 문제 형식).",
+  vp_source_mistakes: "내 오답 ({count})",
+  vp_choice_hint: "키보드 1~4로도 고를 수 있어요.",
+  type_vocab_choice: "헷갈리는 읽기",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

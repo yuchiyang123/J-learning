@@ -13,7 +13,7 @@ const router = Router();
 // summed into one bucket.
 export const CATEGORY_QUIZ_TYPES = {
   kana: ['kana', 'kana_write', 'kana_read'],
-  vocab: ['vocab', 'vocab_typing', 'vocab_tiles', 'vocab_handwrite', 'vocab_kanji_write'],
+  vocab: ['vocab', 'vocab_typing', 'vocab_tiles', 'vocab_handwrite', 'vocab_kanji_write', 'vocab_choice'],
   kanji: ['kanji', 'kanji_write'],
   grammar: ['grammar'],
   listening: ['listening'],

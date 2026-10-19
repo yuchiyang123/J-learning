@@ -4,6 +4,7 @@ import { touchUser } from '../users.js';
 import { translate } from '../locale.js';
 import { optionalAuth, requireAuth } from '../auth.js';
 import { applyReview, practiceUpdatesSrs, logResponse, normalizeResponseMs, isPending, setPending, practiceSettlesPending } from '../srs.js';
+import { getVocabMistakes } from '../mistakes.js';
 
 const router = Router();
 
@@ -342,6 +343,7 @@ const VOCAB_PRACTICE_TYPES = {
   tiles: 'vocab_tiles',
   handwrite: 'vocab_handwrite',
   kanji: 'vocab_kanji_write',
+  choice: 'vocab_choice',
 };
 const WORD_KEY = /^(word|custom_word):(\d+)$/;
 const clip = (v, n) => String(v ?? '').slice(0, n);
@@ -416,6 +418,14 @@ router.post('/vocab-practice/submit', optionalAuth, (req, res) => {
   }
 
   res.json({ total, correct, detail, srsUpdated, resolvedPending });
+});
+
+// GET /api/quiz/vocab-practice/mistakes?level=N5 -> [{ key, wrong, attempts }]
+// The words this user gets wrong most (see mistakes.js), most wrong first.
+router.get('/vocab-practice/mistakes', requireAuth, (req, res) => {
+  const { level } = req.query;
+  if (level && !/^N[1-5]$/.test(level)) return res.status(400).json({ error: 'level must be N1-N5' });
+  res.json(getVocabMistakes(req.user.id, { level }));
 });
 
 // GET /api/quiz/vocab-practice/wrong?level=N5 -> ['word:12', 'custom_word:3', ...]
