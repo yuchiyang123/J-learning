@@ -1,6 +1,7 @@
 import * as OpenCC from 'opencc-js';
 import { loadCache } from './translate.js';
 import { meaningOverrides } from './meaningFixes.js';
+import { grammarOverrides } from './grammarAdditions.js';
 
 export const LOCALES = ['zh-TW', 'zh-CN', 'en', 'ko'];
 export const DEFAULT_LOCALE = 'zh-TW';
@@ -44,7 +45,8 @@ export function translate(zhText, locale) {
   if (loc === 'zh-CN') return toCn(zhText);
   // Hand-corrected meanings (src/meaning-fixes.json) carry their own
   // English / Korean; they win over the machine-translated cache.
-  const fixed = meaningOverrides().get(zhText);
+  // Same for the grammar points added in src/grammar-n5.json.
+  const fixed = meaningOverrides().get(zhText) ?? grammarOverrides().get(zhText);
   if (fixed) return loc === 'en' ? fixed.en : fixed.ko;
   const bucket = getCache()[loc === 'en' ? 'en' : 'ko'];
   return bucket?.[zhText] ?? zhText;
