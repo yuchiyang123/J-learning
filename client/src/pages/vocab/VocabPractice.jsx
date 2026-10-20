@@ -28,13 +28,19 @@ const PREFS_KEY = 'jp_vocab_practice';
 
 const kanaOnly = (s) => /^[ぁ-ゖァ-ヺー]+$/.test(s);
 
-// Which words a mode/prompt combination can actually ask about.
-function eligible(word, mode, prompt) {
+// The prompt a word is actually shown with: words written only in kana
+// (あそこ, あの, ...) have no kanji to show, so 看漢字 asks them by meaning
+// instead of leaving them out of every 看漢字 run.
+function promptFor(word, prompt) {
+  return prompt === 'kanji' && !hasKanji(word) ? 'meaning' : prompt;
+}
+
+// Which words a mode can actually ask about.
+function eligible(word, mode) {
   const reading = primaryReading(word);
   if (!reading) return false;
   const len = [...reading].length;
   if (mode === 'kanji') return hasKanji(word) && [...primaryKanji(word)].length <= 4;
-  if (prompt === 'kanji' && !hasKanji(word)) return false;
   if (mode === 'tiles') return kanaOnly(reading) && len >= 2 && len <= 8;
   // Needs at least two plausible near-misses to make a real question.
   if (mode === 'choice') return kanaOnly(reading) && len >= 2 && confusablesFor(word).length >= 2;
@@ -105,7 +111,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
   useEffect(() => { setSource(isLoggedIn ? 'due' : 'all'); }, [isLoggedIn]);
 
   const pool = useMemo(() => {
-    let list = words.filter((w) => eligible(w, mode, effectivePrompt));
+    let list = words.filter((w) => eligible(w, mode));
     if (source === 'due') {
       // Due order (most overdue first), not the dictionary's.
       const byKey = new Map(list.map((w) => [wordKey(w), w]));
@@ -183,7 +189,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
     const word = queue[qIndex];
     const entry = {
       word,
-      promptText: promptTextFor(word, effectivePrompt),
+      promptText: promptTextFor(word, promptFor(word, effectivePrompt)),
       answer: (mode === 'kanji' ? kanjiVariants(word) : readingVariants(word)).join('／'),
       ...result,
     };
@@ -202,7 +208,7 @@ export default function VocabPractice({ level, words, progressByKey, wordKey, du
     const common = {
       key: `${wordKey(current)}:${qIndex}`,
       word: current,
-      prompt: effectivePrompt,
+      prompt: promptFor(current, effectivePrompt),
       isLast: qIndex + 1 === queue.length,
       onNext: handleNext,
       onGraded: setPendingCorrect,
