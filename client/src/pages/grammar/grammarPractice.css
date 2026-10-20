@@ -1,0 +1,34 @@
+/* Grammar practice. Builds on the vocabulary practice styles
+   (vocabPractice.css) and the same skin tokens. */
+
+.gp-prompt {
+  font-family: var(--font-heading); font-size: clamp(1.3rem, 4.2vw, 1.8rem); font-weight: 700;
+  line-height: 1.7; color: var(--ink); max-width: 640px;
+}
+.gp-prompt.is-pattern { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 800; }
+.gp-blank {
+  display: inline-block; min-width: 2.6em; margin: 0 0.15em; padding: 0 0.3em;
+  border-bottom: 3px solid var(--accent); text-align: center; line-height: 1.3;
+}
+.gp-blank.is-filled { color: var(--accent-2); border-color: var(--accent-2); animation: vp-drop 0.18s ease; }
+.gp-demo-blank { color: var(--accent); border-bottom: 2px solid currentColor; margin: 0 0.1em; }
+
+.gp-choices-meaning .vp-choice { font-size: 1.02rem; font-weight: 700; letter-spacing: 0; line-height: 1.4; }
+
+.gp-answer { max-width: 560px; align-items: stretch; }
+.gp-answer .vp-verdict { align-self: center; }
+.gp-correct-answer { margin: 0; text-align: center; }
+.gp-correct-answer strong { font-size: 1.3rem; color: var(--accent-2); }
+.gp-point { display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.6rem; border-top: 1px dashed var(--line); }
+.gp-point-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.7rem; }
+.gp-point-pattern { font-family: var(--font-heading); font-weight: 800; font-size: 1.15rem; }
+.gp-point-meaning { color: var(--accent); font-weight: 700; }
+.gp-point-explanation { margin: 0; font-size: 0.9rem; line-height: 1.65; color: var(--ink-soft); }
+.gp-point-example { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; font-size: 0.95rem; }
+.gp-point-example-zh { flex-basis: 100%; color: var(--ink-soft); font-size: 0.85rem; }
+
+.gp-review-pattern { font-size: 1rem; }
+.gp-only { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; font-weight: 700; }
+
+.grammar-card-actions { display: flex; align-items: center; gap: 0.4rem; }
+.tiny-practice-btn { padding: 0.25rem 0.6rem; font-size: 0.8rem; }

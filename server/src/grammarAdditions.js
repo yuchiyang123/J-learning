@@ -12,22 +12,45 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ADDITIONS_FILE = path.join(__dirname, 'grammar-n5.json');
 
-let cached = null;
-export function loadGrammarAdditions() {
-  if (cached) return cached;
-  let raw;
+const LEVEL = /^N[1-5]$/;
+const EXTRA_QUIZ = /^(N[1-5])_extra_quiz$/;
+
+let raw = null;
+function loadFile() {
+  if (raw) return raw;
   try {
     raw = JSON.parse(fs.readFileSync(ADDITIONS_FILE, 'utf8'));
   } catch (err) {
     console.warn(`grammar additions not loaded: ${err.message}`);
     raw = {};
   }
+  return raw;
+}
+
+let cached = null;
+export function loadGrammarAdditions() {
+  if (cached) return cached;
   const rows = [];
-  for (const [level, list] of Object.entries(raw)) {
-    if (!Array.isArray(list)) continue;
+  for (const [level, list] of Object.entries(loadFile())) {
+    if (!LEVEL.test(level) || !Array.isArray(list)) continue;
     for (const g of list) rows.push({ level, ...g });
   }
   cached = rows;
+  return rows;
+}
+
+// Fill-in-the-blank questions for points that came from the seed with only
+// a meaning question ({ level, pattern, prompt, options: [correct, ...] }).
+let cachedExtra = null;
+export function loadExtraGrammarQuiz() {
+  if (cachedExtra) return cachedExtra;
+  const rows = [];
+  for (const [key, list] of Object.entries(loadFile())) {
+    const m = EXTRA_QUIZ.exec(key);
+    if (!m || !Array.isArray(list)) continue;
+    for (const q of list) rows.push({ level: m[1], ...q });
+  }
+  cachedExtra = rows;
   return rows;
 }
 
@@ -67,9 +90,10 @@ function arrange(options, seed) {
   return { options: out, answer: OPTION_KEYS[out.indexOf(options[0])] };
 }
 
-// Inserts the points that aren't there yet plus their questions. Idempotent.
-// Returns the number of points added.
-export function applyGrammarAdditions(db, additions = loadGrammarAdditions()) {
+// Inserts the points that aren't there yet plus their questions, and the
+// extra fill-in questions for existing points. Idempotent. Returns the
+// number of points added.
+export function applyGrammarAdditions(db, additions = loadGrammarAdditions(), extraQuiz = loadExtraGrammarQuiz()) {
   const exists = db.prepare('SELECT 1 FROM grammar_points WHERE level = ? AND pattern = ?');
   const insertPoint = db.prepare(
     'INSERT INTO grammar_points (level, pattern, meaning, explanation, example_jp, example_reading, example_zh) VALUES (?,?,?,?,?,?,?)'
@@ -96,6 +120,13 @@ export function applyGrammarAdditions(db, additions = loadGrammarAdditions()) {
       const { prompt, options, answer } = g.quiz;
       addQuiz(g.level, prompt, [options[answer], ...options.filter((_, k) => k !== answer)], explanation);
       added++;
+    }
+    const point = db.prepare('SELECT meaning FROM grammar_points WHERE level = ? AND pattern = ?');
+    const asked = db.prepare("SELECT 1 FROM quiz_questions WHERE type = 'grammar' AND level = ? AND prompt = ?");
+    for (const q of extraQuiz) {
+      const p = point.get(q.level, q.pattern);
+      if (!p || asked.get(q.level, q.prompt)) continue;
+      addQuiz(q.level, q.prompt, q.options, quizExplanation(q.pattern, p.meaning));
     }
   })();
   return added;

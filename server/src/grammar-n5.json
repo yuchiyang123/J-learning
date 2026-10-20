@@ -3,459 +3,1896 @@
   "N5": [
     {
       "pattern": "〜は〜です",
-      "zh": { "meaning": "〜是〜", "explanation": "名詞＋は＋名詞＋です，用來說明主題是什麼。「は」當助詞時唸 wa。", "example": "我是學生。" },
-      "example_jp": "わたしは学生です。", "example_reading": "わたしはがくせいです。",
-      "en": { "meaning": "A is B", "explanation": "Noun は noun です states what the topic is. は as a particle is read wa.", "example": "I am a student." },
-      "ko": { "meaning": "~은/는 ~입니다", "explanation": "명사+は+명사+です로 주제가 무엇인지 말합니다. 조사 は는 wa로 읽습니다.", "example": "저는 학생입니다." },
-      "quiz": { "prompt": "わたし＿＿＿学生です。空欄に入るのは？", "options": ["は", "を", "で", "へ"], "answer": 0 }
+      "zh": {
+        "meaning": "〜是〜",
+        "explanation": "名詞＋は＋名詞＋です，用來說明主題是什麼。「は」當助詞時唸 wa。",
+        "example": "我是學生。"
+      },
+      "example_jp": "わたしは学生です。",
+      "example_reading": "わたしはがくせいです。",
+      "en": {
+        "meaning": "A is B",
+        "explanation": "Noun は noun です states what the topic is. は as a particle is read wa.",
+        "example": "I am a student."
+      },
+      "ko": {
+        "meaning": "~은/는 ~입니다",
+        "explanation": "명사+は+명사+です로 주제가 무엇인지 말합니다. 조사 は는 wa로 읽습니다.",
+        "example": "저는 학생입니다."
+      },
+      "quiz": {
+        "prompt": "わたし＿＿＿学生です。空欄に入るのは？",
+        "options": [
+          "は",
+          "を",
+          "で",
+          "へ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜は〜ではありません（じゃありません）",
-      "zh": { "meaning": "〜不是〜", "explanation": "「です」的否定。口語常說「じゃありません」或「じゃないです」。", "example": "這不是我的書。" },
-      "example_jp": "これはわたしの本ではありません。", "example_reading": "これはわたしのほんではありません。",
-      "en": { "meaning": "A is not B", "explanation": "Negative of です; in speech often じゃありません or じゃないです.", "example": "This is not my book." },
-      "ko": { "meaning": "~은/는 ~이/가 아닙니다", "explanation": "です의 부정형입니다. 회화에서는 じゃありません이라고도 합니다.", "example": "이것은 제 책이 아닙니다." },
-      "quiz": { "prompt": "かれは先生＿＿＿。（否定）空欄に入るのは？", "options": ["ではありません", "でした", "です", "でしょう"], "answer": 0 }
+      "zh": {
+        "meaning": "〜不是〜",
+        "explanation": "「です」的否定。口語常說「じゃありません」或「じゃないです」。",
+        "example": "這不是我的書。"
+      },
+      "example_jp": "これはわたしの本ではありません。",
+      "example_reading": "これはわたしのほんではありません。",
+      "en": {
+        "meaning": "A is not B",
+        "explanation": "Negative of です; in speech often じゃありません or じゃないです.",
+        "example": "This is not my book."
+      },
+      "ko": {
+        "meaning": "~은/는 ~이/가 아닙니다",
+        "explanation": "です의 부정형입니다. 회화에서는 じゃありません이라고도 합니다.",
+        "example": "이것은 제 책이 아닙니다."
+      },
+      "quiz": {
+        "prompt": "かれは先生＿＿＿。（否定）空欄に入るのは？",
+        "options": [
+          "ではありません",
+          "でした",
+          "です",
+          "でしょう"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜か（疑問句）",
-      "zh": { "meaning": "〜嗎？", "explanation": "句尾加「か」就變成疑問句，語調上揚。", "example": "你是日本人嗎？" },
-      "example_jp": "あなたは日本人ですか。", "example_reading": "あなたはにほんじんですか。",
-      "en": { "meaning": "question marker", "explanation": "Adding か at the end of a sentence makes it a question.", "example": "Are you Japanese?" },
-      "ko": { "meaning": "~까? (의문)", "explanation": "문장 끝에 か를 붙이면 의문문이 됩니다.", "example": "당신은 일본인입니까?" },
-      "quiz": { "prompt": "これはペンです＿＿＿。（質問）空欄に入るのは？", "options": ["か", "ね", "よ", "も"], "answer": 0 }
+      "zh": {
+        "meaning": "〜嗎？",
+        "explanation": "句尾加「か」就變成疑問句，語調上揚。",
+        "example": "你是日本人嗎？"
+      },
+      "example_jp": "あなたは日本人ですか。",
+      "example_reading": "あなたはにほんじんですか。",
+      "en": {
+        "meaning": "question marker",
+        "explanation": "Adding か at the end of a sentence makes it a question.",
+        "example": "Are you Japanese?"
+      },
+      "ko": {
+        "meaning": "~까? (의문)",
+        "explanation": "문장 끝에 か를 붙이면 의문문이 됩니다.",
+        "example": "당신은 일본인입니까?"
+      },
+      "quiz": {
+        "prompt": "これはペンです＿＿＿。（質問）空欄に入るのは？",
+        "options": [
+          "か",
+          "ね",
+          "よ",
+          "も"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜の〜（名詞修飾）",
-      "zh": { "meaning": "〜的〜", "explanation": "名詞＋の＋名詞，表示所屬、內容或屬性。", "example": "這是日文的書。" },
-      "example_jp": "これは日本語の本です。", "example_reading": "これはにほんごのほんです。",
-      "en": { "meaning": "noun の noun (of / 's)", "explanation": "Noun の noun shows ownership, content or type.", "example": "This is a Japanese book." },
-      "ko": { "meaning": "~의 ~", "explanation": "명사+の+명사로 소유·내용·속성을 나타냅니다.", "example": "이것은 일본어 책입니다." },
-      "quiz": { "prompt": "これはわたし＿＿＿かばんです。空欄に入るのは？", "options": ["の", "に", "を", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "〜的〜",
+        "explanation": "名詞＋の＋名詞，表示所屬、內容或屬性。",
+        "example": "這是日文的書。"
+      },
+      "example_jp": "これは日本語の本です。",
+      "example_reading": "これはにほんごのほんです。",
+      "en": {
+        "meaning": "noun の noun (of / 's)",
+        "explanation": "Noun の noun shows ownership, content or type.",
+        "example": "This is a Japanese book."
+      },
+      "ko": {
+        "meaning": "~의 ~",
+        "explanation": "명사+の+명사로 소유·내용·속성을 나타냅니다.",
+        "example": "이것은 일본어 책입니다."
+      },
+      "quiz": {
+        "prompt": "これはわたし＿＿＿かばんです。空欄に入るのは？",
+        "options": [
+          "の",
+          "に",
+          "を",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜も",
-      "zh": { "meaning": "〜也", "explanation": "取代「は」「が」「を」，表示「也是一樣」。", "example": "我也是學生。" },
-      "example_jp": "わたしも学生です。", "example_reading": "わたしもがくせいです。",
-      "en": { "meaning": "also, too", "explanation": "Replaces は, が or を to mean 'also'.", "example": "I am a student too." },
-      "ko": { "meaning": "~도", "explanation": "は・が・を 대신 써서 '~도'라는 뜻을 나타냅니다.", "example": "저도 학생입니다." },
-      "quiz": { "prompt": "田中さんは学生です。わたし＿＿＿学生です。空欄に入るのは？", "options": ["も", "を", "で", "に"], "answer": 0 }
+      "zh": {
+        "meaning": "〜也",
+        "explanation": "取代「は」「が」「を」，表示「也是一樣」。",
+        "example": "我也是學生。"
+      },
+      "example_jp": "わたしも学生です。",
+      "example_reading": "わたしもがくせいです。",
+      "en": {
+        "meaning": "also, too",
+        "explanation": "Replaces は, が or を to mean 'also'.",
+        "example": "I am a student too."
+      },
+      "ko": {
+        "meaning": "~도",
+        "explanation": "は・が・を 대신 써서 '~도'라는 뜻을 나타냅니다.",
+        "example": "저도 학생입니다."
+      },
+      "quiz": {
+        "prompt": "田中さんは学生です。わたし＿＿＿学生です。空欄に入るのは？",
+        "options": [
+          "も",
+          "を",
+          "で",
+          "に"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜が好きです／上手です",
-      "zh": { "meaning": "喜歡〜／擅長〜", "explanation": "好き、嫌い、上手、下手、分かる等的對象用「が」，不用「を」。", "example": "我喜歡音樂。" },
-      "example_jp": "わたしは音楽が好きです。", "example_reading": "わたしはおんがくがすきです。",
-      "en": { "meaning": "to like ~ / be good at ~", "explanation": "With 好き, 嫌い, 上手, 下手, 分かる the object takes が, not を.", "example": "I like music." },
-      "ko": { "meaning": "~을/를 좋아합니다/잘합니다", "explanation": "好き・上手・分かる 등의 대상에는 を가 아니라 が를 씁니다.", "example": "저는 음악을 좋아합니다." },
-      "quiz": { "prompt": "わたしはりんご＿＿＿好きです。空欄に入るのは？", "options": ["が", "を", "で", "へ"], "answer": 0 }
+      "zh": {
+        "meaning": "喜歡〜／擅長〜",
+        "explanation": "好き、嫌い、上手、下手、分かる等的對象用「が」，不用「を」。",
+        "example": "我喜歡音樂。"
+      },
+      "example_jp": "わたしは音楽が好きです。",
+      "example_reading": "わたしはおんがくがすきです。",
+      "en": {
+        "meaning": "to like ~ / be good at ~",
+        "explanation": "With 好き, 嫌い, 上手, 下手, 分かる the object takes が, not を.",
+        "example": "I like music."
+      },
+      "ko": {
+        "meaning": "~을/를 좋아합니다/잘합니다",
+        "explanation": "好き・上手・分かる 등의 대상에는 を가 아니라 が를 씁니다.",
+        "example": "저는 음악을 좋아합니다."
+      },
+      "quiz": {
+        "prompt": "わたしはりんご＿＿＿好きです。空欄に入るのは？",
+        "options": [
+          "が",
+          "を",
+          "で",
+          "へ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜を（受詞）",
-      "zh": { "meaning": "（動作的對象）", "explanation": "「を」標示動作的對象，唸 o。", "example": "我喝水。" },
-      "example_jp": "水を飲みます。", "example_reading": "みずをのみます。",
-      "en": { "meaning": "object marker", "explanation": "を marks the object of a verb; read o.", "example": "I drink water." },
-      "ko": { "meaning": "~을/를 (목적어)", "explanation": "を는 동작의 대상을 나타내며 o로 읽습니다.", "example": "물을 마십니다." },
-      "quiz": { "prompt": "パン＿＿＿食べます。空欄に入るのは？", "options": ["を", "が", "に", "へ"], "answer": 0 }
+      "zh": {
+        "meaning": "（動作的對象）",
+        "explanation": "「を」標示動作的對象，唸 o。",
+        "example": "我喝水。"
+      },
+      "example_jp": "水を飲みます。",
+      "example_reading": "みずをのみます。",
+      "en": {
+        "meaning": "object marker",
+        "explanation": "を marks the object of a verb; read o.",
+        "example": "I drink water."
+      },
+      "ko": {
+        "meaning": "~을/를 (목적어)",
+        "explanation": "を는 동작의 대상을 나타내며 o로 읽습니다.",
+        "example": "물을 마십니다."
+      },
+      "quiz": {
+        "prompt": "パン＿＿＿食べます。空欄に入るのは？",
+        "options": [
+          "を",
+          "が",
+          "に",
+          "へ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜を（經過、離開的地方）",
-      "zh": { "meaning": "經過〜／離開〜", "explanation": "移動動詞前的「を」表示經過的地方（公園を散歩する）或離開的地方（電車を降りる）。", "example": "在公園散步。" },
-      "example_jp": "公園を散歩します。", "example_reading": "こうえんをさんぽします。",
-      "en": { "meaning": "through / out of (place)", "explanation": "With motion verbs を marks the place passed through or left.", "example": "I take a walk in the park." },
-      "ko": { "meaning": "~을/를 지나다/떠나다", "explanation": "이동 동사 앞의 を는 지나가는 곳이나 떠나는 곳을 나타냅니다.", "example": "공원을 산책합니다." },
-      "quiz": { "prompt": "つぎの駅で電車＿＿＿降ります。空欄に入るのは？", "options": ["を", "に", "で", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "經過〜／離開〜",
+        "explanation": "移動動詞前的「を」表示經過的地方（公園を散歩する）或離開的地方（電車を降りる）。",
+        "example": "在公園散步。"
+      },
+      "example_jp": "公園を散歩します。",
+      "example_reading": "こうえんをさんぽします。",
+      "en": {
+        "meaning": "through / out of (place)",
+        "explanation": "With motion verbs を marks the place passed through or left.",
+        "example": "I take a walk in the park."
+      },
+      "ko": {
+        "meaning": "~을/를 지나다/떠나다",
+        "explanation": "이동 동사 앞의 を는 지나가는 곳이나 떠나는 곳을 나타냅니다.",
+        "example": "공원을 산책합니다."
+      },
+      "quiz": {
+        "prompt": "つぎの駅で電車＿＿＿降ります。空欄に入るのは？",
+        "options": [
+          "を",
+          "に",
+          "で",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜に（時間點）",
-      "zh": { "meaning": "在〜（時間）", "explanation": "具體的時間點（7點、星期一、5月）後面加「に」；今日、明日、毎日等不加。", "example": "早上七點起床。" },
-      "example_jp": "朝七時に起きます。", "example_reading": "あさしちじにおきます。",
-      "en": { "meaning": "at / on (a time)", "explanation": "Specific times take に (7時に, 月曜日に); words like 今日, 明日, 毎日 don't.", "example": "I get up at seven in the morning." },
-      "ko": { "meaning": "~에 (시간)", "explanation": "구체적인 시각·요일에는 に를 붙이고, 今日・明日・毎日 등에는 붙이지 않습니다.", "example": "아침 7시에 일어납니다." },
-      "quiz": { "prompt": "毎晩十一時＿＿＿寝ます。空欄に入るのは？", "options": ["に", "で", "を", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "在〜（時間）",
+        "explanation": "具體的時間點（7點、星期一、5月）後面加「に」；今日、明日、毎日等不加。",
+        "example": "早上七點起床。"
+      },
+      "example_jp": "朝七時に起きます。",
+      "example_reading": "あさしちじにおきます。",
+      "en": {
+        "meaning": "at / on (a time)",
+        "explanation": "Specific times take に (7時に, 月曜日に); words like 今日, 明日, 毎日 don't.",
+        "example": "I get up at seven in the morning."
+      },
+      "ko": {
+        "meaning": "~에 (시간)",
+        "explanation": "구체적인 시각·요일에는 に를 붙이고, 今日・明日・毎日 등에는 붙이지 않습니다.",
+        "example": "아침 7시에 일어납니다."
+      },
+      "quiz": {
+        "prompt": "毎晩十一時＿＿＿寝ます。空欄に入るのは？",
+        "options": [
+          "に",
+          "で",
+          "を",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜へ／〜に（方向、目的地）",
-      "zh": { "meaning": "往〜、到〜", "explanation": "移動的方向或目的地。「へ」當助詞時唸 e。", "example": "明天去東京。" },
-      "example_jp": "明日東京へ行きます。", "example_reading": "あしたとうきょうへいきます。",
-      "en": { "meaning": "to (a destination)", "explanation": "Direction or destination of movement; へ as a particle is read e.", "example": "I'm going to Tokyo tomorrow." },
-      "ko": { "meaning": "~에/~로 (방향·목적지)", "explanation": "이동의 방향이나 목적지를 나타냅니다. 조사 へ는 e로 읽습니다.", "example": "내일 도쿄에 갑니다." },
-      "quiz": { "prompt": "来週、日本＿＿＿行きます。空欄に入るのは？", "options": ["へ", "を", "で", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "往〜、到〜",
+        "explanation": "移動的方向或目的地。「へ」當助詞時唸 e。",
+        "example": "明天去東京。"
+      },
+      "example_jp": "明日東京へ行きます。",
+      "example_reading": "あしたとうきょうへいきます。",
+      "en": {
+        "meaning": "to (a destination)",
+        "explanation": "Direction or destination of movement; へ as a particle is read e.",
+        "example": "I'm going to Tokyo tomorrow."
+      },
+      "ko": {
+        "meaning": "~에/~로 (방향·목적지)",
+        "explanation": "이동의 방향이나 목적지를 나타냅니다. 조사 へ는 e로 읽습니다.",
+        "example": "내일 도쿄에 갑니다."
+      },
+      "quiz": {
+        "prompt": "来週、日本＿＿＿行きます。空欄に入るのは？",
+        "options": [
+          "へ",
+          "を",
+          "で",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜で（動作進行的場所）",
-      "zh": { "meaning": "在〜（做某事）", "explanation": "動作發生的地點用「で」；只表示存在的地點用「に」。", "example": "在圖書館讀書。" },
-      "example_jp": "図書館で勉強します。", "example_reading": "としょかんでべんきょうします。",
-      "en": { "meaning": "at / in (where an action happens)", "explanation": "で marks where an action takes place; に marks where something simply is.", "example": "I study at the library." },
-      "ko": { "meaning": "~에서 (동작의 장소)", "explanation": "동작이 일어나는 장소에는 で, 존재 장소에는 に를 씁니다.", "example": "도서관에서 공부합니다." },
-      "quiz": { "prompt": "レストラン＿＿＿昼ご飯を食べます。空欄に入るのは？", "options": ["で", "に", "を", "へ"], "answer": 0 }
+      "zh": {
+        "meaning": "在〜（做某事）",
+        "explanation": "動作發生的地點用「で」；只表示存在的地點用「に」。",
+        "example": "在圖書館讀書。"
+      },
+      "example_jp": "図書館で勉強します。",
+      "example_reading": "としょかんでべんきょうします。",
+      "en": {
+        "meaning": "at / in (where an action happens)",
+        "explanation": "で marks where an action takes place; に marks where something simply is.",
+        "example": "I study at the library."
+      },
+      "ko": {
+        "meaning": "~에서 (동작의 장소)",
+        "explanation": "동작이 일어나는 장소에는 で, 존재 장소에는 に를 씁니다.",
+        "example": "도서관에서 공부합니다."
+      },
+      "quiz": {
+        "prompt": "レストラン＿＿＿昼ご飯を食べます。空欄に入るのは？",
+        "options": [
+          "で",
+          "に",
+          "を",
+          "へ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜で（手段、工具）",
-      "zh": { "meaning": "用〜、搭〜", "explanation": "表示交通工具、工具、方法或語言。", "example": "搭公車去學校。" },
-      "example_jp": "バスで学校へ行きます。", "example_reading": "ばすでがっこうへいきます。",
-      "en": { "meaning": "by / with / in (means)", "explanation": "Marks a means: transport, tool, method or language.", "example": "I go to school by bus." },
-      "ko": { "meaning": "~로 (수단·도구)", "explanation": "교통수단·도구·방법·언어를 나타냅니다.", "example": "버스로 학교에 갑니다." },
-      "quiz": { "prompt": "はし＿＿＿ご飯を食べます。空欄に入るのは？", "options": ["で", "を", "に", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "用〜、搭〜",
+        "explanation": "表示交通工具、工具、方法或語言。",
+        "example": "搭公車去學校。"
+      },
+      "example_jp": "バスで学校へ行きます。",
+      "example_reading": "ばすでがっこうへいきます。",
+      "en": {
+        "meaning": "by / with / in (means)",
+        "explanation": "Marks a means: transport, tool, method or language.",
+        "example": "I go to school by bus."
+      },
+      "ko": {
+        "meaning": "~로 (수단·도구)",
+        "explanation": "교통수단·도구·방법·언어를 나타냅니다.",
+        "example": "버스로 학교에 갑니다."
+      },
+      "quiz": {
+        "prompt": "はし＿＿＿ご飯を食べます。空欄に入るのは？",
+        "options": [
+          "で",
+          "を",
+          "に",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜と（和、一起）",
-      "zh": { "meaning": "〜和〜／和〜一起", "explanation": "連接名詞（全部列出），或表示一起做動作的對象。", "example": "和朋友一起去看電影。" },
-      "example_jp": "友達と映画を見ます。", "example_reading": "ともだちとえいがをみます。",
-      "en": { "meaning": "and / with", "explanation": "Joins nouns (a complete list) or marks who you do something with.", "example": "I watch a movie with a friend." },
-      "ko": { "meaning": "~와/과, ~와 함께", "explanation": "명사를 나열하거나 함께 하는 상대를 나타냅니다.", "example": "친구와 영화를 봅니다." },
-      "quiz": { "prompt": "母＿＿＿買い物に行きます。空欄に入るのは？", "options": ["と", "を", "が", "で"], "answer": 0 }
+      "zh": {
+        "meaning": "〜和〜／和〜一起",
+        "explanation": "連接名詞（全部列出），或表示一起做動作的對象。",
+        "example": "和朋友一起去看電影。"
+      },
+      "example_jp": "友達と映画を見ます。",
+      "example_reading": "ともだちとえいがをみます。",
+      "en": {
+        "meaning": "and / with",
+        "explanation": "Joins nouns (a complete list) or marks who you do something with.",
+        "example": "I watch a movie with a friend."
+      },
+      "ko": {
+        "meaning": "~와/과, ~와 함께",
+        "explanation": "명사를 나열하거나 함께 하는 상대를 나타냅니다.",
+        "example": "친구와 영화를 봅니다."
+      },
+      "quiz": {
+        "prompt": "母＿＿＿買い物に行きます。空欄に入るのは？",
+        "options": [
+          "と",
+          "を",
+          "が",
+          "で"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜や〜（など）",
-      "zh": { "meaning": "〜和〜等等", "explanation": "舉出幾個例子，暗示還有其他的；「と」則是全部列出。", "example": "包包裡有書和筆等等。" },
-      "example_jp": "かばんの中に本やペンなどがあります。", "example_reading": "かばんのなかにほんやぺんなどがあります。",
-      "en": { "meaning": "~ and ~ (among others)", "explanation": "Lists some examples, implying there are more; と lists everything.", "example": "There are books, pens and so on in the bag." },
-      "ko": { "meaning": "~랑 ~ 등", "explanation": "몇 가지 예를 들고 다른 것도 있음을 나타냅니다. と는 전부 나열합니다.", "example": "가방 안에 책이랑 펜 등이 있습니다." },
-      "quiz": { "prompt": "りんご＿＿＿みかんなどを買いました。空欄に入るのは？", "options": ["や", "も", "を", "で"], "answer": 0 }
+      "zh": {
+        "meaning": "〜和〜等等",
+        "explanation": "舉出幾個例子，暗示還有其他的；「と」則是全部列出。",
+        "example": "包包裡有書和筆等等。"
+      },
+      "example_jp": "かばんの中に本やペンなどがあります。",
+      "example_reading": "かばんのなかにほんやぺんなどがあります。",
+      "en": {
+        "meaning": "~ and ~ (among others)",
+        "explanation": "Lists some examples, implying there are more; と lists everything.",
+        "example": "There are books, pens and so on in the bag."
+      },
+      "ko": {
+        "meaning": "~랑 ~ 등",
+        "explanation": "몇 가지 예를 들고 다른 것도 있음을 나타냅니다. と는 전부 나열합니다.",
+        "example": "가방 안에 책이랑 펜 등이 있습니다."
+      },
+      "quiz": {
+        "prompt": "りんご＿＿＿みかんなどを買いました。空欄に入るのは？",
+        "options": [
+          "や",
+          "も",
+          "を",
+          "で"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜から〜まで",
-      "zh": { "meaning": "從〜到〜", "explanation": "表示時間或地點的起點與終點。", "example": "從九點工作到五點。" },
-      "example_jp": "九時から五時まで働きます。", "example_reading": "くじからごじまではたらきます。",
-      "en": { "meaning": "from ~ to ~", "explanation": "Start and end points of time or place.", "example": "I work from nine to five." },
-      "ko": { "meaning": "~부터 ~까지", "explanation": "시간이나 장소의 시작과 끝을 나타냅니다.", "example": "9시부터 5시까지 일합니다." },
-      "quiz": { "prompt": "うちから駅＿＿＿歩きます。空欄に入るのは？", "options": ["まで", "から", "より", "だけ"], "answer": 0 }
+      "zh": {
+        "meaning": "從〜到〜",
+        "explanation": "表示時間或地點的起點與終點。",
+        "example": "從九點工作到五點。"
+      },
+      "example_jp": "九時から五時まで働きます。",
+      "example_reading": "くじからごじまではたらきます。",
+      "en": {
+        "meaning": "from ~ to ~",
+        "explanation": "Start and end points of time or place.",
+        "example": "I work from nine to five."
+      },
+      "ko": {
+        "meaning": "~부터 ~까지",
+        "explanation": "시간이나 장소의 시작과 끝을 나타냅니다.",
+        "example": "9시부터 5시까지 일합니다."
+      },
+      "quiz": {
+        "prompt": "うちから駅＿＿＿歩きます。空欄に入るのは？",
+        "options": [
+          "まで",
+          "から",
+          "より",
+          "だけ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜ね／〜よ",
-      "zh": { "meaning": "〜呢（確認）／〜喔（告知）", "explanation": "「ね」尋求對方同意或確認；「よ」告訴對方不知道的事。", "example": "今天很熱呢。" },
-      "example_jp": "今日は暑いですね。", "example_reading": "きょうはあついですね。",
-      "en": { "meaning": "isn't it (ね) / you know (よ)", "explanation": "ね seeks agreement; よ tells the listener something new.", "example": "It's hot today, isn't it?" },
-      "ko": { "meaning": "~네요(공감)/~요(알림)", "explanation": "ね는 상대의 동의를 구하고, よ는 상대가 모르는 것을 알려 줍니다.", "example": "오늘 덥네요." },
-      "quiz": { "prompt": "A「いい天気ですね。」B「そうです＿＿＿。」空欄に入るのは？", "options": ["ね", "か", "を", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "〜呢（確認）／〜喔（告知）",
+        "explanation": "「ね」尋求對方同意或確認；「よ」告訴對方不知道的事。",
+        "example": "今天很熱呢。"
+      },
+      "example_jp": "今日は暑いですね。",
+      "example_reading": "きょうはあついですね。",
+      "en": {
+        "meaning": "isn't it (ね) / you know (よ)",
+        "explanation": "ね seeks agreement; よ tells the listener something new.",
+        "example": "It's hot today, isn't it?"
+      },
+      "ko": {
+        "meaning": "~네요(공감)/~요(알림)",
+        "explanation": "ね는 상대의 동의를 구하고, よ는 상대가 모르는 것을 알려 줍니다.",
+        "example": "오늘 덥네요."
+      },
+      "quiz": {
+        "prompt": "A「いい天気ですね。」B「そうです＿＿＿。」空欄に入るのは？",
+        "options": [
+          "ね",
+          "か",
+          "を",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜ます／〜ません",
-      "zh": { "meaning": "動詞禮貌形（肯定／否定）", "explanation": "動詞ます形是禮貌的現在、未來式；否定把「ます」改成「ません」。", "example": "我不喝酒。" },
-      "example_jp": "わたしはお酒を飲みません。", "example_reading": "わたしはおさけをのみません。",
-      "en": { "meaning": "polite verb (do / don't)", "explanation": "The ます form is the polite present/future; the negative is ません.", "example": "I don't drink alcohol." },
-      "ko": { "meaning": "동사 정중형 (긍정/부정)", "explanation": "ます형은 정중한 현재·미래, 부정은 ません입니다.", "example": "저는 술을 마시지 않습니다." },
-      "quiz": { "prompt": "わたしはたばこを吸い＿＿＿。（否定）空欄に入るのは？", "options": ["ません", "ます", "ました", "ましょう"], "answer": 0 }
+      "zh": {
+        "meaning": "動詞禮貌形（肯定／否定）",
+        "explanation": "動詞ます形是禮貌的現在、未來式；否定把「ます」改成「ません」。",
+        "example": "我不喝酒。"
+      },
+      "example_jp": "わたしはお酒を飲みません。",
+      "example_reading": "わたしはおさけをのみません。",
+      "en": {
+        "meaning": "polite verb (do / don't)",
+        "explanation": "The ます form is the polite present/future; the negative is ません.",
+        "example": "I don't drink alcohol."
+      },
+      "ko": {
+        "meaning": "동사 정중형 (긍정/부정)",
+        "explanation": "ます형은 정중한 현재·미래, 부정은 ません입니다.",
+        "example": "저는 술을 마시지 않습니다."
+      },
+      "quiz": {
+        "prompt": "わたしはたばこを吸い＿＿＿。（否定）空欄に入るのは？",
+        "options": [
+          "ません",
+          "ます",
+          "ました",
+          "ましょう"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜ました／〜ませんでした",
-      "zh": { "meaning": "動詞禮貌形的過去式", "explanation": "「ました」是過去肯定，「ませんでした」是過去否定。", "example": "昨天沒有去學校。" },
-      "example_jp": "昨日学校へ行きませんでした。", "example_reading": "きのうがっこうへいきませんでした。",
-      "en": { "meaning": "polite past (did / didn't)", "explanation": "ました is past affirmative, ませんでした past negative.", "example": "I didn't go to school yesterday." },
-      "ko": { "meaning": "동사 정중형 과거", "explanation": "ました는 과거 긍정, ませんでした는 과거 부정입니다.", "example": "어제 학교에 가지 않았습니다." },
-      "quiz": { "prompt": "昨日、映画を見＿＿＿。（過去）空欄に入るのは？", "options": ["ました", "ます", "ません", "ましょう"], "answer": 0 }
+      "zh": {
+        "meaning": "動詞禮貌形的過去式",
+        "explanation": "「ました」是過去肯定，「ませんでした」是過去否定。",
+        "example": "昨天沒有去學校。"
+      },
+      "example_jp": "昨日学校へ行きませんでした。",
+      "example_reading": "きのうがっこうへいきませんでした。",
+      "en": {
+        "meaning": "polite past (did / didn't)",
+        "explanation": "ました is past affirmative, ませんでした past negative.",
+        "example": "I didn't go to school yesterday."
+      },
+      "ko": {
+        "meaning": "동사 정중형 과거",
+        "explanation": "ました는 과거 긍정, ませんでした는 과거 부정입니다.",
+        "example": "어제 학교에 가지 않았습니다."
+      },
+      "quiz": {
+        "prompt": "昨日、映画を見＿＿＿。（過去）空欄に入るのは？",
+        "options": [
+          "ました",
+          "ます",
+          "ません",
+          "ましょう"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "い形容詞的變化（〜くない／〜かった）",
-      "zh": { "meaning": "い形容詞否定、過去", "explanation": "去掉い加「くない」是否定、加「かった」是過去、加「くなかった」是過去否定。いい要變成よくない／よかった。", "example": "昨天不冷。" },
-      "example_jp": "昨日は寒くなかったです。", "example_reading": "きのうはさむくなかったです。",
-      "en": { "meaning": "i-adjective forms", "explanation": "Drop い: くない (not), かった (was), くなかった (wasn't). いい becomes よくない / よかった.", "example": "It wasn't cold yesterday." },
-      "ko": { "meaning": "い형용사 활용", "explanation": "い를 빼고 くない(부정), かった(과거), くなかった(과거 부정). いい는 よくない/よかった가 됩니다.", "example": "어제는 춥지 않았습니다." },
-      "quiz": { "prompt": "このケーキはおいし＿＿＿です。（否定）空欄に入るのは？", "options": ["くない", "いない", "じゃない", "かった"], "answer": 0 }
+      "zh": {
+        "meaning": "い形容詞否定、過去",
+        "explanation": "去掉い加「くない」是否定、加「かった」是過去、加「くなかった」是過去否定。いい要變成よくない／よかった。",
+        "example": "昨天不冷。"
+      },
+      "example_jp": "昨日は寒くなかったです。",
+      "example_reading": "きのうはさむくなかったです。",
+      "en": {
+        "meaning": "i-adjective forms",
+        "explanation": "Drop い: くない (not), かった (was), くなかった (wasn't). いい becomes よくない / よかった.",
+        "example": "It wasn't cold yesterday."
+      },
+      "ko": {
+        "meaning": "い형용사 활용",
+        "explanation": "い를 빼고 くない(부정), かった(과거), くなかった(과거 부정). いい는 よくない/よかった가 됩니다.",
+        "example": "어제는 춥지 않았습니다."
+      },
+      "quiz": {
+        "prompt": "このケーキはおいし＿＿＿です。（否定）空欄に入るのは？",
+        "options": [
+          "くない",
+          "いない",
+          "じゃない",
+          "かった"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "な形容詞的變化（〜ではない／〜だった）",
-      "zh": { "meaning": "な形容詞否定、過去", "explanation": "な形容詞的變化和名詞一樣：〜ではありません、〜でした、〜ではありませんでした。", "example": "以前這裡很安靜。" },
-      "example_jp": "ここは前は静かでした。", "example_reading": "ここはまえはしずかでした。",
-      "en": { "meaning": "na-adjective forms", "explanation": "Na-adjectives change like nouns: ではありません, でした, ではありませんでした.", "example": "It used to be quiet here." },
-      "ko": { "meaning": "な형용사 활용", "explanation": "な형용사는 명사처럼 ではありません・でした・ではありませんでした로 활용합니다.", "example": "여기는 전에는 조용했습니다." },
-      "quiz": { "prompt": "この町はあまりにぎやか＿＿＿。空欄に入るのは？", "options": ["ではありません", "くないです", "かったです", "ないです"], "answer": 0 }
+      "zh": {
+        "meaning": "な形容詞否定、過去",
+        "explanation": "な形容詞的變化和名詞一樣：〜ではありません、〜でした、〜ではありませんでした。",
+        "example": "以前這裡很安靜。"
+      },
+      "example_jp": "ここは前は静かでした。",
+      "example_reading": "ここはまえはしずかでした。",
+      "en": {
+        "meaning": "na-adjective forms",
+        "explanation": "Na-adjectives change like nouns: ではありません, でした, ではありませんでした.",
+        "example": "It used to be quiet here."
+      },
+      "ko": {
+        "meaning": "な형용사 활용",
+        "explanation": "な형용사는 명사처럼 ではありません・でした・ではありませんでした로 활용합니다.",
+        "example": "여기는 전에는 조용했습니다."
+      },
+      "quiz": {
+        "prompt": "この町はあまりにぎやか＿＿＿。空欄に入るのは？",
+        "options": [
+          "ではありません",
+          "くないです",
+          "かったです",
+          "ないです"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "形容詞修飾名詞（〜い＋名詞／〜な＋名詞）",
-      "zh": { "meaning": "〜的（名詞）", "explanation": "い形容詞直接接名詞（高い山）；な形容詞要加「な」（静かな町）。", "example": "這是很漂亮的花。" },
-      "example_jp": "これはきれいな花です。", "example_reading": "これはきれいなはなです。",
-      "en": { "meaning": "adjective + noun", "explanation": "I-adjectives go straight before a noun (高い山); na-adjectives add な (静かな町).", "example": "This is a pretty flower." },
-      "ko": { "meaning": "형용사+명사", "explanation": "い형용사는 바로 명사 앞에, な형용사는 な를 붙여 명사를 꾸밉니다.", "example": "이것은 예쁜 꽃입니다." },
-      "quiz": { "prompt": "これは有名＿＿＿お寺です。空欄に入るのは？", "options": ["な", "の", "い", "で"], "answer": 0 }
+      "zh": {
+        "meaning": "〜的（名詞）",
+        "explanation": "い形容詞直接接名詞（高い山）；な形容詞要加「な」（静かな町）。",
+        "example": "這是很漂亮的花。"
+      },
+      "example_jp": "これはきれいな花です。",
+      "example_reading": "これはきれいなはなです。",
+      "en": {
+        "meaning": "adjective + noun",
+        "explanation": "I-adjectives go straight before a noun (高い山); na-adjectives add な (静かな町).",
+        "example": "This is a pretty flower."
+      },
+      "ko": {
+        "meaning": "형용사+명사",
+        "explanation": "い형용사는 바로 명사 앞에, な형용사는 な를 붙여 명사를 꾸밉니다.",
+        "example": "이것은 예쁜 꽃입니다."
+      },
+      "quiz": {
+        "prompt": "これは有名＿＿＿お寺です。空欄に入るのは？",
+        "options": [
+          "な",
+          "の",
+          "い",
+          "で"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜くて／〜で（連接形容詞）",
-      "zh": { "meaning": "又〜又〜", "explanation": "い形容詞去い加「くて」，な形容詞和名詞加「で」，用來連接兩個描述。", "example": "這家店便宜又好吃。" },
-      "example_jp": "この店は安くておいしいです。", "example_reading": "このみせはやすくておいしいです。",
-      "en": { "meaning": "~ and ~ (linking descriptions)", "explanation": "I-adjectives → くて, na-adjectives and nouns → で, to join descriptions.", "example": "This shop is cheap and tasty." },
-      "ko": { "meaning": "~고 (형용사 연결)", "explanation": "い형용사는 くて, な형용사・명사는 で로 두 설명을 연결합니다.", "example": "이 가게는 싸고 맛있습니다." },
-      "quiz": { "prompt": "わたしの部屋は広＿＿＿明るいです。空欄に入るのは？", "options": ["くて", "いで", "で", "いて"], "answer": 0 }
+      "zh": {
+        "meaning": "又〜又〜",
+        "explanation": "い形容詞去い加「くて」，な形容詞和名詞加「で」，用來連接兩個描述。",
+        "example": "這家店便宜又好吃。"
+      },
+      "example_jp": "この店は安くておいしいです。",
+      "example_reading": "このみせはやすくておいしいです。",
+      "en": {
+        "meaning": "~ and ~ (linking descriptions)",
+        "explanation": "I-adjectives → くて, na-adjectives and nouns → で, to join descriptions.",
+        "example": "This shop is cheap and tasty."
+      },
+      "ko": {
+        "meaning": "~고 (형용사 연결)",
+        "explanation": "い형용사는 くて, な형용사・명사는 で로 두 설명을 연결합니다.",
+        "example": "이 가게는 싸고 맛있습니다."
+      },
+      "quiz": {
+        "prompt": "わたしの部屋は広＿＿＿明るいです。空欄に入るのは？",
+        "options": [
+          "くて",
+          "いで",
+          "で",
+          "いて"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜て、〜（動作的順序）",
-      "zh": { "meaning": "〜然後〜", "explanation": "用動詞て形連接，依序描述好幾個動作。", "example": "早上起床，吃早餐，然後去學校。" },
-      "example_jp": "朝起きて、朝ご飯を食べて、学校へ行きます。", "example_reading": "あさおきて、あさごはんをたべて、がっこうへいきます。",
-      "en": { "meaning": "do ~ and then ~", "explanation": "Linking verbs in the て form lists actions in order.", "example": "I get up, eat breakfast and go to school." },
-      "ko": { "meaning": "~하고 ~합니다 (동작 순서)", "explanation": "동사 て형으로 연결해 동작을 순서대로 말합니다.", "example": "아침에 일어나서 아침을 먹고 학교에 갑니다." },
-      "quiz": { "prompt": "シャワーを浴び＿＿＿、寝ます。空欄に入るのは？", "options": ["て", "た", "ない", "ます"], "answer": 0 }
+      "zh": {
+        "meaning": "〜然後〜",
+        "explanation": "用動詞て形連接，依序描述好幾個動作。",
+        "example": "早上起床，吃早餐，然後去學校。"
+      },
+      "example_jp": "朝起きて、朝ご飯を食べて、学校へ行きます。",
+      "example_reading": "あさおきて、あさごはんをたべて、がっこうへいきます。",
+      "en": {
+        "meaning": "do ~ and then ~",
+        "explanation": "Linking verbs in the て form lists actions in order.",
+        "example": "I get up, eat breakfast and go to school."
+      },
+      "ko": {
+        "meaning": "~하고 ~합니다 (동작 순서)",
+        "explanation": "동사 て형으로 연결해 동작을 순서대로 말합니다.",
+        "example": "아침에 일어나서 아침을 먹고 학교에 갑니다."
+      },
+      "quiz": {
+        "prompt": "シャワーを浴び＿＿＿、寝ます。空欄に入るのは？",
+        "options": [
+          "て",
+          "た",
+          "ない",
+          "ます"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜たり〜たりします",
-      "zh": { "meaning": "又〜又〜、做做〜做做〜", "explanation": "動詞た形＋り，列舉幾個代表性的動作（不分先後）。", "example": "週末看看書、打打掃。" },
-      "example_jp": "週末は本を読んだり、掃除をしたりします。", "example_reading": "しゅうまつはほんをよんだり、そうじをしたりします。",
-      "en": { "meaning": "do things like ~ and ~", "explanation": "Verb た form + り lists sample actions, in no particular order.", "example": "On weekends I do things like reading and cleaning." },
-      "ko": { "meaning": "~하거나 ~하거나 합니다", "explanation": "동사 た형+り로 대표적인 동작을 나열합니다(순서 무관).", "example": "주말에는 책을 읽거나 청소를 하거나 합니다." },
-      "quiz": { "prompt": "休みの日は映画を見＿＿＿、買い物をしたりします。空欄に入るのは？", "options": ["たり", "て", "ながら", "から"], "answer": 0 }
+      "zh": {
+        "meaning": "又〜又〜、做做〜做做〜",
+        "explanation": "動詞た形＋り，列舉幾個代表性的動作（不分先後）。",
+        "example": "週末看看書、打打掃。"
+      },
+      "example_jp": "週末は本を読んだり、掃除をしたりします。",
+      "example_reading": "しゅうまつはほんをよんだり、そうじをしたりします。",
+      "en": {
+        "meaning": "do things like ~ and ~",
+        "explanation": "Verb た form + り lists sample actions, in no particular order.",
+        "example": "On weekends I do things like reading and cleaning."
+      },
+      "ko": {
+        "meaning": "~하거나 ~하거나 합니다",
+        "explanation": "동사 た형+り로 대표적인 동작을 나열합니다(순서 무관).",
+        "example": "주말에는 책을 읽거나 청소를 하거나 합니다."
+      },
+      "quiz": {
+        "prompt": "休みの日は映画を見＿＿＿、買い物をしたりします。空欄に入るのは？",
+        "options": [
+          "たり",
+          "て",
+          "ながら",
+          "から"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜たことがあります",
-      "zh": { "meaning": "曾經〜過", "explanation": "動詞た形＋ことがあります，表示過去的經驗。", "example": "我去過日本。" },
-      "example_jp": "日本へ行ったことがあります。", "example_reading": "にほんへいったことがあります。",
-      "en": { "meaning": "have done ~ (experience)", "explanation": "Verb た form + ことがあります talks about past experience.", "example": "I have been to Japan." },
-      "ko": { "meaning": "~한 적이 있습니다", "explanation": "동사 た형+ことがあります로 경험을 나타냅니다.", "example": "일본에 간 적이 있습니다." },
-      "quiz": { "prompt": "すしを食べた＿＿＿があります。空欄に入るのは？", "options": ["こと", "もの", "とき", "ところ"], "answer": 0 }
+      "zh": {
+        "meaning": "曾經〜過",
+        "explanation": "動詞た形＋ことがあります，表示過去的經驗。",
+        "example": "我去過日本。"
+      },
+      "example_jp": "日本へ行ったことがあります。",
+      "example_reading": "にほんへいったことがあります。",
+      "en": {
+        "meaning": "have done ~ (experience)",
+        "explanation": "Verb た form + ことがあります talks about past experience.",
+        "example": "I have been to Japan."
+      },
+      "ko": {
+        "meaning": "~한 적이 있습니다",
+        "explanation": "동사 た형+ことがあります로 경험을 나타냅니다.",
+        "example": "일본에 간 적이 있습니다."
+      },
+      "quiz": {
+        "prompt": "すしを食べた＿＿＿があります。空欄に入るのは？",
+        "options": [
+          "こと",
+          "もの",
+          "とき",
+          "ところ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜たほうがいいです",
-      "zh": { "meaning": "最好〜", "explanation": "動詞た形＋ほうがいいです，給對方建議。", "example": "最好早點睡。" },
-      "example_jp": "早く寝たほうがいいです。", "example_reading": "はやくねたほうがいいです。",
-      "en": { "meaning": "you'd better ~", "explanation": "Verb た form + ほうがいいです gives advice.", "example": "You'd better go to bed early." },
-      "ko": { "meaning": "~하는 편이 좋습니다", "explanation": "동사 た형+ほうがいいです로 조언합니다.", "example": "일찍 자는 편이 좋습니다." },
-      "quiz": { "prompt": "かぜですね。薬を飲んだ＿＿＿がいいですよ。空欄に入るのは？", "options": ["ほう", "こと", "まえ", "とき"], "answer": 0 }
+      "zh": {
+        "meaning": "最好〜",
+        "explanation": "動詞た形＋ほうがいいです，給對方建議。",
+        "example": "最好早點睡。"
+      },
+      "example_jp": "早く寝たほうがいいです。",
+      "example_reading": "はやくねたほうがいいです。",
+      "en": {
+        "meaning": "you'd better ~",
+        "explanation": "Verb た form + ほうがいいです gives advice.",
+        "example": "You'd better go to bed early."
+      },
+      "ko": {
+        "meaning": "~하는 편이 좋습니다",
+        "explanation": "동사 た형+ほうがいいです로 조언합니다.",
+        "example": "일찍 자는 편이 좋습니다."
+      },
+      "quiz": {
+        "prompt": "かぜですね。薬を飲んだ＿＿＿がいいですよ。空欄に入るのは？",
+        "options": [
+          "ほう",
+          "こと",
+          "まえ",
+          "とき"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜なければなりません",
-      "zh": { "meaning": "必須〜", "explanation": "動詞ない形去掉い加「ければなりません」，表示義務。", "example": "明天必須早起。" },
-      "example_jp": "明日は早く起きなければなりません。", "example_reading": "あしたははやくおきなければなりません。",
-      "en": { "meaning": "must ~", "explanation": "Verb ない form, drop い, add ければなりません: an obligation.", "example": "I have to get up early tomorrow." },
-      "ko": { "meaning": "~해야 합니다", "explanation": "동사 ない형의 い를 빼고 ければなりません을 붙여 의무를 나타냅니다.", "example": "내일은 일찍 일어나야 합니다." },
-      "quiz": { "prompt": "宿題をしな＿＿＿なりません。空欄に入るのは？", "options": ["ければ", "くて", "いで", "かった"], "answer": 0 }
+      "zh": {
+        "meaning": "必須〜",
+        "explanation": "動詞ない形去掉い加「ければなりません」，表示義務。",
+        "example": "明天必須早起。"
+      },
+      "example_jp": "明日は早く起きなければなりません。",
+      "example_reading": "あしたははやくおきなければなりません。",
+      "en": {
+        "meaning": "must ~",
+        "explanation": "Verb ない form, drop い, add ければなりません: an obligation.",
+        "example": "I have to get up early tomorrow."
+      },
+      "ko": {
+        "meaning": "~해야 합니다",
+        "explanation": "동사 ない형의 い를 빼고 ければなりません을 붙여 의무를 나타냅니다.",
+        "example": "내일은 일찍 일어나야 합니다."
+      },
+      "quiz": {
+        "prompt": "宿題をしな＿＿＿なりません。空欄に入るのは？",
+        "options": [
+          "ければ",
+          "くて",
+          "いで",
+          "かった"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜く／〜になります（變化）",
-      "zh": { "meaning": "變得〜", "explanation": "い形容詞去い加「くなります」；な形容詞和名詞加「になります」。", "example": "天氣變冷了。" },
-      "example_jp": "寒くなりました。", "example_reading": "さむくなりました。",
-      "en": { "meaning": "to become ~", "explanation": "I-adjectives → くなります; na-adjectives and nouns → になります.", "example": "It has got cold." },
-      "ko": { "meaning": "~해지다, ~이/가 되다", "explanation": "い형용사는 くなります, な형용사・명사는 になります.", "example": "추워졌습니다." },
-      "quiz": { "prompt": "部屋がきれい＿＿＿なりました。空欄に入るのは？", "options": ["に", "く", "で", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "變得〜",
+        "explanation": "い形容詞去い加「くなります」；な形容詞和名詞加「になります」。",
+        "example": "天氣變冷了。"
+      },
+      "example_jp": "寒くなりました。",
+      "example_reading": "さむくなりました。",
+      "en": {
+        "meaning": "to become ~",
+        "explanation": "I-adjectives → くなります; na-adjectives and nouns → になります.",
+        "example": "It has got cold."
+      },
+      "ko": {
+        "meaning": "~해지다, ~이/가 되다",
+        "explanation": "い형용사는 くなります, な형용사・명사는 になります.",
+        "example": "추워졌습니다."
+      },
+      "quiz": {
+        "prompt": "部屋がきれい＿＿＿なりました。空欄に入るのは？",
+        "options": [
+          "に",
+          "く",
+          "で",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜にします（決定）",
-      "zh": { "meaning": "決定要〜", "explanation": "名詞＋にします，表示從幾個選項中做出選擇，常用在點餐、購物。", "example": "我要咖啡。" },
-      "example_jp": "わたしはコーヒーにします。", "example_reading": "わたしはこーひーにします。",
-      "en": { "meaning": "I'll have / decide on ~", "explanation": "Noun + にします chooses among options, e.g. when ordering.", "example": "I'll have coffee." },
-      "ko": { "meaning": "~로 하겠습니다 (결정)", "explanation": "명사+にします로 여러 가지 중에서 고릅니다.", "example": "저는 커피로 하겠습니다." },
-      "quiz": { "prompt": "飲み物は何＿＿＿しますか。空欄に入るのは？", "options": ["に", "を", "が", "で"], "answer": 0 }
+      "zh": {
+        "meaning": "決定要〜",
+        "explanation": "名詞＋にします，表示從幾個選項中做出選擇，常用在點餐、購物。",
+        "example": "我要咖啡。"
+      },
+      "example_jp": "わたしはコーヒーにします。",
+      "example_reading": "わたしはこーひーにします。",
+      "en": {
+        "meaning": "I'll have / decide on ~",
+        "explanation": "Noun + にします chooses among options, e.g. when ordering.",
+        "example": "I'll have coffee."
+      },
+      "ko": {
+        "meaning": "~로 하겠습니다 (결정)",
+        "explanation": "명사+にします로 여러 가지 중에서 고릅니다.",
+        "example": "저는 커피로 하겠습니다."
+      },
+      "quiz": {
+        "prompt": "飲み物は何＿＿＿しますか。空欄に入るのは？",
+        "options": [
+          "に",
+          "を",
+          "が",
+          "で"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜がほしいです",
-      "zh": { "meaning": "想要（東西）〜", "explanation": "想要某樣東西時用「名詞＋がほしいです」；想做某事用「〜たいです」。", "example": "我想要新的手機。" },
-      "example_jp": "新しいけいたいがほしいです。", "example_reading": "あたらしいけいたいがほしいです。",
-      "en": { "meaning": "I want (a thing)", "explanation": "Noun + がほしいです for wanting a thing; 〜たいです for wanting to do.", "example": "I want a new phone." },
-      "ko": { "meaning": "~을/를 갖고 싶습니다", "explanation": "물건을 원할 때는 명사+がほしいです, 하고 싶을 때는 〜たいです.", "example": "새 휴대폰을 갖고 싶습니다." },
-      "quiz": { "prompt": "わたしは車＿＿＿ほしいです。空欄に入るのは？", "options": ["が", "を", "に", "で"], "answer": 0 }
+      "zh": {
+        "meaning": "想要（東西）〜",
+        "explanation": "想要某樣東西時用「名詞＋がほしいです」；想做某事用「〜たいです」。",
+        "example": "我想要新的手機。"
+      },
+      "example_jp": "新しいけいたいがほしいです。",
+      "example_reading": "あたらしいけいたいがほしいです。",
+      "en": {
+        "meaning": "I want (a thing)",
+        "explanation": "Noun + がほしいです for wanting a thing; 〜たいです for wanting to do.",
+        "example": "I want a new phone."
+      },
+      "ko": {
+        "meaning": "~을/를 갖고 싶습니다",
+        "explanation": "물건을 원할 때는 명사+がほしいです, 하고 싶을 때는 〜たいです.",
+        "example": "새 휴대폰을 갖고 싶습니다."
+      },
+      "quiz": {
+        "prompt": "わたしは車＿＿＿ほしいです。空欄に入るのは？",
+        "options": [
+          "が",
+          "を",
+          "に",
+          "で"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜に行きます／来ます（目的）",
-      "zh": { "meaning": "去／來做〜", "explanation": "動詞ます形去掉ます（或動作性名詞）＋に行きます，表示移動的目的。", "example": "去百貨公司買東西。" },
-      "example_jp": "デパートへ買い物に行きます。", "example_reading": "でぱーとへかいものにいきます。",
-      "en": { "meaning": "go / come to do ~", "explanation": "Verb stem (or an action noun) + に行きます gives the purpose of going.", "example": "I'm going to the department store to shop." },
-      "ko": { "meaning": "~하러 갑니다/옵니다", "explanation": "동사 ます형 어간(또는 동작 명사)+に行きます로 이동의 목적을 나타냅니다.", "example": "백화점에 쇼핑하러 갑니다." },
-      "quiz": { "prompt": "図書館へ本を借り＿＿＿行きます。空欄に入るのは？", "options": ["に", "て", "を", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "去／來做〜",
+        "explanation": "動詞ます形去掉ます（或動作性名詞）＋に行きます，表示移動的目的。",
+        "example": "去百貨公司買東西。"
+      },
+      "example_jp": "デパートへ買い物に行きます。",
+      "example_reading": "でぱーとへかいものにいきます。",
+      "en": {
+        "meaning": "go / come to do ~",
+        "explanation": "Verb stem (or an action noun) + に行きます gives the purpose of going.",
+        "example": "I'm going to the department store to shop."
+      },
+      "ko": {
+        "meaning": "~하러 갑니다/옵니다",
+        "explanation": "동사 ます형 어간(또는 동작 명사)+に行きます로 이동의 목적을 나타냅니다.",
+        "example": "백화점에 쇼핑하러 갑니다."
+      },
+      "quiz": {
+        "prompt": "図書館へ本を借り＿＿＿行きます。空欄に入るのは？",
+        "options": [
+          "に",
+          "て",
+          "を",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜たあとで",
-      "zh": { "meaning": "〜之後", "explanation": "動詞た形＋あとで，或名詞＋のあとで，表示在某事之後。", "example": "吃完飯後刷牙。" },
-      "example_jp": "ご飯を食べたあとで、歯をみがきます。", "example_reading": "ごはんをたべたあとで、はをみがきます。",
-      "en": { "meaning": "after ~", "explanation": "Verb た form + あとで, or noun + のあとで.", "example": "I brush my teeth after eating." },
-      "ko": { "meaning": "~한 후에", "explanation": "동사 た형+あとで 또는 명사+のあとで.", "example": "밥을 먹은 후에 이를 닦습니다." },
-      "quiz": { "prompt": "授業の＿＿＿で、友達と遊びます。空欄に入るのは？", "options": ["あと", "まえ", "とき", "から"], "answer": 0 }
+      "zh": {
+        "meaning": "〜之後",
+        "explanation": "動詞た形＋あとで，或名詞＋のあとで，表示在某事之後。",
+        "example": "吃完飯後刷牙。"
+      },
+      "example_jp": "ご飯を食べたあとで、歯をみがきます。",
+      "example_reading": "ごはんをたべたあとで、はをみがきます。",
+      "en": {
+        "meaning": "after ~",
+        "explanation": "Verb た form + あとで, or noun + のあとで.",
+        "example": "I brush my teeth after eating."
+      },
+      "ko": {
+        "meaning": "~한 후에",
+        "explanation": "동사 た형+あとで 또는 명사+のあとで.",
+        "example": "밥을 먹은 후에 이를 닦습니다."
+      },
+      "quiz": {
+        "prompt": "授業の＿＿＿で、友達と遊びます。空欄に入るのは？",
+        "options": [
+          "あと",
+          "まえ",
+          "とき",
+          "から"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "數量詞的用法（〜を三つ買います）",
-      "zh": { "meaning": "（數量放在動詞前）", "explanation": "數量詞通常放在助詞後、動詞前，不加助詞：りんごを三つ買います。", "example": "買三個蘋果。" },
-      "example_jp": "りんごを三つ買いました。", "example_reading": "りんごをみっつかいました。",
-      "en": { "meaning": "position of quantities", "explanation": "A quantity usually comes after the particle, right before the verb, with no particle of its own.", "example": "I bought three apples." },
-      "ko": { "meaning": "수량사의 위치", "explanation": "수량사는 보통 조사 뒤, 동사 앞에 조사 없이 놓입니다.", "example": "사과를 세 개 샀습니다." },
-      "quiz": { "prompt": "切手を＿＿＿ください。空欄に入るのは？", "options": ["五枚", "五枚を", "五枚の", "五枚が"], "answer": 0 }
+      "zh": {
+        "meaning": "（數量放在動詞前）",
+        "explanation": "數量詞通常放在助詞後、動詞前，不加助詞：りんごを三つ買います。",
+        "example": "買三個蘋果。"
+      },
+      "example_jp": "りんごを三つ買いました。",
+      "example_reading": "りんごをみっつかいました。",
+      "en": {
+        "meaning": "position of quantities",
+        "explanation": "A quantity usually comes after the particle, right before the verb, with no particle of its own.",
+        "example": "I bought three apples."
+      },
+      "ko": {
+        "meaning": "수량사의 위치",
+        "explanation": "수량사는 보통 조사 뒤, 동사 앞에 조사 없이 놓입니다.",
+        "example": "사과를 세 개 샀습니다."
+      },
+      "quiz": {
+        "prompt": "切手を＿＿＿ください。空欄に入るのは？",
+        "options": [
+          "五枚",
+          "五枚を",
+          "五枚の",
+          "五枚が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "疑問詞＋か（だれか、なにか）",
-      "zh": { "meaning": "某人、某物、某處", "explanation": "疑問詞加「か」表示不特定的對象：だれか（某人）、なにか（某物）、どこか（某處）。", "example": "有人在嗎？" },
-      "example_jp": "だれかいますか。", "example_reading": "だれかいますか。",
-      "en": { "meaning": "someone / something / somewhere", "explanation": "Question word + か: だれか someone, なにか something, どこか somewhere.", "example": "Is anyone there?" },
-      "ko": { "meaning": "누군가, 무언가, 어딘가", "explanation": "의문사+か는 불특정한 것을 나타냅니다.", "example": "누군가 있습니까?" },
-      "quiz": { "prompt": "のどがかわきました。何＿＿＿飲みたいです。空欄に入るのは？", "options": ["か", "も", "が", "を"], "answer": 0 }
+      "zh": {
+        "meaning": "某人、某物、某處",
+        "explanation": "疑問詞加「か」表示不特定的對象：だれか（某人）、なにか（某物）、どこか（某處）。",
+        "example": "有人在嗎？"
+      },
+      "example_jp": "だれかいますか。",
+      "example_reading": "だれかいますか。",
+      "en": {
+        "meaning": "someone / something / somewhere",
+        "explanation": "Question word + か: だれか someone, なにか something, どこか somewhere.",
+        "example": "Is anyone there?"
+      },
+      "ko": {
+        "meaning": "누군가, 무언가, 어딘가",
+        "explanation": "의문사+か는 불특정한 것을 나타냅니다.",
+        "example": "누군가 있습니까?"
+      },
+      "quiz": {
+        "prompt": "のどがかわきました。何＿＿＿飲みたいです。空欄に入るのは？",
+        "options": [
+          "か",
+          "も",
+          "が",
+          "を"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "疑問詞＋も＋否定（だれも〜ない）",
-      "zh": { "meaning": "誰都不〜、什麼都不〜", "explanation": "疑問詞加「も」再接否定：だれもいません（一個人都沒有）、なにも食べません（什麼都不吃）。", "example": "教室裡一個人都沒有。" },
-      "example_jp": "教室にだれもいません。", "example_reading": "きょうしつにだれもいません。",
-      "en": { "meaning": "nobody / nothing / nowhere", "explanation": "Question word + も with a negative: だれもいません, なにも食べません.", "example": "There's nobody in the classroom." },
-      "ko": { "meaning": "아무도/아무것도 ~않다", "explanation": "의문사+も 뒤에 부정이 오면 '아무도·아무것도'가 됩니다.", "example": "교실에 아무도 없습니다." },
-      "quiz": { "prompt": "朝から何＿＿＿食べていません。空欄に入るのは？", "options": ["も", "か", "が", "を"], "answer": 0 }
+      "zh": {
+        "meaning": "誰都不〜、什麼都不〜",
+        "explanation": "疑問詞加「も」再接否定：だれもいません（一個人都沒有）、なにも食べません（什麼都不吃）。",
+        "example": "教室裡一個人都沒有。"
+      },
+      "example_jp": "教室にだれもいません。",
+      "example_reading": "きょうしつにだれもいません。",
+      "en": {
+        "meaning": "nobody / nothing / nowhere",
+        "explanation": "Question word + も with a negative: だれもいません, なにも食べません.",
+        "example": "There's nobody in the classroom."
+      },
+      "ko": {
+        "meaning": "아무도/아무것도 ~않다",
+        "explanation": "의문사+も 뒤에 부정이 오면 '아무도·아무것도'가 됩니다.",
+        "example": "교실에 아무도 없습니다."
+      },
+      "quiz": {
+        "prompt": "朝から何＿＿＿食べていません。空欄に入るのは？",
+        "options": [
+          "も",
+          "か",
+          "が",
+          "を"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜が、〜／〜けど（但是）",
-      "zh": { "meaning": "〜，但是〜", "explanation": "連接兩個相反的句子；「けど」比較口語。", "example": "這本書很有趣，但是很難。" },
-      "example_jp": "この本はおもしろいですが、むずかしいです。", "example_reading": "このほんはおもしろいですが、むずかしいです。",
-      "en": { "meaning": "~, but ~", "explanation": "Joins two contrasting clauses; けど is more casual.", "example": "This book is interesting but difficult." },
-      "ko": { "meaning": "~지만", "explanation": "반대되는 두 문장을 연결합니다. けど는 더 구어적입니다.", "example": "이 책은 재미있지만 어렵습니다." },
-      "quiz": { "prompt": "日本語はむずかしいです＿＿＿、おもしろいです。空欄に入るのは？", "options": ["が", "から", "と", "も"], "answer": 0 }
+      "zh": {
+        "meaning": "〜，但是〜",
+        "explanation": "連接兩個相反的句子；「けど」比較口語。",
+        "example": "這本書很有趣，但是很難。"
+      },
+      "example_jp": "この本はおもしろいですが、むずかしいです。",
+      "example_reading": "このほんはおもしろいですが、むずかしいです。",
+      "en": {
+        "meaning": "~, but ~",
+        "explanation": "Joins two contrasting clauses; けど is more casual.",
+        "example": "This book is interesting but difficult."
+      },
+      "ko": {
+        "meaning": "~지만",
+        "explanation": "반대되는 두 문장을 연결합니다. けど는 더 구어적입니다.",
+        "example": "이 책은 재미있지만 어렵습니다."
+      },
+      "quiz": {
+        "prompt": "日本語はむずかしいです＿＿＿、おもしろいです。空欄に入るのは？",
+        "options": [
+          "が",
+          "から",
+          "と",
+          "も"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜ましょうか（提議）",
-      "zh": { "meaning": "我來〜吧？", "explanation": "動詞ます形去ます＋ましょうか，主動提議幫對方做某事。", "example": "我來幫你拿行李吧？" },
-      "example_jp": "荷物を持ちましょうか。", "example_reading": "にもつをもちましょうか。",
-      "en": { "meaning": "shall I ~?", "explanation": "Verb stem + ましょうか offers to do something for someone.", "example": "Shall I carry your bag?" },
-      "ko": { "meaning": "~할까요? (제안)", "explanation": "동사 ます형 어간+ましょうか로 상대를 위해 해 주겠다고 제안합니다.", "example": "짐을 들어 드릴까요?" },
-      "quiz": { "prompt": "暑いですね。窓を開け＿＿＿か。空欄に入るのは？", "options": ["ましょう", "ません", "ました", "ます"], "answer": 0 }
+      "zh": {
+        "meaning": "我來〜吧？",
+        "explanation": "動詞ます形去ます＋ましょうか，主動提議幫對方做某事。",
+        "example": "我來幫你拿行李吧？"
+      },
+      "example_jp": "荷物を持ちましょうか。",
+      "example_reading": "にもつをもちましょうか。",
+      "en": {
+        "meaning": "shall I ~?",
+        "explanation": "Verb stem + ましょうか offers to do something for someone.",
+        "example": "Shall I carry your bag?"
+      },
+      "ko": {
+        "meaning": "~할까요? (제안)",
+        "explanation": "동사 ます형 어간+ましょうか로 상대를 위해 해 주겠다고 제안합니다.",
+        "example": "짐을 들어 드릴까요?"
+      },
+      "quiz": {
+        "prompt": "暑いですね。窓を開け＿＿＿か。空欄に入るのは？",
+        "options": [
+          "ましょう",
+          "ません",
+          "ました",
+          "ます"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜のが好きです（動詞名詞化）",
-      "zh": { "meaning": "喜歡做〜", "explanation": "動詞辭書形＋の，把動作變成名詞，後面接好き、上手等。", "example": "我喜歡看書。" },
-      "example_jp": "わたしは本を読むのが好きです。", "example_reading": "わたしはほんをよむのがすきです。",
-      "en": { "meaning": "like doing ~", "explanation": "Dictionary form + の turns an action into a noun, followed by 好き, 上手, etc.", "example": "I like reading." },
-      "ko": { "meaning": "~하는 것을 좋아합니다", "explanation": "동사 사전형+の로 동작을 명사로 만들어 好き・上手 등과 씁니다.", "example": "저는 책 읽는 것을 좋아합니다." },
-      "quiz": { "prompt": "わたしは歌を歌う＿＿＿が好きです。空欄に入るのは？", "options": ["の", "こと", "もの", "とき"], "answer": 0 }
+      "zh": {
+        "meaning": "喜歡做〜",
+        "explanation": "動詞辭書形＋の，把動作變成名詞，後面接好き、上手等。",
+        "example": "我喜歡看書。"
+      },
+      "example_jp": "わたしは本を読むのが好きです。",
+      "example_reading": "わたしはほんをよむのがすきです。",
+      "en": {
+        "meaning": "like doing ~",
+        "explanation": "Dictionary form + の turns an action into a noun, followed by 好き, 上手, etc.",
+        "example": "I like reading."
+      },
+      "ko": {
+        "meaning": "~하는 것을 좋아합니다",
+        "explanation": "동사 사전형+の로 동작을 명사로 만들어 好き・上手 등과 씁니다.",
+        "example": "저는 책 읽는 것을 좋아합니다."
+      },
+      "quiz": {
+        "prompt": "わたしは歌を歌う＿＿＿が好きです。空欄に入るのは？",
+        "options": [
+          "の",
+          "こと",
+          "もの",
+          "とき"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜くらい／〜ぐらい（大約）",
-      "zh": { "meaning": "大約〜", "explanation": "接在數量後面表示大概的量。", "example": "從家裡到車站大約十分鐘。" },
-      "example_jp": "うちから駅まで十分ぐらいです。", "example_reading": "うちからえきまでじゅっぷんぐらいです。",
-      "en": { "meaning": "about ~ (amount)", "explanation": "After a quantity, gives a rough amount.", "example": "It's about ten minutes from home to the station." },
-      "ko": { "meaning": "~정도", "explanation": "수량 뒤에 붙어 대략적인 양을 나타냅니다.", "example": "집에서 역까지 10분 정도입니다." },
-      "quiz": { "prompt": "毎日一時間＿＿＿勉強します。空欄に入るのは？", "options": ["ぐらい", "ごろ", "まで", "から"], "answer": 0 }
+      "zh": {
+        "meaning": "大約〜",
+        "explanation": "接在數量後面表示大概的量。",
+        "example": "從家裡到車站大約十分鐘。"
+      },
+      "example_jp": "うちから駅まで十分ぐらいです。",
+      "example_reading": "うちからえきまでじゅっぷんぐらいです。",
+      "en": {
+        "meaning": "about ~ (amount)",
+        "explanation": "After a quantity, gives a rough amount.",
+        "example": "It's about ten minutes from home to the station."
+      },
+      "ko": {
+        "meaning": "~정도",
+        "explanation": "수량 뒤에 붙어 대략적인 양을 나타냅니다.",
+        "example": "집에서 역까지 10분 정도입니다."
+      },
+      "quiz": {
+        "prompt": "毎日一時間＿＿＿勉強します。空欄に入るのは？",
+        "options": [
+          "ぐらい",
+          "ごろ",
+          "まで",
+          "から"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜ごろ（時間大約）",
-      "zh": { "meaning": "〜左右（時間點）", "explanation": "接在時間點後面表示大概的時刻；量的大約用ぐらい。", "example": "七點左右回家。" },
-      "example_jp": "七時ごろ帰ります。", "example_reading": "しちじごろかえります。",
-      "en": { "meaning": "around (a point in time)", "explanation": "After a time gives an approximate moment; for amounts use ぐらい.", "example": "I'll be home around seven." },
-      "ko": { "meaning": "~쯤 (시점)", "explanation": "시각 뒤에 붙어 대략적인 시점을 나타냅니다. 양은 ぐらい.", "example": "7시쯤 돌아갑니다." },
-      "quiz": { "prompt": "毎晩十一時＿＿＿寝ます。（だいたいの時間）空欄に入るのは？", "options": ["ごろ", "ぐらい", "まで", "だけ"], "answer": 0 }
+      "zh": {
+        "meaning": "〜左右（時間點）",
+        "explanation": "接在時間點後面表示大概的時刻；量的大約用ぐらい。",
+        "example": "七點左右回家。"
+      },
+      "example_jp": "七時ごろ帰ります。",
+      "example_reading": "しちじごろかえります。",
+      "en": {
+        "meaning": "around (a point in time)",
+        "explanation": "After a time gives an approximate moment; for amounts use ぐらい.",
+        "example": "I'll be home around seven."
+      },
+      "ko": {
+        "meaning": "~쯤 (시점)",
+        "explanation": "시각 뒤에 붙어 대략적인 시점을 나타냅니다. 양은 ぐらい.",
+        "example": "7시쯤 돌아갑니다."
+      },
+      "quiz": {
+        "prompt": "毎晩十一時＿＿＿寝ます。（だいたいの時間）空欄に入るのは？",
+        "options": [
+          "ごろ",
+          "ぐらい",
+          "まで",
+          "だけ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜の中で〜がいちばん〜",
-      "zh": { "meaning": "在〜之中，〜最〜", "explanation": "最高級的說法；問句用「〜の中で何／どれ／だれがいちばん〜ですか」。", "example": "水果之中我最喜歡草莓。" },
-      "example_jp": "くだものの中でいちごがいちばん好きです。", "example_reading": "くだもののなかでいちごがいちばんすきです。",
-      "en": { "meaning": "~ is the most ~ among ~", "explanation": "Superlative; as a question: 〜の中で何／どれ／だれがいちばん〜ですか.", "example": "Of all fruit, I like strawberries best." },
-      "ko": { "meaning": "~중에서 ~이/가 가장 ~", "explanation": "최상급 표현입니다.", "example": "과일 중에서 딸기를 가장 좋아합니다." },
-      "quiz": { "prompt": "クラスの中でだれ＿＿＿いちばん背が高いですか。空欄に入るのは？", "options": ["が", "を", "は", "で"], "answer": 0 }
+      "zh": {
+        "meaning": "在〜之中，〜最〜",
+        "explanation": "最高級的說法；問句用「〜の中で何／どれ／だれがいちばん〜ですか」。",
+        "example": "水果之中我最喜歡草莓。"
+      },
+      "example_jp": "くだものの中でいちごがいちばん好きです。",
+      "example_reading": "くだもののなかでいちごがいちばんすきです。",
+      "en": {
+        "meaning": "~ is the most ~ among ~",
+        "explanation": "Superlative; as a question: 〜の中で何／どれ／だれがいちばん〜ですか.",
+        "example": "Of all fruit, I like strawberries best."
+      },
+      "ko": {
+        "meaning": "~중에서 ~이/가 가장 ~",
+        "explanation": "최상급 표현입니다.",
+        "example": "과일 중에서 딸기를 가장 좋아합니다."
+      },
+      "quiz": {
+        "prompt": "クラスの中でだれ＿＿＿いちばん背が高いですか。空欄に入るのは？",
+        "options": [
+          "が",
+          "を",
+          "は",
+          "で"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜と〜と、どちらが〜",
-      "zh": { "meaning": "〜和〜，哪一個比較〜？", "explanation": "比較兩者的問句；回答用「〜のほうが〜です」。", "example": "狗和貓，你比較喜歡哪一個？" },
-      "example_jp": "犬と猫と、どちらが好きですか。", "example_reading": "いぬとねこと、どちらがすきですか。",
-      "en": { "meaning": "which is more ~, A or B?", "explanation": "Question comparing two things; answer with 〜のほうが〜です.", "example": "Which do you like better, dogs or cats?" },
-      "ko": { "meaning": "~와 ~ 중 어느 쪽이 ~?", "explanation": "두 가지를 비교하는 질문이며, 〜のほうが〜です로 답합니다.", "example": "개와 고양이 중 어느 쪽을 좋아합니까?" },
-      "quiz": { "prompt": "バスと電車と、＿＿＿が速いですか。空欄に入るのは？", "options": ["どちら", "どれ", "なに", "だれ"], "answer": 0 }
+      "zh": {
+        "meaning": "〜和〜，哪一個比較〜？",
+        "explanation": "比較兩者的問句；回答用「〜のほうが〜です」。",
+        "example": "狗和貓，你比較喜歡哪一個？"
+      },
+      "example_jp": "犬と猫と、どちらが好きですか。",
+      "example_reading": "いぬとねこと、どちらがすきですか。",
+      "en": {
+        "meaning": "which is more ~, A or B?",
+        "explanation": "Question comparing two things; answer with 〜のほうが〜です.",
+        "example": "Which do you like better, dogs or cats?"
+      },
+      "ko": {
+        "meaning": "~와 ~ 중 어느 쪽이 ~?",
+        "explanation": "두 가지를 비교하는 질문이며, 〜のほうが〜です로 답합니다.",
+        "example": "개와 고양이 중 어느 쪽을 좋아합니까?"
+      },
+      "quiz": {
+        "prompt": "バスと電車と、＿＿＿が速いですか。空欄に入るのは？",
+        "options": [
+          "どちら",
+          "どれ",
+          "なに",
+          "だれ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜は〜より〜",
-      "zh": { "meaning": "〜比〜更〜", "explanation": "AはBより〜：A比B更〜。", "example": "東京比大阪大。" },
-      "example_jp": "東京は大阪より大きいです。", "example_reading": "とうきょうはおおさかよりおおきいです。",
-      "en": { "meaning": "A is more ~ than B", "explanation": "AはBより〜: A is more ~ than B.", "example": "Tokyo is bigger than Osaka." },
-      "ko": { "meaning": "~은/는 ~보다 ~", "explanation": "AはBより〜: A가 B보다 더 ~.", "example": "도쿄는 오사카보다 큽니다." },
-      "quiz": { "prompt": "今日は昨日＿＿＿暑いです。空欄に入るのは？", "options": ["より", "まで", "から", "ほう"], "answer": 0 }
+      "zh": {
+        "meaning": "〜比〜更〜",
+        "explanation": "AはBより〜：A比B更〜。",
+        "example": "東京比大阪大。"
+      },
+      "example_jp": "東京は大阪より大きいです。",
+      "example_reading": "とうきょうはおおさかよりおおきいです。",
+      "en": {
+        "meaning": "A is more ~ than B",
+        "explanation": "AはBより〜: A is more ~ than B.",
+        "example": "Tokyo is bigger than Osaka."
+      },
+      "ko": {
+        "meaning": "~은/는 ~보다 ~",
+        "explanation": "AはBより〜: A가 B보다 더 ~.",
+        "example": "도쿄는 오사카보다 큽니다."
+      },
+      "quiz": {
+        "prompt": "今日は昨日＿＿＿暑いです。空欄に入るのは？",
+        "options": [
+          "より",
+          "まで",
+          "から",
+          "ほう"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜をあげます／もらいます",
-      "zh": { "meaning": "給〜／從〜得到", "explanation": "「AはBに〜をあげます」A給B；「AはBに（から）〜をもらいます」A從B得到。", "example": "我從朋友那裡收到了花。" },
-      "example_jp": "わたしは友達に花をもらいました。", "example_reading": "わたしはともだちにはなをもらいました。",
-      "en": { "meaning": "give / receive", "explanation": "AはBに〜をあげます: A gives B; AはBに（から）〜をもらいます: A receives from B.", "example": "I received flowers from a friend." },
-      "ko": { "meaning": "주다 / 받다", "explanation": "AはBに〜をあげます: A가 B에게 줍니다. AはBに(から)〜をもらいます: A가 B에게서 받습니다.", "example": "저는 친구에게서 꽃을 받았습니다." },
-      "quiz": { "prompt": "わたしは母に花を＿＿＿。（わたし→母）空欄に入るのは？", "options": ["あげました", "もらいました", "くれました", "かしました"], "answer": 0 }
+      "zh": {
+        "meaning": "給〜／從〜得到",
+        "explanation": "「AはBに〜をあげます」A給B；「AはBに（から）〜をもらいます」A從B得到。",
+        "example": "我從朋友那裡收到了花。"
+      },
+      "example_jp": "わたしは友達に花をもらいました。",
+      "example_reading": "わたしはともだちにはなをもらいました。",
+      "en": {
+        "meaning": "give / receive",
+        "explanation": "AはBに〜をあげます: A gives B; AはBに（から）〜をもらいます: A receives from B.",
+        "example": "I received flowers from a friend."
+      },
+      "ko": {
+        "meaning": "주다 / 받다",
+        "explanation": "AはBに〜をあげます: A가 B에게 줍니다. AはBに(から)〜をもらいます: A가 B에게서 받습니다.",
+        "example": "저는 친구에게서 꽃을 받았습니다."
+      },
+      "quiz": {
+        "prompt": "わたしは母に花を＿＿＿。（わたし→母）空欄に入るのは？",
+        "options": [
+          "あげました",
+          "もらいました",
+          "くれました",
+          "かしました"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜をくれます",
-      "zh": { "meaning": "（別人）給我〜", "explanation": "別人給「我」（或我這邊的人）東西時用「くれます」。", "example": "姊姊給了我一本書。" },
-      "example_jp": "姉がわたしに本をくれました。", "example_reading": "あねがわたしにほんをくれました。",
-      "en": { "meaning": "(someone) gives me", "explanation": "Use くれます when someone gives something to me (or my side).", "example": "My sister gave me a book." },
-      "ko": { "meaning": "(남이 나에게) 줍니다", "explanation": "다른 사람이 나(또는 내 쪽 사람)에게 줄 때 くれます를 씁니다.", "example": "언니가 저에게 책을 주었습니다." },
-      "quiz": { "prompt": "友達がわたしにチョコレートを＿＿＿。空欄に入るのは？", "options": ["くれました", "あげました", "もらいました", "かりました"], "answer": 0 }
+      "zh": {
+        "meaning": "（別人）給我〜",
+        "explanation": "別人給「我」（或我這邊的人）東西時用「くれます」。",
+        "example": "姊姊給了我一本書。"
+      },
+      "example_jp": "姉がわたしに本をくれました。",
+      "example_reading": "あねがわたしにほんをくれました。",
+      "en": {
+        "meaning": "(someone) gives me",
+        "explanation": "Use くれます when someone gives something to me (or my side).",
+        "example": "My sister gave me a book."
+      },
+      "ko": {
+        "meaning": "(남이 나에게) 줍니다",
+        "explanation": "다른 사람이 나(또는 내 쪽 사람)에게 줄 때 くれます를 씁니다.",
+        "example": "언니가 저에게 책을 주었습니다."
+      },
+      "quiz": {
+        "prompt": "友達がわたしにチョコレートを＿＿＿。空欄に入るのは？",
+        "options": [
+          "くれました",
+          "あげました",
+          "もらいました",
+          "かりました"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "これ／それ／あれ／どれ",
-      "zh": { "meaning": "這個／那個／那個（遠）／哪個", "explanation": "指東西的代名詞：これ靠近說話者、それ靠近聽話者、あれ離兩人都遠、どれ是疑問。", "example": "那個是什麼？" },
-      "example_jp": "それは何ですか。", "example_reading": "それはなんですか。",
-      "en": { "meaning": "this / that / that over there / which", "explanation": "これ near me, それ near you, あれ away from both, どれ which.", "example": "What is that?" },
-      "ko": { "meaning": "이것/그것/저것/어느 것", "explanation": "これ는 말하는 사람 가까이, それ는 듣는 사람 가까이, あれ는 둘 다에게서 먼 것, どれ는 의문.", "example": "그것은 무엇입니까?" },
-      "quiz": { "prompt": "A「＿＿＿があなたのかさですか。」B「その赤いのです。」空欄に入るのは？", "options": ["どれ", "これ", "どこ", "だれ"], "answer": 0 }
+      "zh": {
+        "meaning": "這個／那個／那個（遠）／哪個",
+        "explanation": "指東西的代名詞：これ靠近說話者、それ靠近聽話者、あれ離兩人都遠、どれ是疑問。",
+        "example": "那個是什麼？"
+      },
+      "example_jp": "それは何ですか。",
+      "example_reading": "それはなんですか。",
+      "en": {
+        "meaning": "this / that / that over there / which",
+        "explanation": "これ near me, それ near you, あれ away from both, どれ which.",
+        "example": "What is that?"
+      },
+      "ko": {
+        "meaning": "이것/그것/저것/어느 것",
+        "explanation": "これ는 말하는 사람 가까이, それ는 듣는 사람 가까이, あれ는 둘 다에게서 먼 것, どれ는 의문.",
+        "example": "그것은 무엇입니까?"
+      },
+      "quiz": {
+        "prompt": "A「＿＿＿があなたのかさですか。」B「その赤いのです。」空欄に入るのは？",
+        "options": [
+          "どれ",
+          "これ",
+          "どこ",
+          "だれ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "この／その／あの／どの＋名詞",
-      "zh": { "meaning": "這個〜／那個〜／哪個〜", "explanation": "後面一定要接名詞：この本、その人、あの店、どの電車。", "example": "那個人是誰？" },
-      "example_jp": "あの人はだれですか。", "example_reading": "あのひとはだれですか。",
-      "en": { "meaning": "this ~ / that ~ / which ~", "explanation": "Always followed by a noun: この本, その人, あの店, どの電車.", "example": "Who is that person?" },
-      "ko": { "meaning": "이~/그~/저~/어느~", "explanation": "반드시 명사 앞에 씁니다.", "example": "저 사람은 누구입니까?" },
-      "quiz": { "prompt": "＿＿＿本はわたしのです。空欄に入るのは？", "options": ["この", "これ", "ここ", "こちら"], "answer": 0 }
+      "zh": {
+        "meaning": "這個〜／那個〜／哪個〜",
+        "explanation": "後面一定要接名詞：この本、その人、あの店、どの電車。",
+        "example": "那個人是誰？"
+      },
+      "example_jp": "あの人はだれですか。",
+      "example_reading": "あのひとはだれですか。",
+      "en": {
+        "meaning": "this ~ / that ~ / which ~",
+        "explanation": "Always followed by a noun: この本, その人, あの店, どの電車.",
+        "example": "Who is that person?"
+      },
+      "ko": {
+        "meaning": "이~/그~/저~/어느~",
+        "explanation": "반드시 명사 앞에 씁니다.",
+        "example": "저 사람은 누구입니까?"
+      },
+      "quiz": {
+        "prompt": "＿＿＿本はわたしのです。空欄に入るのは？",
+        "options": [
+          "この",
+          "これ",
+          "ここ",
+          "こちら"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "ここ／そこ／あそこ／どこ",
-      "zh": { "meaning": "這裡／那裡／那裡（遠）／哪裡", "explanation": "指場所的代名詞；比較禮貌的說法是こちら／そちら／あちら／どちら。", "example": "廁所在哪裡？" },
-      "example_jp": "トイレはどこですか。", "example_reading": "といれはどこですか。",
-      "en": { "meaning": "here / there / over there / where", "explanation": "Place words; the polite forms are こちら／そちら／あちら／どちら.", "example": "Where is the toilet?" },
-      "ko": { "meaning": "여기/거기/저기/어디", "explanation": "장소를 가리키는 말입니다. 정중한 형태는 こちら・そちら・あちら・どちら.", "example": "화장실은 어디입니까?" },
-      "quiz": { "prompt": "すみません、駅は＿＿＿ですか。空欄に入るのは？", "options": ["どこ", "どれ", "どの", "だれ"], "answer": 0 }
+      "zh": {
+        "meaning": "這裡／那裡／那裡（遠）／哪裡",
+        "explanation": "指場所的代名詞；比較禮貌的說法是こちら／そちら／あちら／どちら。",
+        "example": "廁所在哪裡？"
+      },
+      "example_jp": "トイレはどこですか。",
+      "example_reading": "といれはどこですか。",
+      "en": {
+        "meaning": "here / there / over there / where",
+        "explanation": "Place words; the polite forms are こちら／そちら／あちら／どちら.",
+        "example": "Where is the toilet?"
+      },
+      "ko": {
+        "meaning": "여기/거기/저기/어디",
+        "explanation": "장소를 가리키는 말입니다. 정중한 형태는 こちら・そちら・あちら・どちら.",
+        "example": "화장실은 어디입니까?"
+      },
+      "quiz": {
+        "prompt": "すみません、駅は＿＿＿ですか。空欄に入るのは？",
+        "options": [
+          "どこ",
+          "どれ",
+          "どの",
+          "だれ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜は〜にあります／います（位置）",
-      "zh": { "meaning": "〜在〜", "explanation": "說明某物或某人在哪裡：東西用あります，人和動物用います。", "example": "郵局在車站旁邊。" },
-      "example_jp": "郵便局は駅のとなりにあります。", "example_reading": "ゆうびんきょくはえきのとなりにあります。",
-      "en": { "meaning": "~ is (located) at ~", "explanation": "Says where something is: あります for things, います for people and animals.", "example": "The post office is next to the station." },
-      "ko": { "meaning": "~은/는 ~에 있습니다", "explanation": "위치를 말합니다. 사물은 あります, 사람・동물은 います.", "example": "우체국은 역 옆에 있습니다." },
-      "quiz": { "prompt": "ねこはつくえの下＿＿＿います。空欄に入るのは？", "options": ["に", "で", "を", "へ"], "answer": 0 }
+      "zh": {
+        "meaning": "〜在〜",
+        "explanation": "說明某物或某人在哪裡：東西用あります，人和動物用います。",
+        "example": "郵局在車站旁邊。"
+      },
+      "example_jp": "郵便局は駅のとなりにあります。",
+      "example_reading": "ゆうびんきょくはえきのとなりにあります。",
+      "en": {
+        "meaning": "~ is (located) at ~",
+        "explanation": "Says where something is: あります for things, います for people and animals.",
+        "example": "The post office is next to the station."
+      },
+      "ko": {
+        "meaning": "~은/는 ~에 있습니다",
+        "explanation": "위치를 말합니다. 사물은 あります, 사람・동물은 います.",
+        "example": "우체국은 역 옆에 있습니다."
+      },
+      "quiz": {
+        "prompt": "ねこはつくえの下＿＿＿います。空欄に入るのは？",
+        "options": [
+          "に",
+          "で",
+          "を",
+          "へ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "あまり〜ない",
-      "zh": { "meaning": "不太〜", "explanation": "「あまり」後面接否定，表示程度不高。", "example": "我不太喝咖啡。" },
-      "example_jp": "コーヒーはあまり飲みません。", "example_reading": "こーひーはあまりのみません。",
-      "en": { "meaning": "not very / not much", "explanation": "あまり is followed by a negative.", "example": "I don't drink coffee much." },
-      "ko": { "meaning": "별로 ~지 않다", "explanation": "あまり 뒤에는 부정이 옵니다.", "example": "커피는 별로 마시지 않습니다." },
-      "quiz": { "prompt": "このかばんはあまり＿＿＿。空欄に入るのは？", "options": ["高くないです", "高いです", "高かったです", "高くて"], "answer": 0 }
+      "zh": {
+        "meaning": "不太〜",
+        "explanation": "「あまり」後面接否定，表示程度不高。",
+        "example": "我不太喝咖啡。"
+      },
+      "example_jp": "コーヒーはあまり飲みません。",
+      "example_reading": "こーひーはあまりのみません。",
+      "en": {
+        "meaning": "not very / not much",
+        "explanation": "あまり is followed by a negative.",
+        "example": "I don't drink coffee much."
+      },
+      "ko": {
+        "meaning": "별로 ~지 않다",
+        "explanation": "あまり 뒤에는 부정이 옵니다.",
+        "example": "커피는 별로 마시지 않습니다."
+      },
+      "quiz": {
+        "prompt": "このかばんはあまり＿＿＿。空欄に入るのは？",
+        "options": [
+          "高くないです",
+          "高いです",
+          "高かったです",
+          "高くて"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "全然〜ない",
-      "zh": { "meaning": "完全不〜", "explanation": "「全然」後面接否定，表示完全否定。", "example": "我完全不懂。" },
-      "example_jp": "全然分かりません。", "example_reading": "ぜんぜんわかりません。",
-      "en": { "meaning": "not at all", "explanation": "全然 is followed by a negative.", "example": "I don't understand at all." },
-      "ko": { "meaning": "전혀 ~않다", "explanation": "全然 뒤에는 부정이 옵니다.", "example": "전혀 모르겠습니다." },
-      "quiz": { "prompt": "わたしはおさけを全然＿＿＿。空欄に入るのは？", "options": ["のみません", "のみます", "のみました", "のみましょう"], "answer": 0 }
+      "zh": {
+        "meaning": "完全不〜",
+        "explanation": "「全然」後面接否定，表示完全否定。",
+        "example": "我完全不懂。"
+      },
+      "example_jp": "全然分かりません。",
+      "example_reading": "ぜんぜんわかりません。",
+      "en": {
+        "meaning": "not at all",
+        "explanation": "全然 is followed by a negative.",
+        "example": "I don't understand at all."
+      },
+      "ko": {
+        "meaning": "전혀 ~않다",
+        "explanation": "全然 뒤에는 부정이 옵니다.",
+        "example": "전혀 모르겠습니다."
+      },
+      "quiz": {
+        "prompt": "わたしはおさけを全然＿＿＿。空欄に入るのは？",
+        "options": [
+          "のみません",
+          "のみます",
+          "のみました",
+          "のみましょう"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜に〜回（頻率）",
-      "zh": { "meaning": "每〜幾次", "explanation": "期間＋に＋次數，表示頻率：一週間に二回。", "example": "一個星期游泳兩次。" },
-      "example_jp": "一週間に二回泳ぎます。", "example_reading": "いっしゅうかんににかいおよぎます。",
-      "en": { "meaning": "~ times per ~", "explanation": "Period + に + number of times: 一週間に二回.", "example": "I swim twice a week." },
-      "ko": { "meaning": "~에 ~번 (빈도)", "explanation": "기간+に+횟수로 빈도를 나타냅니다.", "example": "일주일에 두 번 수영합니다." },
-      "quiz": { "prompt": "一か月＿＿＿一回、映画を見ます。空欄に入るのは？", "options": ["に", "で", "を", "が"], "answer": 0 }
+      "zh": {
+        "meaning": "每〜幾次",
+        "explanation": "期間＋に＋次數，表示頻率：一週間に二回。",
+        "example": "一個星期游泳兩次。"
+      },
+      "example_jp": "一週間に二回泳ぎます。",
+      "example_reading": "いっしゅうかんににかいおよぎます。",
+      "en": {
+        "meaning": "~ times per ~",
+        "explanation": "Period + に + number of times: 一週間に二回.",
+        "example": "I swim twice a week."
+      },
+      "ko": {
+        "meaning": "~에 ~번 (빈도)",
+        "explanation": "기간+に+횟수로 빈도를 나타냅니다.",
+        "example": "일주일에 두 번 수영합니다."
+      },
+      "quiz": {
+        "prompt": "一か月＿＿＿一回、映画を見ます。空欄に入るのは？",
+        "options": [
+          "に",
+          "で",
+          "を",
+          "が"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "動詞普通形（辭書形・ない形・た形）",
-      "zh": { "meaning": "動詞的常體", "explanation": "跟朋友說話用常體：食べる（吃）、食べない（不吃）、食べた（吃了）、食べなかった（沒吃）。", "example": "昨天沒去學校。" },
-      "example_jp": "昨日学校へ行かなかった。", "example_reading": "きのうがっこうへいかなかった。",
-      "en": { "meaning": "plain (casual) verb forms", "explanation": "Casual speech uses plain forms: 食べる, 食べない, 食べた, 食べなかった.", "example": "I didn't go to school yesterday." },
-      "ko": { "meaning": "동사 보통형", "explanation": "친구와 말할 때는 보통형을 씁니다: 食べる, 食べない, 食べた, 食べなかった.", "example": "어제 학교에 안 갔다." },
-      "quiz": { "prompt": "「行きませんでした」の普通形は？", "options": ["行かなかった", "行かない", "行った", "行きない"], "answer": 0 }
+      "zh": {
+        "meaning": "動詞的常體",
+        "explanation": "跟朋友說話用常體：食べる（吃）、食べない（不吃）、食べた（吃了）、食べなかった（沒吃）。",
+        "example": "昨天沒去學校。"
+      },
+      "example_jp": "昨日学校へ行かなかった。",
+      "example_reading": "きのうがっこうへいかなかった。",
+      "en": {
+        "meaning": "plain (casual) verb forms",
+        "explanation": "Casual speech uses plain forms: 食べる, 食べない, 食べた, 食べなかった.",
+        "example": "I didn't go to school yesterday."
+      },
+      "ko": {
+        "meaning": "동사 보통형",
+        "explanation": "친구와 말할 때는 보통형을 씁니다: 食べる, 食べない, 食べた, 食べなかった.",
+        "example": "어제 학교에 안 갔다."
+      },
+      "quiz": {
+        "prompt": "「行きませんでした」の普通形は？",
+        "options": [
+          "行かなかった",
+          "行かない",
+          "行った",
+          "行きない"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜と言います（引用）",
-      "zh": { "meaning": "說〜／叫做〜", "explanation": "引用別人說的話，或說明名稱：「〜と言います」。", "example": "這個用日文怎麼說？" },
-      "example_jp": "これは日本語で何と言いますか。", "example_reading": "これはにほんごでなんといいますか。",
-      "en": { "meaning": "say ~ / be called ~", "explanation": "Quotes what someone says, or gives a name: 〜と言います.", "example": "How do you say this in Japanese?" },
-      "ko": { "meaning": "~라고 합니다", "explanation": "다른 사람의 말이나 이름을 인용합니다.", "example": "이것은 일본어로 뭐라고 합니까?" },
-      "quiz": { "prompt": "寝る前に「おやすみなさい」＿＿＿言います。空欄に入るのは？", "options": ["と", "を", "が", "に"], "answer": 0 }
+      "zh": {
+        "meaning": "說〜／叫做〜",
+        "explanation": "引用別人說的話，或說明名稱：「〜と言います」。",
+        "example": "這個用日文怎麼說？"
+      },
+      "example_jp": "これは日本語で何と言いますか。",
+      "example_reading": "これはにほんごでなんといいますか。",
+      "en": {
+        "meaning": "say ~ / be called ~",
+        "explanation": "Quotes what someone says, or gives a name: 〜と言います.",
+        "example": "How do you say this in Japanese?"
+      },
+      "ko": {
+        "meaning": "~라고 합니다",
+        "explanation": "다른 사람의 말이나 이름을 인용합니다.",
+        "example": "이것은 일본어로 뭐라고 합니까?"
+      },
+      "quiz": {
+        "prompt": "寝る前に「おやすみなさい」＿＿＿言います。空欄に入るのは？",
+        "options": [
+          "と",
+          "を",
+          "が",
+          "に"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜をください",
-      "zh": { "meaning": "請給我〜", "explanation": "買東西或點餐時說；要數量就加在後面：「りんごを三つください」。", "example": "請給我那個紅色的包包。" },
-      "example_jp": "その赤いかばんをください。", "example_reading": "そのあかいかばんをください。",
-      "en": { "meaning": "please give me ~", "explanation": "For shopping or ordering; add the quantity after: りんごを三つください.", "example": "That red bag, please." },
-      "ko": { "meaning": "~을/를 주세요", "explanation": "물건을 사거나 주문할 때 씁니다. 수량은 뒤에: りんごを三つください.", "example": "그 빨간 가방을 주세요." },
-      "quiz": { "prompt": "すみません、コーヒーを二つ＿＿＿。空欄に入るのは？", "options": ["ください", "あげます", "くれます", "もらいます"], "answer": 0 }
+      "zh": {
+        "meaning": "請給我〜",
+        "explanation": "買東西或點餐時說；要數量就加在後面：「りんごを三つください」。",
+        "example": "請給我那個紅色的包包。"
+      },
+      "example_jp": "その赤いかばんをください。",
+      "example_reading": "そのあかいかばんをください。",
+      "en": {
+        "meaning": "please give me ~",
+        "explanation": "For shopping or ordering; add the quantity after: りんごを三つください.",
+        "example": "That red bag, please."
+      },
+      "ko": {
+        "meaning": "~을/를 주세요",
+        "explanation": "물건을 사거나 주문할 때 씁니다. 수량은 뒤에: りんごを三つください.",
+        "example": "그 빨간 가방을 주세요."
+      },
+      "quiz": {
+        "prompt": "すみません、コーヒーを二つ＿＿＿。空欄に入るのは？",
+        "options": [
+          "ください",
+          "あげます",
+          "くれます",
+          "もらいます"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "〜はどうですか",
-      "zh": { "meaning": "〜怎麼樣？", "explanation": "詢問感想或提出建議；更禮貌的說法是「〜はいかがですか」。", "example": "日本的生活怎麼樣？" },
-      "example_jp": "日本の生活はどうですか。", "example_reading": "にほんのせいかつはどうですか。",
-      "en": { "meaning": "how is ~? / how about ~?", "explanation": "Asks for an impression or makes a suggestion; politer: 〜はいかがですか.", "example": "How is life in Japan?" },
-      "ko": { "meaning": "~은/는 어떻습니까?", "explanation": "감상을 묻거나 권할 때 씁니다. 더 정중하게는 〜はいかがですか.", "example": "일본 생활은 어떻습니까?" },
-      "quiz": { "prompt": "A「テストは＿＿＿でしたか。」B「やさしかったです。」空欄に入るのは？", "options": ["どう", "どこ", "だれ", "どれ"], "answer": 0 }
+      "zh": {
+        "meaning": "〜怎麼樣？",
+        "explanation": "詢問感想或提出建議；更禮貌的說法是「〜はいかがですか」。",
+        "example": "日本的生活怎麼樣？"
+      },
+      "example_jp": "日本の生活はどうですか。",
+      "example_reading": "にほんのせいかつはどうですか。",
+      "en": {
+        "meaning": "how is ~? / how about ~?",
+        "explanation": "Asks for an impression or makes a suggestion; politer: 〜はいかがですか.",
+        "example": "How is life in Japan?"
+      },
+      "ko": {
+        "meaning": "~은/는 어떻습니까?",
+        "explanation": "감상을 묻거나 권할 때 씁니다. 더 정중하게는 〜はいかがですか.",
+        "example": "일본 생활은 어떻습니까?"
+      },
+      "quiz": {
+        "prompt": "A「テストは＿＿＿でしたか。」B「やさしかったです。」空欄に入るのは？",
+        "options": [
+          "どう",
+          "どこ",
+          "だれ",
+          "どれ"
+        ],
+        "answer": 0
+      }
     },
     {
       "pattern": "何＋助數詞（何人、何時）",
-      "zh": { "meaning": "幾〜（詢問數量）", "explanation": "「何」加量詞詢問數量或時間：何人（幾個人）、何時（幾點）、何回（幾次）、何歳（幾歲）。", "example": "現在幾點？" },
-      "example_jp": "今何時ですか。", "example_reading": "いまなんじですか。",
-      "en": { "meaning": "how many ~ (何 + counter)", "explanation": "何 + counter asks a number or time: 何人, 何時, 何回, 何歳.", "example": "What time is it now?" },
-      "ko": { "meaning": "몇 ~ (何+조수사)", "explanation": "何+조수사로 수량이나 시간을 묻습니다: 何人, 何時, 何回, 何歳.", "example": "지금 몇 시입니까?" },
-      "quiz": { "prompt": "家族は＿＿＿ですか。（人数）空欄に入るのは？", "options": ["なんにん", "なんじ", "なんかい", "なんさい"], "answer": 0 }
+      "zh": {
+        "meaning": "幾〜（詢問數量）",
+        "explanation": "「何」加量詞詢問數量或時間：何人（幾個人）、何時（幾點）、何回（幾次）、何歳（幾歲）。",
+        "example": "現在幾點？"
+      },
+      "example_jp": "今何時ですか。",
+      "example_reading": "いまなんじですか。",
+      "en": {
+        "meaning": "how many ~ (何 + counter)",
+        "explanation": "何 + counter asks a number or time: 何人, 何時, 何回, 何歳.",
+        "example": "What time is it now?"
+      },
+      "ko": {
+        "meaning": "몇 ~ (何+조수사)",
+        "explanation": "何+조수사로 수량이나 시간을 묻습니다: 何人, 何時, 何回, 何歳.",
+        "example": "지금 몇 시입니까?"
+      },
+      "quiz": {
+        "prompt": "家族は＿＿＿ですか。（人数）空欄に入るのは？",
+        "options": [
+          "なんにん",
+          "なんじ",
+          "なんかい",
+          "なんさい"
+        ],
+        "answer": 0
+      }
+    }
+  ],
+  "_about_extra_quiz": "N5_extra_quiz: fill-in-the-blank questions for the original seed points that only had a meaning question; inserted once each (matched on prompt). The correct option is listed first.",
+  "N5_extra_quiz": [
+    {
+      "pattern": "〜てください",
+      "prompt": "すみません、ちょっと待っ＿＿＿ください。空欄に入るのは？",
+      "options": [
+        "て",
+        "た",
+        "に",
+        "を"
+      ]
+    },
+    {
+      "pattern": "〜前に",
+      "prompt": "寝る＿＿＿、歯をみがきます。空欄に入るのは？",
+      "options": [
+        "まえに",
+        "あとで",
+        "ながら",
+        "から"
+      ]
+    },
+    {
+      "pattern": "〜ないでください",
+      "prompt": "ここでたばこを吸わ＿＿＿ください。空欄に入るのは？",
+      "options": [
+        "ないで",
+        "なくて",
+        "なければ",
+        "ても"
+      ]
+    },
+    {
+      "pattern": "〜があります／〜がいます",
+      "prompt": "公園に子どもが＿＿＿。空欄に入るのは？",
+      "options": [
+        "います",
+        "あります",
+        "です",
+        "します"
+      ]
+    },
+    {
+      "pattern": "〜より〜のほうが",
+      "prompt": "バスより電車の＿＿＿が速いです。空欄に入るのは？",
+      "options": [
+        "ほう",
+        "より",
+        "まで",
+        "だけ"
+      ]
+    },
+    {
+      "pattern": "〜ましょう",
+      "prompt": "いっしょに昼ご飯を食べ＿＿＿。空欄に入るのは？",
+      "options": [
+        "ましょう",
+        "ません",
+        "ました",
+        "ませんでした"
+      ]
+    },
+    {
+      "pattern": "〜ませんか",
+      "prompt": "日曜日、いっしょに映画を見＿＿＿か。（さそう）空欄に入るのは？",
+      "options": [
+        "ません",
+        "ました",
+        "ましょう",
+        "たい"
+      ]
+    },
+    {
+      "pattern": "〜とき",
+      "prompt": "子どもの＿＿＿、よく川で泳ぎました。空欄に入るのは？",
+      "options": [
+        "とき",
+        "まえ",
+        "あと",
+        "から"
+      ]
+    },
+    {
+      "pattern": "〜から",
+      "prompt": "雨が降っています＿＿＿、出かけません。空欄に入るのは？",
+      "options": [
+        "から",
+        "まで",
+        "より",
+        "だけ"
+      ]
+    },
+    {
+      "pattern": "〜だけ",
+      "prompt": "わたしの家族で、日本語が分かるのはわたし＿＿＿です。空欄に入るのは？",
+      "options": [
+        "だけ",
+        "しか",
+        "より",
+        "から"
+      ]
+    },
+    {
+      "pattern": "〜しか〜ない",
+      "prompt": "さいふに百円＿＿＿ありません。空欄に入るのは？",
+      "options": [
+        "しか",
+        "だけ",
+        "も",
+        "まで"
+      ]
+    },
+    {
+      "pattern": "〜もう〜ました",
+      "prompt": "A「もう宿題をしましたか。」B「はい、＿＿＿しました。」空欄に入るのは？",
+      "options": [
+        "もう",
+        "まだ",
+        "あまり",
+        "ぜんぜん"
+      ]
+    },
+    {
+      "pattern": "〜まだ〜ていません",
+      "prompt": "A「もう昼ご飯を食べましたか。」B「いいえ、まだ食べて＿＿＿。」空欄に入るのは？",
+      "options": [
+        "いません",
+        "います",
+        "いました",
+        "ください"
+      ]
+    },
+    {
+      "pattern": "〜つもりです",
+      "prompt": "来年、日本へ行く＿＿＿です。空欄に入るのは？",
+      "options": [
+        "つもり",
+        "こと",
+        "ほう",
+        "とき"
+      ]
+    },
+    {
+      "pattern": "〜てから",
+      "prompt": "手を洗っ＿＿＿、ご飯を食べます。空欄に入るのは？",
+      "options": [
+        "てから",
+        "たから",
+        "ながら",
+        "まえに"
+      ]
+    },
+    {
+      "pattern": "〜と思います",
+      "prompt": "明日は雨が降る＿＿＿思います。空欄に入るのは？",
+      "options": [
+        "と",
+        "を",
+        "に",
+        "が"
+      ]
+    },
+    {
+      "pattern": "〜でしょう",
+      "prompt": "明日はたぶん晴れる＿＿＿。空欄に入るのは？",
+      "options": [
+        "でしょう",
+        "ましょう",
+        "ません",
+        "ました"
+      ]
+    },
+    {
+      "pattern": "〜方（かた）",
+      "prompt": "この漢字の読み＿＿＿を教えてください。空欄に入るのは？",
+      "options": [
+        "かた",
+        "こと",
+        "もの",
+        "ところ"
+      ]
     }
   ]
 }

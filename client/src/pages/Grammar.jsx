@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Volume2, Search, SearchX, X, Check } from 'lucide-react';
+import { Volume2, Search, SearchX, X, Check, PenLine } from 'lucide-react';
 import { api } from '../api.js';
 import { speak } from '../speech.js';
 import { LevelPicker } from './Vocabulary.jsx';
@@ -9,6 +9,7 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { GrammarListSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { useCachedApi } from '../hooks/useCachedApi.js';
+import GrammarPractice from './grammar/GrammarPractice.jsx';
 
 // Most seeded explanations read as "<formation clause>，<usage description>"
 // (e.g. "動詞て形＋ください，表示禮貌地請求對方做某動作。") but a good chunk
@@ -31,6 +32,9 @@ export default function Grammar() {
   const [level, setLevel] = useState(/^N[1-5]$/.test(urlLevel) ? urlLevel : 'N5');
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [filter, setFilter] = useState('all'); // 'all' | 'unknown'
+  const [view, setView] = useState(searchParams.get('view') === 'practice' ? 'practice' : 'list');
+  // A grammar id when 練這條 on a card started the practice for that point only.
+  const [practiceOnly, setPracticeOnly] = useState(null);
   const [progress, setProgress] = useState([]);
   const [progressLoading, setProgressLoading] = useState(true);
   const { t, locale } = useLocale();
@@ -45,7 +49,7 @@ export default function Grammar() {
   // correct under StrictMode's double-invoke-on-mount in dev.
   const prevLevel = useRef(level);
   useEffect(() => {
-    if (prevLevel.current !== level) setQuery('');
+    if (prevLevel.current !== level) { setQuery(''); setPracticeOnly(null); }
     prevLevel.current = level;
   }, [level]);
 
@@ -79,11 +83,13 @@ export default function Grammar() {
     return result;
   }, [list, filter, progressByKey, query]);
 
-  async function mark(g, correct) {
+  // `toggle`: clicking the already-active button deselects it, same
+  // convention as the vocabulary flashcards' mark buttons. The practice's
+  // "mark the missed ones" sets 不熟 without toggling.
+  async function mark(g, correct, { toggle = true } = {}) {
     const currentSrs = progressByKey.get(g.id);
-    // Clicking the already-active button deselects it, same convention as
-    // the vocabulary flashcards' mark buttons.
-    const isDeselect = (correct === false && currentSrs === 0) || (correct === true && currentSrs > 0);
+    if (!toggle && !correct && currentSrs === 0) return;
+    const isDeselect = toggle && ((correct === false && currentSrs === 0) || (correct === true && currentSrs > 0));
     if (isDeselect) {
       setProgress((prev) => prev.filter((p) => !(p.item_type === 'grammar' && p.item_id === g.id)));
       await api.clearProgress({ itemType: 'grammar', itemId: g.id }).catch(() => {});
@@ -106,6 +112,25 @@ export default function Grammar() {
       <h1>{t('grammar_title')}</h1>
       <LevelPicker level={level} onChange={setLevel} />
 
+      <div className="filter-group vocab-view-switch">
+        <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>{t('grammar_tab_list')}</button>
+        <button className={view === 'practice' ? 'active' : ''} onClick={() => { setPracticeOnly(null); setView('practice'); }}>{t('vp_tab_practice')}</button>
+      </div>
+
+      {view === 'practice' && (
+        combinedLoading || !list ? <GrammarListSkeleton /> : (
+          <GrammarPractice
+            level={level}
+            points={list}
+            progressByKey={progressByKey}
+            only={practiceOnly}
+            onClearOnly={() => setPracticeOnly(null)}
+            onMark={(g, correct) => mark(g, correct, { toggle: false })}
+          />
+        )
+      )}
+
+      {view === 'list' && <>
       <div className="filter-row">
         <div className="search-box">
           <Search size={16} />
@@ -148,6 +173,13 @@ export default function Grammar() {
                     {g.pattern}{' '}
                     <button className="tiny-btn" onClick={() => speak(g.pattern)}><Volume2 size={16} /></button>
                   </div>
+                  <div className="grammar-card-actions">
+                  <button
+                    className="secondary-btn icon-btn tiny-practice-btn"
+                    onClick={() => { setPracticeOnly(g.id); setView('practice'); window.scrollTo({ top: 0 }); }}
+                  >
+                    <PenLine size={14} /> {t('gp_practice_this')}
+                  </button>
                   {isLoggedIn && (
                     <div className="kanji-mark">
                       <button
@@ -166,6 +198,7 @@ export default function Grammar() {
                       </button>
                     </div>
                   )}
+                  </div>
                 </div>
                 <div className="grammar-meaning">{g.meaning}</div>
                 {formation && (
@@ -189,6 +222,7 @@ export default function Grammar() {
           })}
         </div>
       )}
+      </>}
     </div>
   );
 }

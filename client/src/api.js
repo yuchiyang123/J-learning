@@ -82,6 +82,7 @@ export const api = {
   deleteCustomWord: (id) => request(`/words/custom/${id}`, { method: 'DELETE' }),
   getKanji: (level) => request(`/kanji?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
   getGrammar: (level) => request(`/grammar?${withLocale(new URLSearchParams(level ? { level } : {}))}`),
+  getGrammarPractice: (level) => request(`/grammar/practice?${withLocale(new URLSearchParams({ level }))}`),
   search: (q) => request(`/search?${withLocale(new URLSearchParams({ q }))}`),
   getQuiz: ({ type, level, count, includeAnswers } = {}) => {
     const params = new URLSearchParams();
