@@ -36,11 +36,16 @@ const norm = (s) => toHiragana(s.normalize('NFKC').replace(/[\s～〜~]/g, ''));
 
 // Katakana and hiragana count the same when typing (romaji input always
 // produces hiragana), so コーヒー accepts こーひー.
+// Typing every reading of a multi-reading word (いい; よい -> "いい;よい",
+// "いい／よい") is right too, as long as each part is one of its readings.
 export function checkAnswer(given, word, { acceptKanji = false } = {}) {
   const g = norm(given);
   const pool = [...readingVariants(word), ...(acceptKanji ? kanjiVariants(word) : [])];
   const hit = pool.find((v) => norm(v) === g);
-  return { correct: !!hit && g.length > 0, matched: hit ?? null };
+  if (hit || !g) return { correct: !!hit && g.length > 0, matched: hit ?? null };
+  const parts = given.split(/[;；、,，/／・\s]+/).map(norm).filter(Boolean);
+  const all = parts.length > 1 && parts.every((part) => pool.some((v) => norm(v) === part));
+  return { correct: all, matched: all ? pool.find((v) => norm(v) === parts[0]) : null };
 }
 
 // Character diff between what was typed and the answer (LCS alignment),
