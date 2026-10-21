@@ -33,7 +33,10 @@ router.get('/due', (req, res) => {
   const { level, itemType = 'vocab' } = req.query;
   if (level && !/^N[1-5]$/.test(level)) return res.status(400).json({ error: 'level must be N1-N5' });
   if (!isDueItemType(itemType)) return res.status(400).json({ error: 'unknown itemType' });
-  res.json(getDueItems(req.user.id, { itemType, level }));
+  // tz: the learner's UTC offset in minutes (480 for UTC+8) -> due by local day.
+  const tz = parseInt(req.query.tz, 10);
+  const tzOffsetMinutes = Number.isFinite(tz) && Math.abs(tz) <= 14 * 60 ? tz : undefined;
+  res.json(getDueItems(req.user.id, { itemType, level, tzOffsetMinutes }));
 });
 
 // ---------- flashcard bookmarks ----------

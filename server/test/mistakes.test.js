@@ -76,3 +76,19 @@ test('choice runs are saved under their own type and count as recognition with t
   assert.equal(r.body.srsUpdated, true);
   assert.equal(db.prepare("SELECT type FROM quiz_results WHERE user_id = ? ORDER BY id DESC LIMIT 1").get(U).type, 'vocab_choice');
 });
+
+test('a word leaves the list after two right answers in a row, and comes back when missed again', async () => {
+  const k = addWord('N5', '電車', 'でんしゃ', '電車');
+  const at = (when, ok) => db.prepare(
+    "INSERT INTO quiz_results (user_id, type, level, total, correct, detail, taken_at) VALUES (?, 'vocab_typing', 'N5', 1, ?, ?, datetime('now', ?))"
+  ).run(U, ok ? 1 : 0, JSON.stringify([{ questionId: `word:${k}`, isCorrect: ok }]), when);
+  const listed = async () => (await app.call('GET', '/api/quiz/vocab-practice/mistakes?level=N5', { user: U })).body.some((m) => m.key === `word:${k}`);
+  at('-3 hours', false);
+  assert.equal(await listed(), true);
+  at('-2 hours', true);
+  assert.equal(await listed(), true);   // one right answer isn't enough
+  at('-1 hours', true);
+  assert.equal(await listed(), false);  // two in a row: learned
+  at('-1 minutes', false);
+  assert.equal(await listed(), true);
+});

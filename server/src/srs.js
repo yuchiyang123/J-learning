@@ -143,7 +143,12 @@ export function isDueItemType(itemType) {
 // Items whose next review has come (next_review <= now), oldest first —
 // the order they should be studied in. `level` filters by the item's own
 // JLPT level (dictionary word, custom word or kanji).
-export function getDueItems(userId, { itemType = 'vocab', level } = {}) {
+// With tzOffsetMinutes (the learner's UTC offset), due is by local day:
+// everything scheduled for today counts from the start of the day, instead
+// of trickling in at the clock time it was reviewed yesterday (a word
+// reviewed at 20:40 would otherwise only come due at 20:40). Without it,
+// due is by the exact timestamp.
+export function getDueItems(userId, { itemType = 'vocab', level, tzOffsetMinutes } = {}) {
   const types = DUE_ITEM_TYPES[itemType];
   if (!types) throw new Error(`unknown itemType: ${itemType}`);
   const params = [userId, ...types];
@@ -156,7 +161,11 @@ export function getDueItems(userId, { itemType = 'vocab', level } = {}) {
     WHERE p.user_id = ?
       AND p.item_type IN (${types.map(() => '?').join(',')})
       AND p.next_review IS NOT NULL
-      AND p.next_review <= datetime('now')`;
+      AND ${Number.isFinite(tzOffsetMinutes) ? "date(p.next_review, ?) <= date('now', ?)" : "p.next_review <= datetime('now')"}`;
+  if (Number.isFinite(tzOffsetMinutes)) {
+    const shift = `${tzOffsetMinutes >= 0 ? '+' : ''}${tzOffsetMinutes} minutes`;
+    params.push(shift, shift);
+  }
   if (level) {
     sql += ' AND COALESCE(w.level, uw.level, k.level) = ?';
     params.push(level);

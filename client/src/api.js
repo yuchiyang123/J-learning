@@ -118,7 +118,7 @@ export const api = {
   getBookmarks: () => request('/progress/bookmarks'),
   putBookmark: ({ id, key }) => request('/progress/bookmarks', { method: 'PUT', body: JSON.stringify({ id, key }) }),
   setPending: ({ itemType, itemId, pending }) => request('/progress/pending', { method: 'PUT', body: JSON.stringify({ itemType, itemId, pending }) }),
-  getDue: ({ level, itemType = 'vocab' } = {}) => request(`/progress/due?${new URLSearchParams({ itemType, ...(level ? { level } : {}) })}`),
+  getDue: ({ level, itemType = 'vocab' } = {}) => request(`/progress/due?${new URLSearchParams({ itemType, tz: -new Date().getTimezoneOffset(), ...(level ? { level } : {}) })}`),
   reviewProgress: (payload) => request('/progress/review', { method: 'POST', body: JSON.stringify(payload) }),
   clearProgress: ({ itemType, itemId }) => request(`/progress/${itemType}/${itemId}`, { method: 'DELETE' }),
   getStats: () => request('/progress/stats'),
