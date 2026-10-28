@@ -45,6 +45,12 @@ test('the N5 passages are well formed', () => {
       assert.ok(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < 4, p.id);
     }
     for (const v of p.vocab) assert.equal(v.length, 5, p.id);
+    // JLPT N5 formats: 問題4 short (1 question), 問題5 mid (2), 問題6 info (1)
+    assert.ok(['short', 'mid', 'info'].includes(p.part), p.id);
+    assert.equal(p.questions.length, p.part === 'mid' ? 2 : 1, p.id);
+    const marks = (s) => (s.match(/〈/g) || []).length;
+    assert.equal(marks(p.text), marks(p.furigana), `${p.id} underline marks`);
+    assert.equal(marks(p.text), (p.text.match(/〉/g) || []).length, `${p.id} unbalanced 〈〉`);
   }
 });
 

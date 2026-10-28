@@ -44,6 +44,7 @@ function localize(p, locale) {
   const vocabMeaning = ([, , zh, en, ko]) => (loc === 'en' ? en : loc === 'ko' ? ko : translate(zh, loc));
   return {
     id: p.id,
+    part: p.part,
     kind: p.kind,
     title: pick(p.title, locale),
     text: p.text,

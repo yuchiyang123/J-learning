@@ -501,6 +501,13 @@ const zhTW = {
   reading_retry: "再做一次",
   reading_next: "下一篇",
   type_reading: "閱讀測驗",
+  reading_spaced: "考卷排版（詞之間空格）",
+  reading_part_short: "問題4　短文",
+  reading_part_desc_short: "約 80 字的留言、通知、信件，每篇 1 題。",
+  reading_part_mid: "問題5　中篇",
+  reading_part_desc_mid: "約 250 字的日記、短文，每篇 2 題，會考畫底線的部分指什麼、為什麼。",
+  reading_part_info: "問題6　情報檢索",
+  reading_part_desc_info: "傳單、時刻表、價目表，照題目的條件找出答案。",
 };
 
 const zhCN = {
@@ -992,6 +999,13 @@ const zhCN = {
   reading_retry: "再做一次",
   reading_next: "下一篇",
   type_reading: "阅读测验",
+  reading_spaced: "考卷排版（词之间空格）",
+  reading_part_short: "问题4　短文",
+  reading_part_desc_short: "约 80 字的留言、通知、邮件，每篇 1 题。",
+  reading_part_mid: "问题5　中篇",
+  reading_part_desc_mid: "约 250 字的日记、短文，每篇 2 题，会考画线部分指什么、为什么。",
+  reading_part_info: "问题6　信息检索",
+  reading_part_desc_info: "传单、时刻表、价目表，按题目的条件找出答案。",
 };
 
 const en = {
@@ -1483,6 +1497,13 @@ const en = {
   reading_retry: "Try again",
   reading_next: "Next passage",
   type_reading: "Reading",
+  reading_spaced: "Exam layout (spaces between phrases)",
+  reading_part_short: "Part 4 · Short texts",
+  reading_part_desc_short: "Notes, notices and emails of about 80 characters, one question each.",
+  reading_part_mid: "Part 5 · Mid-length texts",
+  reading_part_desc_mid: "Diaries and short essays of about 250 characters, two questions each — what an underlined part refers to, and why.",
+  reading_part_info: "Part 6 · Information retrieval",
+  reading_part_desc_info: "Flyers, timetables and price lists: find the option that meets the conditions.",
 };
 
 const ko = {
@@ -1974,6 +1995,13 @@ const ko = {
   reading_retry: "다시 풀기",
   reading_next: "다음 글",
   type_reading: "독해",
+  reading_spaced: "시험지 배치(어절 사이 띄어쓰기)",
+  reading_part_short: "문제4 단문",
+  reading_part_desc_short: "약 80자의 메모・안내・메일, 각 1문제.",
+  reading_part_mid: "문제5 중문",
+  reading_part_desc_mid: "약 250자의 일기・짧은 글, 각 2문제. 밑줄 친 부분이 가리키는 것과 이유를 묻습니다.",
+  reading_part_info: "문제6 정보 검색",
+  reading_part_desc_info: "전단지・시간표・가격표에서 조건에 맞는 답을 찾습니다.",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

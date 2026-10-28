@@ -10,6 +10,51 @@ import { GrammarListSkeleton } from '../components/Skeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import './reading.css';
 
+const PARTS = ['short', 'mid', 'info'];
+const SPACED_KEY = 'jp_reading_spaced';
+
+function loadSpaced() {
+  try { return localStorage.getItem(SPACED_KEY) !== '0'; } catch { return true; }
+}
+
+// The passages are written like the N5 paper: a space between phrases
+// (分かち書き), 〈…〉 for the underlined part a question asks about, and
+// lines starting with | for table rows. `spaced` false drops the spaces.
+function Inline({ text, spaced }) {
+  const shown = spaced ? text : text.replace(/ +/g, '');
+  return shown.split(/(〈[^〉]*〉)/).map((part, i) => (
+    part.startsWith('〈') ? <u key={i} className="reading-underline">{part.slice(1, -1)}</u> : <span key={i}>{part}</span>
+  ));
+}
+
+function RichText({ text, spaced }) {
+  const blocks = [];
+  for (const line of text.split('\n')) {
+    const last = blocks[blocks.length - 1];
+    if (line.startsWith('|')) {
+      const cells = line.split('|').slice(1, -1).map((c) => c.trim());
+      if (last?.type === 'table') last.rows.push(cells);
+      else blocks.push({ type: 'table', rows: [cells] });
+    } else {
+      blocks.push({ type: 'line', text: line });
+    }
+  }
+  return blocks.map((b, i) => (b.type === 'table' ? (
+    <div key={i} className="reading-table-wrap">
+      <table className="reading-table">
+        <thead><tr>{b.rows[0].map((c, j) => <th key={j}><Inline text={c} spaced={spaced} /></th>)}</tr></thead>
+        <tbody>
+          {b.rows.slice(1).map((row, k) => (
+            <tr key={k}>{row.map((c, j) => <td key={j}><Inline text={c} spaced={spaced} /></td>)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p key={i} className="reading-line"><Inline text={b.text} spaced={spaced} /></p>
+  )));
+}
+
 const formatTime = (secs) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
 
 function shuffledOrder(n) {
@@ -51,7 +96,6 @@ export default function Reading() {
           key={open.id}
           level={level}
           passage={open}
-          number={index + 1}
           next={list[index + 1] || null}
           onOpen={(id) => { setOpenId(id); window.scrollTo({ top: 0 }); }}
           onBack={() => setOpenId(null)}
@@ -73,8 +117,16 @@ export default function Reading() {
       {loading && !passages && <GrammarListSkeleton />}
       {passages && list.length === 0 && <EmptyState icon={<BookOpen size={32} />} message={t('reading_none')} />}
 
+      {PARTS.map((part) => {
+        const group = list.filter((p) => p.part === part);
+        if (group.length === 0) return null;
+        return (
+      <section key={part} className="reading-group">
+        <h2 className="reading-group-title">{t(`reading_part_${part}`)}</h2>
+        <p className="muted reading-group-desc">{t(`reading_part_desc_${part}`)}</p>
       <div className="reading-list">
-        {list.map((p, i) => {
+        {group.map((p) => {
+          const i = list.indexOf(p);
           const h = history[p.id];
           return (
             <button key={p.id} type="button" className="reading-card" onClick={() => { setOpenId(p.id); window.scrollTo({ top: 0 }); }}>
@@ -94,14 +146,18 @@ export default function Reading() {
           );
         })}
       </div>
+      </section>
+        );
+      })}
     </div>
   );
 }
 
-function Passage({ level, passage, number, next, onOpen, onBack, onSaved }) {
+function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
   const { t } = useLocale();
   const { isLoggedIn } = useAuth();
   const [showKana, setShowKana] = useState(false);
+  const [spaced, setSpaced] = useState(loadSpaced);
   const [answers, setAnswers] = useState(() => passage.questions.map(() => null));
   const [submitted, setSubmitted] = useState(null); // { seconds, correct }
   const [elapsed, setElapsed] = useState(0);
@@ -148,7 +204,7 @@ function Passage({ level, passage, number, next, onOpen, onBack, onSaved }) {
       </div>
 
       <div className="reading-heading">
-        <span className="reading-card-kind">{String(number).padStart(2, '0')} · {t(`reading_kind_${passage.kind}`)}</span>
+        <span className="reading-card-kind">{t(`reading_part_${passage.part}`)} · {t(`reading_kind_${passage.kind}`)}</span>
         <h1>{passage.title}</h1>
       </div>
 
@@ -164,19 +220,29 @@ function Passage({ level, passage, number, next, onOpen, onBack, onSaved }) {
         <label className="reading-toggle">
           <input type="checkbox" checked={showKana} onChange={(e) => setShowKana(e.target.checked)} /> {t('reading_show_kana')}
         </label>
-        <button type="button" className="secondary-btn icon-btn" onClick={() => speak(passage.text.replace(/\n/g, '。'))}>
+        <label className="reading-toggle">
+          <input
+            type="checkbox"
+            checked={spaced}
+            onChange={(e) => {
+              setSpaced(e.target.checked);
+              try { localStorage.setItem(SPACED_KEY, e.target.checked ? '1' : '0'); } catch { /* private mode */ }
+            }}
+          /> {t('reading_spaced')}
+        </label>
+        <button type="button" className="secondary-btn icon-btn" onClick={() => speak(passage.text.replace(/[〈〉|]/g, '').replace(/ +/g, '').replace(/\n/g, '。'))}>
           <Volume2 size={15} /> {t('reading_listen')}
         </button>
       </div>
 
-      <div className="reading-text" lang="ja">{text}</div>
+      <div className="reading-text" lang="ja"><RichText text={text} spaced={spaced} /></div>
 
       <ol className="reading-questions">
         {passage.questions.map((q, qi) => {
           const chosen = answers[qi];
           return (
             <li key={qi} className="reading-question">
-              <p className="reading-q" lang="ja">{q.q}</p>
+              <p className="reading-q" lang="ja"><Inline text={q.q} spaced={spaced} /></p>
               <div className="reading-options" lang="ja">
                 {orders[qi].map((oi, pos) => {
                   let state = '';
@@ -194,7 +260,7 @@ function Passage({ level, passage, number, next, onOpen, onBack, onSaved }) {
                       onClick={() => setAnswers((a) => a.map((v, i) => (i === qi ? oi : v)))}
                     >
                       <span className="reading-option-key">{pos + 1}</span>
-                      {q.options[oi]}
+                      <Inline text={q.options[oi]} spaced={spaced} />
                     </button>
                   );
                 })}
@@ -218,7 +284,7 @@ function Passage({ level, passage, number, next, onOpen, onBack, onSaved }) {
         <>
           <section className="reading-section">
             <h2>{t('reading_translation')}</h2>
-            <p className="reading-translation">{passage.translation}</p>
+            <p className="reading-translation">{passage.translation.replace(/[〈〉]/g, '')}</p>
           </section>
           <section className="reading-section">
             <h2>{t('reading_vocab')}</h2>
