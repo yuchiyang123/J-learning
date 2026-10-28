@@ -25,6 +25,7 @@ import speakingRouter from './routes/speaking.js';
 import gamesRouter from './routes/games.js';
 import usersRouter from './routes/users.js';
 import searchRouter from './routes/search.js';
+import readingRouter from './routes/reading.js';
 
 const ALLOWED_ORIGINS = [
   'https://j-learning.matthewyu.uk',
@@ -82,6 +83,7 @@ app.use('/api/progress/review', writeLimiter);
 app.use('/api/speaking', writeLimiter);
 app.use('/api/games/score', writeLimiter);
 app.use('/api/quiz/submit', writeLimiter);
+app.use('/api/reading/submit', writeLimiter);
 app.use('/api/users/profile', writeLimiter);
 app.use('/api/words/custom', writeLimiter);
 
@@ -97,6 +99,7 @@ app.use('/api/speaking', speakingRouter);
 app.use('/api/games', gamesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/reading', readingRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

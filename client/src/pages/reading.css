@@ -1,0 +1,77 @@
+/* 閱讀測驗. Uses only the shared skin tokens (--ink, --ink-soft, --line,
+   --accent, --accent-2, --paper-raised, --radius). */
+
+.reading-tip { margin: 0.2rem 0 0.6rem; }
+.reading-done-count { margin: 0 0 0.8rem; font-weight: 700; color: var(--accent-2); }
+
+.reading-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
+.reading-card {
+  display: flex; align-items: center; gap: 0.9rem; padding: 0.9rem 1rem; text-align: left; cursor: pointer;
+  font: inherit; color: var(--ink); background: var(--paper-raised);
+  border: 1.5px solid var(--line); border-radius: var(--radius, 12px);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.reading-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.reading-card-num { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 900; color: var(--accent); line-height: 1; }
+.reading-card-body { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 0; }
+.reading-card-kind { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-soft); }
+.reading-card-title { font-weight: 800; font-size: 1.02rem; }
+.reading-card-meta { font-size: 0.8rem; color: var(--ink-soft); }
+.reading-card-result { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; }
+.reading-card-result.is-perfect { color: var(--accent-2); }
+.reading-card-time { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.75rem; font-weight: 600; color: var(--ink-soft); }
+
+.reading-passage { display: flex; flex-direction: column; gap: 1rem; max-width: 760px; margin: 0 auto; }
+.reading-topline { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.reading-timer { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent); }
+.reading-timer.is-stopped { color: var(--ink-soft); }
+.reading-heading h1 { margin: 0.2rem 0 0; }
+
+.reading-score {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1rem; padding: 0.8rem 1rem;
+  border: 1.5px solid var(--accent); border-radius: var(--radius, 12px); background: var(--paper-raised);
+}
+.reading-score.is-perfect { border-color: var(--accent-2); }
+.reading-score-num { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+.reading-score.is-perfect .reading-score-num { color: var(--accent-2); }
+
+.reading-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; }
+.reading-toggle { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; cursor: pointer; }
+
+.reading-text {
+  white-space: pre-line; padding: 1.1rem 1.2rem; font-size: 1.15rem; line-height: 2;
+  background: var(--paper-raised); border: 1.5px solid var(--line); border-radius: var(--radius, 12px);
+}
+
+.reading-questions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.2rem; counter-reset: rq; }
+.reading-question { counter-increment: rq; }
+.reading-q { margin: 0 0 0.5rem; font-weight: 800; font-size: 1.05rem; }
+.reading-q::before { content: "問" counter(rq) "　"; color: var(--accent); }
+.reading-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+@media (max-width: 560px) { .reading-options { grid-template-columns: 1fr; } }
+.reading-option {
+  position: relative; padding: 0.65rem 0.8rem 0.65rem 2.1rem; text-align: left; cursor: pointer;
+  font: inherit; font-size: 1rem; color: var(--ink); background: var(--paper-raised);
+  border: 2px solid var(--line); border-radius: var(--radius, 12px);
+  transition: border-color 0.15s ease, opacity 0.15s ease;
+}
+.reading-option:hover:not(:disabled) { border-color: var(--accent); }
+.reading-option-key { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-size: 0.75rem; font-weight: 700; color: var(--ink-soft); }
+.reading-option.is-chosen { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); }
+.reading-option.is-answer { border-color: var(--accent-2); color: var(--accent-2); font-weight: 700; }
+.reading-option.is-picked-wrong { border-color: var(--accent); color: var(--accent); text-decoration: line-through; }
+.reading-option.is-dim { opacity: 0.45; }
+.reading-option:disabled { cursor: default; }
+.reading-why { display: flex; gap: 0.4rem; align-items: flex-start; margin: 0.5rem 0 0; font-size: 0.9rem; line-height: 1.6; }
+.reading-why svg { flex-shrink: 0; margin-top: 0.2rem; }
+.reading-why.is-correct svg { color: var(--accent-2); }
+.reading-why.is-wrong svg { color: var(--accent); }
+
+.reading-submit { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem 1rem; }
+.reading-section h2 { font-size: 1.05rem; margin: 0 0 0.4rem; }
+.reading-translation { white-space: pre-line; margin: 0; line-height: 1.8; color: var(--ink-soft); }
+.reading-vocab { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.reading-vocab li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.7rem; padding: 0.4rem 0.6rem; border-bottom: 1px dashed var(--line); }
+.reading-vocab-word { font-weight: 800; font-size: 1.05rem; }
+.reading-vocab-kana { color: var(--ink-soft); }
+.reading-vocab-meaning { color: var(--ink-soft); }

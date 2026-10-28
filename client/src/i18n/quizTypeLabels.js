@@ -18,6 +18,7 @@ export const QUIZ_TYPE_LABEL_KEYS = {
   vocab_kanji_write: 'type_vocab_kanji_write',
   vocab_choice: 'type_vocab_choice',
   jlpt_mock: 'type_jlpt_mock',
+  reading: 'type_reading',
 };
 
 // Types whose quiz_results.level column isn't a real JLPT level: 'kana' is

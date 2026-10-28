@@ -24,6 +24,7 @@ export const lanterns = [
   { to: '/vocabulary', key: 'nav_vocab', kanji: '語' },
   { to: '/kanji', key: 'nav_kanji', kanji: '字' },
   { to: '/grammar', key: 'nav_grammar', kanji: '文' },
+  { to: '/reading', key: 'nav_reading', kanji: '読' },
   { to: '/listening', key: 'nav_listening', kanji: '聴' },
   { to: '/speaking', key: 'nav_speaking', kanji: '話' },
   { to: '/quiz', key: 'nav_quiz', kanji: '問' },

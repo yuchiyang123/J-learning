@@ -18,6 +18,7 @@ const links = [
   { to: '/vocabulary', key: 'nav_vocab' },
   { to: '/kanji', key: 'nav_kanji' },
   { to: '/grammar', key: 'nav_grammar' },
+  { to: '/reading', key: 'nav_reading' },
   { to: '/listening', key: 'nav_listening' },
   { to: '/speaking', key: 'nav_speaking' },
   { to: '/quiz', key: 'nav_quiz' },

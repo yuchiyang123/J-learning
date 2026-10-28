@@ -15,7 +15,8 @@ export const CATEGORY_QUIZ_TYPES = {
   kana: ['kana', 'kana_write', 'kana_read'],
   vocab: ['vocab', 'vocab_typing', 'vocab_tiles', 'vocab_handwrite', 'vocab_kanji_write', 'vocab_choice'],
   kanji: ['kanji', 'kanji_write'],
-  grammar: ['grammar'],
+  // JLPT scores 文法 and 読解 together, so reading runs count as grammar.
+  grammar: ['grammar', 'reading'],
   listening: ['listening'],
 };
 router.use(requireAuth);

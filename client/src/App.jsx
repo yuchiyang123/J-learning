@@ -13,6 +13,7 @@ const Vocabulary = lazy(() => import('./pages/Vocabulary.jsx'));
 const Kanji = lazy(() => import('./pages/Kanji.jsx'));
 const Grammar = lazy(() => import('./pages/Grammar.jsx'));
 const Listening = lazy(() => import('./pages/Listening.jsx'));
+const Reading = lazy(() => import('./pages/Reading.jsx'));
 const Speaking = lazy(() => import('./pages/Speaking.jsx'));
 const Quiz = lazy(() => import('./pages/Quiz.jsx'));
 const JlptMock = lazy(() => import('./pages/JlptMock.jsx'));
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="/vocabulary" element={<Vocabulary />} />
             <Route path="/kanji" element={<Kanji />} />
             <Route path="/grammar" element={<Grammar />} />
+            <Route path="/reading" element={<Reading />} />
             <Route path="/listening" element={<Listening />} />
             <Route path="/speaking" element={<Speaking />} />
             <Route path="/quiz" element={<Quiz />} />
