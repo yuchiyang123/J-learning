@@ -91,6 +91,16 @@ function RichText({ model, spaced, active, onSentence }) {
   });
 }
 
+// An on/off option drawn like the site's other filter buttons (an active
+// pill with a check) instead of a bare browser checkbox.
+function Toggle({ on, onChange, children }) {
+  return (
+    <button type="button" className={`reading-chip${on ? ' active' : ''}`} aria-pressed={on} onClick={() => onChange(!on)}>
+      {on && <Check size={13} />} {children}
+    </button>
+  );
+}
+
 const formatTime = (secs) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
 
 function shuffledOrder(n) {
@@ -264,19 +274,19 @@ function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
       )}
 
       <div className="reading-tools">
-        <label className="reading-toggle">
-          <input type="checkbox" checked={showKana} onChange={(e) => setShowKana(e.target.checked)} /> {t('reading_show_kana')}
-        </label>
-        <label className="reading-toggle">
-          <input
-            type="checkbox"
-            checked={spaced}
-            onChange={(e) => {
-              setSpaced(e.target.checked);
-              try { localStorage.setItem(SPACED_KEY, e.target.checked ? '1' : '0'); } catch { /* private mode */ }
+        <span className="filter-group">
+          <span className="filter-label">{t('reading_display')}</span>
+          <Toggle on={showKana} onChange={setShowKana}>{t('reading_show_kana')}</Toggle>
+          <Toggle
+            on={spaced}
+            onChange={(on) => {
+              setSpaced(on);
+              try { localStorage.setItem(SPACED_KEY, on ? '1' : '0'); } catch { /* private mode */ }
             }}
-          /> {t('reading_spaced')}
-        </label>
+          >
+            {t('reading_spaced')}
+          </Toggle>
+        </span>
         <button
           type="button"
           className={`secondary-btn icon-btn${reader.playing ? ' is-active' : ''}`}
@@ -286,12 +296,11 @@ function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
         </button>
       </div>
       <div className="reading-tools reading-listen-settings">
-        <label className="reading-toggle">
-          <input type="checkbox" checked={listen.follow} onChange={(e) => updateListen({ follow: e.target.checked })} /> {t('reading_follow')}
-        </label>
-        <label className="reading-toggle">
-          <input type="checkbox" checked={listen.pause} onChange={(e) => updateListen({ pause: e.target.checked })} /> {t('reading_pause')}
-        </label>
+        <span className="filter-group">
+          <span className="filter-label">{t('reading_listen')}</span>
+          <Toggle on={listen.follow} onChange={(follow) => updateListen({ follow })}>{t('reading_follow')}</Toggle>
+          <Toggle on={listen.pause} onChange={(pause) => updateListen({ pause })}>{t('reading_pause')}</Toggle>
+        </span>
         <span className="filter-group reading-rate">
           <span className="filter-label">{t('reading_rate')}</span>
           {RATES.map((rate) => (

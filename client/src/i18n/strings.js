@@ -519,6 +519,7 @@ const zhTW = {
   reading_tts_failed: "瀏覽器的語音沒有回應，所以沒有念出來。請重新整理頁面再試一次；還是不行的話，換 Chrome 或 Edge 試試。",
   settings_zoom_heading: "顯示大小",
   settings_zoom_hint: "放大頁面主要內容（不含上方導覽列），大螢幕看起來比較舒服。只套用在這台裝置。",
+  reading_display: "顯示",
 };
 
 const zhCN = {
@@ -1028,6 +1029,7 @@ const zhCN = {
   reading_tts_failed: "浏览器的语音没有响应，所以没有读出来。请刷新页面再试一次；还是不行的话，换 Chrome 或 Edge 试试。",
   settings_zoom_heading: "显示大小",
   settings_zoom_hint: "放大页面主要内容（不含上方导航栏），大屏幕看起来比较舒服。只应用在这台设备。",
+  reading_display: "显示",
 };
 
 const en = {
@@ -1537,6 +1539,7 @@ const en = {
   reading_tts_failed: "The browser's voice didn't respond, so nothing was read. Reload the page and try again; if it still fails, try Chrome or Edge.",
   settings_zoom_heading: "Content size",
   settings_zoom_hint: "Enlarge the main page content (not the top navigation) — easier to read on a big screen. Applies to this device only.",
+  reading_display: "Display",
 };
 
 const ko = {
@@ -2046,6 +2049,7 @@ const ko = {
   reading_tts_failed: "브라우저 음성이 응답하지 않아 읽지 못했습니다. 페이지를 새로고침한 뒤 다시 시도하고, 그래도 안 되면 Chrome이나 Edge를 사용해 보세요.",
   settings_zoom_heading: "표시 크기",
   settings_zoom_hint: "페이지 본문을 확대합니다(상단 메뉴 제외). 큰 화면에서 보기 편합니다. 이 기기에만 적용됩니다.",
+  reading_display: "보기",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

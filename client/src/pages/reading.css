@@ -36,7 +36,6 @@
 .reading-score.is-perfect .reading-score-num { color: var(--accent-2); }
 
 .reading-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; }
-.reading-toggle { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; cursor: pointer; }
 
 .reading-text {
   white-space: pre-line; padding: 1.1rem 1.2rem; font-size: 1.15rem; line-height: 2;
@@ -101,3 +100,7 @@ tr.reading-sentence.is-current td, tr.reading-sentence.is-current th { backgroun
 .reading-phrase.is-reading { color: var(--paper-raised); background: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
 .reading-phrase.is-reading .reading-underline { text-decoration-color: currentColor; }
 .secondary-btn.is-active { border-color: var(--accent); color: var(--accent); }
+
+/* on/off options use the skin's filter-button look; the check marks "on" */
+.reading-tools .filter-group { margin: 0; flex-wrap: wrap; }
+.reading-chip { display: inline-flex; align-items: center; gap: 0.25rem; }
