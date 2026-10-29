@@ -508,6 +508,15 @@ const zhTW = {
   reading_part_desc_mid: "約 250 字的日記、短文，每篇 2 題，會考畫底線的部分指什麼、為什麼。",
   reading_part_info: "問題6　情報檢索",
   reading_part_desc_info: "傳單、時刻表、價目表，照題目的條件找出答案。",
+  reading_stop: "停止",
+  reading_follow: "朗讀時標示念到哪",
+  reading_pause: "每句停一下（讓我跟著念）",
+  reading_rate: "語速",
+  reading_rate_0_6: "慢",
+  reading_rate_0_8: "稍慢",
+  reading_rate_1: "正常",
+  reading_follow_hint: "點任何一句，就從那一句開始念。",
+  reading_tts_failed: "瀏覽器的語音沒有回應，所以沒有念出來。請重新整理頁面再試一次；還是不行的話，換 Chrome 或 Edge 試試。",
 };
 
 const zhCN = {
@@ -1006,6 +1015,15 @@ const zhCN = {
   reading_part_desc_mid: "约 250 字的日记、短文，每篇 2 题，会考画线部分指什么、为什么。",
   reading_part_info: "问题6　信息检索",
   reading_part_desc_info: "传单、时刻表、价目表，按题目的条件找出答案。",
+  reading_stop: "停止",
+  reading_follow: "朗读时标示读到哪",
+  reading_pause: "每句停一下（让我跟着读）",
+  reading_rate: "语速",
+  reading_rate_0_6: "慢",
+  reading_rate_0_8: "稍慢",
+  reading_rate_1: "正常",
+  reading_follow_hint: "点任何一句，就从那一句开始读。",
+  reading_tts_failed: "浏览器的语音没有响应，所以没有读出来。请刷新页面再试一次；还是不行的话，换 Chrome 或 Edge 试试。",
 };
 
 const en = {
@@ -1504,6 +1522,15 @@ const en = {
   reading_part_desc_mid: "Diaries and short essays of about 250 characters, two questions each — what an underlined part refers to, and why.",
   reading_part_info: "Part 6 · Information retrieval",
   reading_part_desc_info: "Flyers, timetables and price lists: find the option that meets the conditions.",
+  reading_stop: "Stop",
+  reading_follow: "Highlight what's being read",
+  reading_pause: "Pause after each sentence (to repeat it)",
+  reading_rate: "Speed",
+  reading_rate_0_6: "Slow",
+  reading_rate_0_8: "A bit slow",
+  reading_rate_1: "Normal",
+  reading_follow_hint: "Tap any sentence to start reading from there.",
+  reading_tts_failed: "The browser's voice didn't respond, so nothing was read. Reload the page and try again; if it still fails, try Chrome or Edge.",
 };
 
 const ko = {
@@ -2002,6 +2029,15 @@ const ko = {
   reading_part_desc_mid: "약 250자의 일기・짧은 글, 각 2문제. 밑줄 친 부분이 가리키는 것과 이유를 묻습니다.",
   reading_part_info: "문제6 정보 검색",
   reading_part_desc_info: "전단지・시간표・가격표에서 조건에 맞는 답을 찾습니다.",
+  reading_stop: "정지",
+  reading_follow: "읽는 위치 표시",
+  reading_pause: "문장마다 잠깐 멈춤(따라 읽기)",
+  reading_rate: "속도",
+  reading_rate_0_6: "느리게",
+  reading_rate_0_8: "조금 느리게",
+  reading_rate_1: "보통",
+  reading_follow_hint: "아무 문장이나 누르면 그 문장부터 읽습니다.",
+  reading_tts_failed: "브라우저 음성이 응답하지 않아 읽지 못했습니다. 페이지를 새로고침한 뒤 다시 시도하고, 그래도 안 되면 Chrome이나 Edge를 사용해 보세요.",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

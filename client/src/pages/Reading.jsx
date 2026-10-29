@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, X, Clock, Volume2, RotateCcw, BookOpen } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, X, Clock, Volume2, RotateCcw, BookOpen, Square } from 'lucide-react';
 import { api } from '../api.js';
-import { speak } from '../speech.js';
+import { buildModel, useReadAloud, RATES } from './reading/readAloud.js';
 import { LevelPicker } from './Vocabulary.jsx';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
@@ -12,6 +12,19 @@ import './reading.css';
 
 const PARTS = ['short', 'mid', 'info'];
 const SPACED_KEY = 'jp_reading_spaced';
+const LISTEN_KEY = 'jp_reading_listen';
+
+// Read-aloud settings: highlight what's being read, speed, pause after
+// each sentence (to repeat it). Remembered per browser.
+function loadListen() {
+  const d = { follow: true, rate: 0.8, pause: false };
+  try {
+    const v = JSON.parse(localStorage.getItem(LISTEN_KEY) || '{}');
+    return { follow: v.follow ?? d.follow, rate: RATES.includes(v.rate) ? v.rate : d.rate, pause: !!v.pause };
+  } catch {
+    return d;
+  }
+}
 
 function loadSpaced() {
   try { return localStorage.getItem(SPACED_KEY) !== '0'; } catch { return true; }
@@ -27,32 +40,55 @@ function Inline({ text, spaced }) {
   ));
 }
 
-function RichText({ text, spaced }) {
-  const blocks = [];
-  for (const line of text.split('\n')) {
-    const last = blocks[blocks.length - 1];
-    if (line.startsWith('|')) {
-      const cells = line.split('|').slice(1, -1).map((c) => c.trim());
-      if (last?.type === 'table') last.rows.push(cells);
-      else blocks.push({ type: 'table', rows: [cells] });
-    } else {
-      blocks.push({ type: 'line', text: line });
+// Renders the passage from its sentence / phrase model (readAloud.js), so
+// the phrase being read aloud can be highlighted. Clicking a sentence while
+// follow-along is on reads from that sentence.
+function RichText({ model, spaced, active, onSentence }) {
+  const { blocks, sentences } = model;
+  const phraseClass = (s, p) => {
+    if (!active || active.sentence !== s.id) return 'reading-phrase';
+    return `reading-phrase${active.phrase === p.id ? ' is-reading' : ''}`;
+  };
+  const sentenceClass = (s) => `reading-sentence${active?.sentence === s.id ? ' is-current' : ''}${onSentence ? ' is-clickable' : ''}`;
+  const phrasesOf = (s) => s.phrases.map((p, k) => (
+    <span key={p.id}>
+      {k > 0 && spaced && ' '}
+      <span className={phraseClass(s, p)}><Inline text={p.text} spaced={spaced} /></span>
+    </span>
+  ));
+  return blocks.map((b, i) => {
+    if (b.type === 'table') {
+      const [head, ...rows] = b.rows.map((id) => sentences[id]);
+      const cells = (s, Tag) => s.phrases.map((p) => (
+        <Tag key={p.id}><span className={phraseClass(s, p)}><Inline text={p.text} spaced={spaced} /></span></Tag>
+      ));
+      return (
+        <div key={i} className="reading-table-wrap">
+          <table className="reading-table">
+            <thead><tr className={sentenceClass(head)} onClick={onSentence && (() => onSentence(head.id))}>{cells(head, 'th')}</tr></thead>
+            <tbody>
+              {rows.map((s) => (
+                <tr key={s.id} className={sentenceClass(s)} onClick={onSentence && (() => onSentence(s.id))}>{cells(s, 'td')}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
     }
-  }
-  return blocks.map((b, i) => (b.type === 'table' ? (
-    <div key={i} className="reading-table-wrap">
-      <table className="reading-table">
-        <thead><tr>{b.rows[0].map((c, j) => <th key={j}><Inline text={c} spaced={spaced} /></th>)}</tr></thead>
-        <tbody>
-          {b.rows.slice(1).map((row, k) => (
-            <tr key={k}>{row.map((c, j) => <td key={j}><Inline text={c} spaced={spaced} /></td>)}</tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  ) : (
-    <p key={i} className="reading-line"><Inline text={b.text} spaced={spaced} /></p>
-  )));
+    return (
+      <p key={i} className="reading-line">
+        {b.sentences.map((id) => {
+          const s = sentences[id];
+          return (
+            <span key={id} className={sentenceClass(s)} onClick={onSentence && (() => onSentence(id))}>
+              {phrasesOf(s)}
+              {spaced && ' '}
+            </span>
+          );
+        })}
+      </p>
+    );
+  });
 }
 
 const formatTime = (secs) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
@@ -158,6 +194,7 @@ function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
   const { isLoggedIn } = useAuth();
   const [showKana, setShowKana] = useState(false);
   const [spaced, setSpaced] = useState(loadSpaced);
+  const [listen, setListen] = useState(loadListen);
   const [answers, setAnswers] = useState(() => passage.questions.map(() => null));
   const [submitted, setSubmitted] = useState(null); // { seconds, correct }
   const [elapsed, setElapsed] = useState(0);
@@ -193,6 +230,16 @@ function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
   }
 
   const text = showKana ? passage.furigana : passage.text;
+  const model = useMemo(() => buildModel(text), [text]);
+  const reader = useReadAloud(model.sentences, { rate: listen.rate, pause: listen.pause });
+
+  function updateListen(patch) {
+    setListen((l) => {
+      const next = { ...l, ...patch };
+      try { localStorage.setItem(LISTEN_KEY, JSON.stringify(next)); } catch { /* private mode */ }
+      return next;
+    });
+  }
 
   return (
     <div className="reading-passage">
@@ -230,12 +277,41 @@ function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
             }}
           /> {t('reading_spaced')}
         </label>
-        <button type="button" className="secondary-btn icon-btn" onClick={() => speak(passage.text.replace(/[〈〉|]/g, '').replace(/ +/g, '').replace(/\n/g, '。'))}>
-          <Volume2 size={15} /> {t('reading_listen')}
+        <button
+          type="button"
+          className={`secondary-btn icon-btn${reader.playing ? ' is-active' : ''}`}
+          onClick={() => (reader.playing ? reader.stop() : reader.start(0))}
+        >
+          {reader.playing ? <Square size={14} /> : <Volume2 size={15} />} {reader.playing ? t('reading_stop') : t('reading_listen')}
         </button>
       </div>
+      <div className="reading-tools reading-listen-settings">
+        <label className="reading-toggle">
+          <input type="checkbox" checked={listen.follow} onChange={(e) => updateListen({ follow: e.target.checked })} /> {t('reading_follow')}
+        </label>
+        <label className="reading-toggle">
+          <input type="checkbox" checked={listen.pause} onChange={(e) => updateListen({ pause: e.target.checked })} /> {t('reading_pause')}
+        </label>
+        <span className="filter-group reading-rate">
+          <span className="filter-label">{t('reading_rate')}</span>
+          {RATES.map((rate) => (
+            <button key={rate} type="button" className={listen.rate === rate ? 'active' : ''} onClick={() => updateListen({ rate })}>
+              {t(`reading_rate_${String(rate).replace('.', '_')}`)}
+            </button>
+          ))}
+        </span>
+      </div>
 
-      <div className="reading-text" lang="ja"><RichText text={text} spaced={spaced} /></div>
+      <div className="reading-text" lang="ja">
+        <RichText
+          model={model}
+          spaced={spaced}
+          active={listen.follow ? reader.active : null}
+          onSentence={listen.follow ? (id) => reader.start(id) : null}
+        />
+      </div>
+      {reader.failed && <p className="warning reading-follow-hint">{t('reading_tts_failed')}</p>}
+      {listen.follow && <p className="muted reading-follow-hint">{t('reading_follow_hint')}</p>}
 
       <ol className="reading-questions">
         {passage.questions.map((q, qi) => {

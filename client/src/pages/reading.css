@@ -88,3 +88,16 @@
 .reading-group { margin-top: 1.4rem; }
 .reading-group-title { font-size: 1.15rem; margin: 0; }
 .reading-group-desc { margin: 0.2rem 0 0.7rem; font-size: 0.85rem; }
+
+/* follow-along read-aloud */
+.reading-listen-settings { margin-top: -0.4rem; font-size: 0.9rem; }
+.reading-rate { margin: 0; }
+.reading-follow-hint { margin: -0.5rem 0 0; font-size: 0.8rem; }
+.reading-sentence { border-radius: 4px; transition: background-color 0.2s ease; }
+.reading-sentence.is-clickable { cursor: pointer; }
+.reading-sentence.is-current { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+tr.reading-sentence.is-current td, tr.reading-sentence.is-current th { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.reading-phrase { border-radius: 3px; transition: color 0.12s ease, background-color 0.12s ease; }
+.reading-phrase.is-reading { color: var(--paper-raised); background: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.reading-phrase.is-reading .reading-underline { text-decoration-color: currentColor; }
+.secondary-btn.is-active { border-color: var(--accent); color: var(--accent); }

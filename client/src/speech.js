@@ -40,6 +40,17 @@ function pickVoice(lang) {
   );
 }
 
+// An utterance with the page's usual Japanese voice, for callers that need
+// its events (the reading page's follow-along highlight).
+export function makeUtterance(text, { rate = 0.9, lang = 'ja-JP' } = {}) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  utter.rate = rate;
+  const voice = pickVoice(lang);
+  if (voice) utter.voice = voice;
+  return utter;
+}
+
 export function speak(text, { rate = 0.9, lang = 'ja-JP' } = {}) {
   if (!('speechSynthesis' in window)) {
     console.warn('SpeechSynthesis not supported in this browser.');
