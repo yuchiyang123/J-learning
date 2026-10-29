@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, UserCircle, Type, Palette } from 'lucide-react';
+import { LogIn, UserCircle, Type, Palette, ZoomIn } from 'lucide-react';
 import { useLocale } from '../i18n/LocaleContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import SkinPicker from '../components/SkinPicker.jsx';
+import { CONTENT_ZOOMS, getContentZoom, setContentZoom } from '../lib/contentZoom.js';
 import { getKanaWriteAutoplay, setKanaWriteAutoplay, getStrokeAnimation, setStrokeAnimation } from '../lib/kanaWritePrefs.js';
 
 export default function Settings() {
@@ -11,6 +12,7 @@ export default function Settings() {
   const { isLoggedIn, user, loading } = useAuth();
   const [kanaAutoplay, setKanaAutoplayState] = useState(getKanaWriteAutoplay);
   const [strokeAnimation, setStrokeAnimationState] = useState(getStrokeAnimation);
+  const [zoom, setZoomState] = useState(getContentZoom);
 
   function toggleKanaAutoplay(value) {
     setKanaAutoplayState(value);
@@ -34,6 +36,20 @@ export default function Settings() {
         </h2>
         <p className="muted">{t('settings_skin_hint')}</p>
         <SkinPicker />
+      </div>
+
+      <div className="auth-card settings-card">
+        <h2 className="settings-section-heading">
+          <ZoomIn size={18} /> {t('settings_zoom_heading')}
+        </h2>
+        <p className="muted">{t('settings_zoom_hint')}</p>
+        <div className="filter-group">
+          {CONTENT_ZOOMS.map((z) => (
+            <button key={z} className={zoom === z ? 'active' : ''} onClick={() => { setZoomState(z); setContentZoom(z); }}>
+              {Math.round(z * 100)}%
+            </button>
+          ))}
+        </div>
       </div>
 
       {!loading && !isLoggedIn && (

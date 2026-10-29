@@ -123,3 +123,7 @@
 }
 .flashcard-homophones-label { font-weight: 700; }
 .flashcard-homophone span { font-weight: 700; color: var(--ink); }
+
+/* 設定 → 顯示大小: scales the main content column on every skin
+   (lib/contentZoom.js sets the variable). */
+.app-main { zoom: var(--content-zoom, 1); }

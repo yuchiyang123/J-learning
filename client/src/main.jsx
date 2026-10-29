@@ -7,6 +7,7 @@ import { AuthProvider } from './auth/AuthContext.jsx';
 import { SkinProvider } from './skins/SkinContext.jsx';
 import { applySkin, getStoredSkin, loadSkin, DEFAULT_SKIN } from './skins/registry.js';
 import './skins/shared.css';
+import { applyContentZoom } from './lib/contentZoom.js';
 
 // The skin's stylesheet is the whole look of the site, so load and apply it
 // before the first render instead of flashing unstyled markup. If the chosen
@@ -19,6 +20,7 @@ async function boot() {
     initial = await loadSkin(DEFAULT_SKIN);
   }
   applySkin(initial.meta, initial.mod);
+  applyContentZoom();
 
   ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
