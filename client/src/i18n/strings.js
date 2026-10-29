@@ -520,6 +520,7 @@ const zhTW = {
   settings_zoom_heading: "顯示大小",
   settings_zoom_hint: "放大頁面主要內容（不含上方導覽列），大螢幕看起來比較舒服。只套用在這台裝置。",
   reading_display: "顯示",
+  vocab_auto_advance_label: "按完自動下一張",
 };
 
 const zhCN = {
@@ -1030,6 +1031,7 @@ const zhCN = {
   settings_zoom_heading: "显示大小",
   settings_zoom_hint: "放大页面主要内容（不含上方导航栏），大屏幕看起来比较舒服。只应用在这台设备。",
   reading_display: "显示",
+  vocab_auto_advance_label: "按完自动下一张",
 };
 
 const en = {
@@ -1540,6 +1542,7 @@ const en = {
   settings_zoom_heading: "Content size",
   settings_zoom_hint: "Enlarge the main page content (not the top navigation) — easier to read on a big screen. Applies to this device only.",
   reading_display: "Display",
+  vocab_auto_advance_label: "Next card after marking",
 };
 
 const ko = {
@@ -2050,6 +2053,7 @@ const ko = {
   settings_zoom_heading: "표시 크기",
   settings_zoom_hint: "페이지 본문을 확대합니다(상단 메뉴 제외). 큰 화면에서 보기 편합니다. 이 기기에만 적용됩니다.",
   reading_display: "보기",
+  vocab_auto_advance_label: "표시 후 다음 카드로",
 };
 
 export const dictionaries = { 'zh-TW': zhTW, 'zh-CN': zhCN, en, ko };

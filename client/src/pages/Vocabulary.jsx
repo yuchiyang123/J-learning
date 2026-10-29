@@ -23,6 +23,7 @@ const LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 //   kanji — words with kanji only; front: kanji only; back: reading + meaning
 //   both  — front: kanji + kana; back: meaning (the original layout)
 // `autoplay` speaks the word whenever the card is turned to its back.
+// `autoAdvance` moves on to the next card after 記得 / 不熟 / 待考.
 // Bookmark: the card you were last on, per level / deck / front mode, so
 // reopening the page picks up where you left off (e.g. card 423 of 718)
 // instead of starting over — on any device when logged in (lib/bookmarks.js
@@ -36,9 +37,9 @@ const FRONTS = ['kana', 'kanji', 'both'];
 function loadCardPrefs() {
   try {
     const p = JSON.parse(localStorage.getItem(CARD_PREFS_KEY) || '{}');
-    return { front: FRONTS.includes(p.front) ? p.front : 'kana', autoplay: p.autoplay !== false };
+    return { front: FRONTS.includes(p.front) ? p.front : 'kana', autoplay: p.autoplay !== false, autoAdvance: p.autoAdvance !== false };
   } catch {
-    return { front: 'kana', autoplay: true };
+    return { front: 'kana', autoplay: true, autoAdvance: true };
   }
 }
 
@@ -323,9 +324,11 @@ export default function Vocabulary() {
       const n = new Set(prev); n.delete(`${itemType}:${itemId}`); return n;
     });
     const responseMs = Math.round(performance.now() - shownAtRef.current);
+    // Move on right away; saving happens in the background (waiting for
+    // the round trip first is what made every press stall).
+    if (cardPrefs.autoAdvance) next();
     await api.reviewProgress({ itemType, itemId, correct, responseMs }).catch(() => {});
     loadDue(false);
-    next();
   }
 
   // 待考: flag the word to be settled by a practice test (typing / tiles):
@@ -336,8 +339,8 @@ export default function Vocabulary() {
     const key = wordKey(current);
     const on = !pending.has(key);
     setPendingKeys((prev) => { const n = new Set(prev); if (on) n.add(key); else n.delete(key); return n; });
+    if (on && cardPrefs.autoAdvance) next();
     await api.setPending({ itemType, itemId: current.id, pending: on }).catch(() => {});
-    if (on) next();
   }
 
   async function deleteCustom() {
@@ -391,6 +394,11 @@ export default function Vocabulary() {
             <span className="filter-label">{t('vocab_autoplay_label')}</span>
             <button className={cardPrefs.autoplay ? 'active' : ''} onClick={() => updateCardPrefs({ autoplay: true })}>{t('settings_toggle_on')}</button>
             <button className={!cardPrefs.autoplay ? 'active' : ''} onClick={() => updateCardPrefs({ autoplay: false })}>{t('settings_toggle_off')}</button>
+          </div>
+          <div className="filter-group">
+            <span className="filter-label">{t('vocab_auto_advance_label')}</span>
+            <button className={cardPrefs.autoAdvance ? 'active' : ''} onClick={() => updateCardPrefs({ autoAdvance: true })}>{t('settings_toggle_on')}</button>
+            <button className={!cardPrefs.autoAdvance ? 'active' : ''} onClick={() => updateCardPrefs({ autoAdvance: false })}>{t('settings_toggle_off')}</button>
           </div>
         </div>
       )}
