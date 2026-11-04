@@ -241,7 +241,17 @@ function Passage({ level, passage, next, onOpen, onBack, onSaved }) {
 
   const text = showKana ? passage.furigana : passage.text;
   const model = useMemo(() => buildModel(text), [text]);
-  const reader = useReadAloud(model.sentences, { rate: listen.rate, pause: listen.pause });
+  // The voice always reads the kanji version: in all-kana text it can't
+  // tell the particles は / へ (wa / e) from ha / he and misreads them. The
+  // kana version is written phrase for phrase like the kanji one, so the
+  // same sentence / phrase ids highlight the kana on screen.
+  const spokenModel = useMemo(() => {
+    const kanji = buildModel(passage.text);
+    const aligned = kanji.sentences.length === model.sentences.length
+      && kanji.sentences.every((s, i) => s.phrases.length === model.sentences[i].phrases.length);
+    return aligned ? kanji : model;
+  }, [passage.text, model]);
+  const reader = useReadAloud(spokenModel.sentences, { rate: listen.rate, pause: listen.pause });
 
   function updateListen(patch) {
     setListen((l) => {

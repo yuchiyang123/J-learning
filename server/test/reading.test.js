@@ -51,6 +51,11 @@ test('the N5 passages are well formed', () => {
     const marks = (s) => (s.match(/〈/g) || []).length;
     assert.equal(marks(p.text), marks(p.furigana), `${p.id} underline marks`);
     assert.equal(marks(p.text), (p.text.match(/〉/g) || []).length, `${p.id} unbalanced 〈〉`);
+    // Read-aloud speaks the kanji version while highlighting the kana one,
+    // so both must be split into the same phrases line by line.
+    const phrases = (line) => line.replace(/〈[^〉]*〉/g, 'X').split(' ').length;
+    const kana = p.furigana.split('\n');
+    p.text.split('\n').forEach((line, i) => assert.equal(phrases(line), phrases(kana[i]), `${p.id} line ${i + 1} phrases`));
   }
 });
 
