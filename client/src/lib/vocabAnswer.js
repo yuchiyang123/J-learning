@@ -16,6 +16,17 @@ function variants(text) {
 export const readingVariants = (word) => variants(word.kana);
 export const kanjiVariants = (word) => variants(word.kanji);
 
+// The same variants with the parenthesised extra kept in: "けっこん (する)"
+// is answered right as けっこん or as けっこんする.
+function withExtras(text) {
+  if (!text) return [];
+  return text
+    .split(/[;；、,]/)
+    .filter((v) => /[(（]/.test(v))
+    .map((v) => v.replace(/[(（)）～〜~\s]/g, '').trim())
+    .filter(Boolean);
+}
+
 // The reading used when a single answer has to be shown or built (tiles,
 // handwriting): the first variant, as written in the dictionary.
 export const primaryReading = (word) => readingVariants(word)[0] ?? '';
@@ -40,7 +51,10 @@ const norm = (s) => toHiragana(s.normalize('NFKC').replace(/[\s～〜~]/g, ''));
 // "いい／よい") is right too, as long as each part is one of its readings.
 export function checkAnswer(given, word, { acceptKanji = false } = {}) {
   const g = norm(given);
-  const pool = [...readingVariants(word), ...(acceptKanji ? kanjiVariants(word) : [])];
+  const pool = [
+    ...readingVariants(word), ...withExtras(word.kana),
+    ...(acceptKanji ? [...kanjiVariants(word), ...withExtras(word.kanji)] : []),
+  ];
   const hit = pool.find((v) => norm(v) === g);
   if (hit || !g) return { correct: !!hit && g.length > 0, matched: hit ?? null };
   const parts = given.split(/[;；、,，/／・\s]+/).map(norm).filter(Boolean);
